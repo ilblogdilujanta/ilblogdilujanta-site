@@ -1,110 +1,301 @@
 ---
-const title = "Il Blog di Lujanta";
-const description =
-  "Tradizioni, luoghi sacri e figure del mito nelle culture alpine e di confine.";
+const siteTitle = "il Blog di Lujanta";
+
+// Cambia questo percorso se il file ha un nome diverso
+const coverImage = "/cover.jpg";
+
+// Didascalia in alto a destra (come nel tuo esempio)
+const coverCaptionLine1 = "Pragser Wildsee —";
+const coverCaptionLine2 = "Lago di Braies";
+const coverCaptionLine3 = "archivio personale";
 ---
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="it">
   <head>
     <meta charset="utf-8" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{siteTitle}</title>
+
     <style>
-      body {
-        margin: 0;
+      :root{
+        --bg:#f4f1ea;
+        --paper:#eee8de;
+        --ink:#2b2a26;
+        --muted:#5a564d;
+        --line:#d6cfbf;
+        --accent:#8b6f4e; /* rame spento */
+      }
+
+      *{ box-sizing:border-box; }
+      body{
+        margin:0;
+        background:var(--bg);
+        color:var(--ink);
         font-family: Georgia, "Times New Roman", serif;
-        background: #f6f4ef;
-        color: #2a2a2a;
-        line-height: 1.6;
+        line-height:1.7;
       }
-      header, section {
-        max-width: 960px;
-        margin: auto;
-        padding: 3rem 1.5rem;
+
+      .wrap{
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 48px 18px 80px;
       }
-      h1, h2 {
+
+      /* HERO */
+      .hero{
+        text-align:center;
+        padding-top: 10px;
+      }
+
+      .cover{
+        position:relative;
+        display:block;
+        width: min(920px, 100%);
+        margin: 0 auto 26px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        box-shadow: 0 10px 28px rgba(0,0,0,.08);
+        padding: 12px;
+      }
+
+      /* Se vuoi un effetto “pergamena erosa” leggero senza immagini extra */
+      .cover::before{
+        content:"";
+        position:absolute;
+        inset: 6px;
+        border: 1px solid rgba(139,111,78,.18);
+        pointer-events:none;
+      }
+
+      .cover img{
+        display:block;
+        width:100%;
+        height:auto;
+        border-radius: 2px;
+      }
+
+      .cover-caption{
+        position:absolute;
+        right: 26px;
+        bottom: 86px; /* tarato per stare “a lato” come nel tuo mock */
+        text-align:right;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.25;
+        font-style: italic;
+        text-shadow: 0 1px 0 rgba(244,241,234,.85);
+      }
+      .cover-caption strong{
+        font-style: normal;
+        font-weight: normal;
+        letter-spacing: .02em;
+      }
+
+      h1{
+        margin: 6px 0 8px;
+        font-size: 46px;
+        font-weight: normal;
+        letter-spacing: .02em;
+      }
+
+      .subtitle{
+        margin: 0 auto 18px;
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .cap-words{
+        text-transform: uppercase;   /* MAIUSCOLO */
+        font-weight: normal;         /* NON grassetto */
+        letter-spacing: .05em;
+        color: var(--ink);
+      }
+
+      .cap-one{
+        text-transform: uppercase;   /* CULTURE in maiuscolo */
+        font-weight: normal;
+        letter-spacing: .04em;
+        color: var(--ink);
+      }
+
+      .btn{
+        display:inline-block;
+        margin-top: 10px;
+        padding: 10px 22px;
+        border: 1px solid var(--accent);
+        background: transparent;
+        color: var(--ink);
+        text-decoration:none;
+        letter-spacing:.06em;
+      }
+      .btn:hover{
+        background: rgba(139,111,78,.07);
+      }
+
+      .orn{
+        margin: 26px auto 34px;
+        width: min(560px, 95%);
+        height: 1px;
+        background: var(--line);
+        position: relative;
+      }
+      .orn::after{
+        content:"✦";
+        position:absolute;
+        left:50%;
+        transform:translateX(-50%);
+        top:-14px;
+        background: var(--bg);
+        padding: 0 10px;
+        color: var(--accent);
+        font-size: 16px;
+      }
+
+      /* SEZIONI */
+      .section-title{
+        font-size: 40px;
+        margin: 10px 0 18px;
         font-weight: normal;
       }
-      h1 {
-        font-size: 2.4rem;
+
+      .cards{
+        display:grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+        margin-bottom: 36px;
       }
-      h2 {
-        margin-top: 0;
-        font-size: 1.8rem;
+
+      .card{
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,.18);
+        padding: 18px 18px 20px;
+        text-align:left;
+        position:relative;
+        min-height: 110px;
       }
-      .hero {
-        text-align: center;
-        padding-top: 5rem;
-        padding-bottom: 4rem;
+      .card h3{
+        margin: 0 0 8px;
+        font-size: 22px;
+        font-weight: normal;
       }
-      .button {
-        display: inline-block;
-        margin-top: 1.5rem;
-        padding: 0.6rem 1.2rem;
-        border: 1px solid #555;
-        text-decoration: none;
-        color: inherit;
+      .card p{
+        margin:0;
+        color: var(--muted);
+        font-size: 16px;
       }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 1.5rem;
+      .arrow{
+        position:absolute;
+        right:14px;
+        bottom:12px;
+        color: var(--muted);
+        font-size: 22px;
       }
-      .card {
-        background: #fff;
-        padding: 1.2rem;
-        border: 1px solid #ddd;
+
+      .path{
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,.18);
+        padding: 18px;
+        text-align:left;
+        position:relative;
       }
-      footer {
-        text-align: center;
-        padding: 3rem 1rem;
-        font-size: 0.9rem;
-        color: #666;
+      .path h3{
+        margin: 0 0 8px;
+        font-size: 26px;
+        font-weight: normal;
+      }
+      .path p{
+        margin: 0 0 12px;
+        color: var(--muted);
+      }
+      .mini-btn{
+        display:inline-block;
+        border:1px solid var(--line);
+        padding: 6px 12px;
+        text-decoration:none;
+        color: var(--ink);
+        font-size: 14px;
+        background: transparent;
+      }
+
+      .footer-note{
+        margin-top: 26px;
+        color: var(--muted);
+        font-size: 16px;
+        text-align:center;
+        max-width: 760px;
+        margin-left:auto;
+        margin-right:auto;
+      }
+
+      @media (max-width: 520px){
+        h1{ font-size: 36px; }
+        .section-title{ font-size: 32px; }
+        .cover-caption{ right: 18px; bottom: 74px; font-size: 13px; }
       }
     </style>
   </head>
 
   <body>
-    <header class="hero">
-      <h1>Il Blog di Lujanta</h1>
-      <p>Tradizioni, luoghi sacri e figure del mito<br />nelle culture alpine e di confine</p>
-      <a class="button" href="#">Inizia da qui</a>
-    </header>
+    <main class="wrap">
+      <section class="hero">
+        <div class="cover">
+          <img src={coverImage} alt="Copertina: paesaggio innevato del lago" />
 
-    <section>
-      <h2>Scoperte consigliate</h2>
-      <div class="grid">
-        <div class="card">
-          <h3>La Šmara e i molti nomi della Trude</h3>
-          <p>Figure femminili dell’inverno e del confine.</p>
+          <div class="cover-caption" aria-label="Didascalia immagine">
+            <strong>{coverCaptionLine1}</strong><br />
+            <strong>{coverCaptionLine2}</strong><br />
+            {coverCaptionLine3}
+          </div>
         </div>
-        <div class="card">
-          <h3>Krampus e Perchten</h3>
-          <p>Gli oscuri spiriti delle tradizioni alpine.</p>
+
+        <h1>{siteTitle}</h1>
+
+        <p class="subtitle">
+          <span class="cap-words">Tradizioni, Folklore e Stregoneria</span><br />
+          nelle <span class="cap-one">Culture</span> alpine e nei loro intrecci europei nel tempo
+        </p>
+
+        <a class="btn" href="/inizia-da-qui">Inizia da qui</a>
+
+        <div class="orn"></div>
+
+        <h2 class="section-title">Scoperte consigliate</h2>
+
+        <div class="cards">
+          <a class="card" href="https://ilblogdilujanta.blogspot.com/2025/12/la-smara-e-i-molti-nomi-della-trude.html" target="_blank" rel="noreferrer">
+            <h3>La Šmara e i molti nomi della Trude</h3>
+            <p>Figure femminili dell’inverno e del confine.</p>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="card" href="https://ilblogdilujanta.blogspot.com/2016/12/krampus-e-perchten-gli-oscuri-spiriti.html" target="_blank" rel="noreferrer">
+            <h3>Krampus e Perchten</h3>
+            <p>Gli oscuri spiriti delle tradizioni alpine.</p>
+            <span class="arrow">→</span>
+          </a>
+
+          <a class="card" href="https://ilblogdilujanta.blogspot.com/2016/03/trumusiate-sainate-la-divinita-del.html" target="_blank" rel="noreferrer">
+            <h3>Trumusiate Sainate</h3>
+            <p>La divinità del bosco e dei margini.</p>
+            <span class="arrow">→</span>
+          </a>
         </div>
-        <div class="card">
-          <h3>Trumusiate Sainate</h3>
-          <p>La divinità del bosco e dei margini.</p>
+
+        <h2 class="section-title">Percorsi di lettura</h2>
+
+        <div class="path">
+          <h3>Spiriti, miti e tradizioni d’inverno</h3>
+          <p>Figure notturne, rituali stagionali e simboli tra luce e buio.</p>
+          <a class="mini-btn" href="#">Scopri il percorso</a>
+          <span class="arrow">→</span>
         </div>
-      </div>
-    </section>
 
-    <section>
-      <h2>Percorsi di lettura</h2>
-      <p>
-        <strong>Spiriti, miti e tradizioni d’inverno</strong><br />
-        Figure notturne, rituali stagionali e simboli tra luce e buio.
-      </p>
-    </section>
-
-    <section>
-      <h2>Esplora per temi</h2>
-      <p>Tradizioni e folklore · Divinità e miti · Rituali stagionali · Luoghi del sacro</p>
-    </section>
-
-    <footer>
-      © Il Blog di Lujanta
-    </footer>
+        <p class="footer-note">
+          Puoi seguire i percorsi proposti, esplorare per temi o luoghi, oppure iniziare da un singolo articolo.
+        </p>
+      </section>
+    </main>
   </body>
 </html>
