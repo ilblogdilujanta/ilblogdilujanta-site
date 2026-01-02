@@ -1,16 +1,110 @@
 ---
-
+const title = "Il Blog di Lujanta";
+const description =
+  "Tradizioni, luoghi sacri e figure del mito nelle culture alpine e di confine.";
 ---
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        background: #f6f4ef;
+        color: #2a2a2a;
+        line-height: 1.6;
+      }
+      header, section {
+        max-width: 960px;
+        margin: auto;
+        padding: 3rem 1.5rem;
+      }
+      h1, h2 {
+        font-weight: normal;
+      }
+      h1 {
+        font-size: 2.4rem;
+      }
+      h2 {
+        margin-top: 0;
+        font-size: 1.8rem;
+      }
+      .hero {
+        text-align: center;
+        padding-top: 5rem;
+        padding-bottom: 4rem;
+      }
+      .button {
+        display: inline-block;
+        margin-top: 1.5rem;
+        padding: 0.6rem 1.2rem;
+        border: 1px solid #555;
+        text-decoration: none;
+        color: inherit;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+      }
+      .card {
+        background: #fff;
+        padding: 1.2rem;
+        border: 1px solid #ddd;
+      }
+      footer {
+        text-align: center;
+        padding: 3rem 1rem;
+        font-size: 0.9rem;
+        color: #666;
+      }
+    </style>
+  </head>
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <body>
+    <header class="hero">
+      <h1>Il Blog di Lujanta</h1>
+      <p>Tradizioni, luoghi sacri e figure del mito<br />nelle culture alpine e di confine</p>
+      <a class="button" href="#">Inizia da qui</a>
+    </header>
+
+    <section>
+      <h2>Scoperte consigliate</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>La Šmara e i molti nomi della Trude</h3>
+          <p>Figure femminili dell’inverno e del confine.</p>
+        </div>
+        <div class="card">
+          <h3>Krampus e Perchten</h3>
+          <p>Gli oscuri spiriti delle tradizioni alpine.</p>
+        </div>
+        <div class="card">
+          <h3>Trumusiate Sainate</h3>
+          <p>La divinità del bosco e dei margini.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Percorsi di lettura</h2>
+      <p>
+        <strong>Spiriti, miti e tradizioni d’inverno</strong><br />
+        Figure notturne, rituali stagionali e simboli tra luce e buio.
+      </p>
+    </section>
+
+    <section>
+      <h2>Esplora per temi</h2>
+      <p>Tradizioni e folklore · Divinità e miti · Rituali stagionali · Luoghi del sacro</p>
+    </section>
+
+    <footer>
+      © Il Blog di Lujanta
+    </footer>
+  </body>
 </html>
