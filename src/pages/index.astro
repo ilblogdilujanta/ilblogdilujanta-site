@@ -1,301 +1,135 @@
 ---
 const siteTitle = "il Blog di Lujanta";
-
-// Cambia questo percorso se il file ha un nome diverso
-const coverImage = "/cover.jpg";
-
-// Didascalia in alto a destra (come nel tuo esempio)
-const coverCaptionLine1 = "Pragser Wildsee —";
-const coverCaptionLine2 = "Lago di Braies";
-const coverCaptionLine3 = "archivio personale";
+const tagline =
+  "TRADIZIONI, FOLKLORE E STREGONERIA\nnelle Culture alpine e nei loro intrecci europei nel tempo";
 ---
 
 <!doctype html>
 <html lang="it">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{siteTitle}</title>
-
     <style>
       :root{
-        --bg:#f4f1ea;
-        --paper:#eee8de;
         --ink:#2b2a26;
-        --muted:#5a564d;
-        --line:#d6cfbf;
-        --accent:#8b6f4e; /* rame spento */
+        --paper: rgba(244,241,234,.78); /* velo “avorio” sopra l’immagine */
+        --border: rgba(43,42,38,.35);
       }
 
-      *{ box-sizing:border-box; }
-      body{
-        margin:0;
-        background:var(--bg);
-        color:var(--ink);
-        font-family: Georgia, "Times New Roman", serif;
-        line-height:1.7;
-      }
+      body{ margin:0; font-family: Georgia,"Times New Roman",serif; color:var(--ink); }
 
-      .wrap{
-        max-width: 980px;
-        margin: 0 auto;
-        padding: 48px 18px 80px;
-      }
-
-      /* HERO */
+      /* HERO full-screen */
       .hero{
-        text-align:center;
-        padding-top: 10px;
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
       }
 
-      .cover{
-        position:relative;
-        display:block;
-        width: min(920px, 100%);
-        margin: 0 auto 26px;
+      .hero__bg{
+        position:absolute; inset:0;
+        background-image: url("/hero.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        transform: scale(1.02);
+      }
+
+      /* leggera patina avorio per far “stare” la grafica */
+      .hero__veil{
+        position:absolute; inset:0;
         background: var(--paper);
-        border: 1px solid var(--line);
-        box-shadow: 0 10px 28px rgba(0,0,0,.08);
-        padding: 12px;
       }
 
-      /* Se vuoi un effetto “pergamena erosa” leggero senza immagini extra */
-      .cover::before{
-        content:"";
-        position:absolute;
-        inset: 6px;
-        border: 1px solid rgba(139,111,78,.18);
-        pointer-events:none;
+      /* contenuto sopra */
+      .hero__content{
+        position: relative;
+        width: min(980px, 92vw);
+        text-align: center;
+        padding: 2.5rem 1rem;
       }
 
-      .cover img{
-        display:block;
-        width:100%;
-        height:auto;
-        border-radius: 2px;
+      /* barra link in alto */
+      .topnav{
+        position: fixed;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(980px, 92vw);
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        padding: .7rem 1rem;
+        border: 1px solid var(--border);
+        background: rgba(244,241,234,.75);
+        backdrop-filter: blur(4px);
+        z-index: 10;
       }
-
-      .cover-caption{
-        position:absolute;
-        right: 26px;
-        bottom: 86px; /* tarato per stare “a lato” come nel tuo mock */
-        text-align:right;
-        color: var(--muted);
-        font-size: 14px;
-        line-height: 1.25;
-        font-style: italic;
-        text-shadow: 0 1px 0 rgba(244,241,234,.85);
+      .topnav a{
+        color: inherit;
+        text-decoration: none;
+        padding: .2rem .4rem;
       }
-      .cover-caption strong{
-        font-style: normal;
-        font-weight: normal;
-        letter-spacing: .02em;
-      }
+      .topnav a:hover{ text-decoration: underline; }
 
       h1{
-        margin: 6px 0 8px;
-        font-size: 46px;
         font-weight: normal;
         letter-spacing: .02em;
+        font-size: clamp(2rem, 4vw, 3rem);
+        margin: 0 0 .8rem 0;
       }
 
-      .subtitle{
-        margin: 0 auto 18px;
-        max-width: 760px;
-        color: var(--muted);
-        font-size: 18px;
+      .tagline{
+        margin: 0 auto 1.4rem auto;
+        max-width: 62ch;
+        font-size: clamp(1rem, 1.6vw, 1.15rem);
+        line-height: 1.8;
+        white-space: pre-line; /* per la riga a capo in tagline */
       }
 
-      .cap-words{
-        text-transform: uppercase;   /* MAIUSCOLO */
-        font-weight: normal;         /* NON grassetto */
-        letter-spacing: .05em;
-        color: var(--ink);
-      }
-
-      .cap-one{
-        text-transform: uppercase;   /* CULTURE in maiuscolo */
-        font-weight: normal;
-        letter-spacing: .04em;
-        color: var(--ink);
-      }
-
-      .btn{
+      .cta{
         display:inline-block;
-        margin-top: 10px;
-        padding: 10px 22px;
-        border: 1px solid var(--accent);
-        background: transparent;
-        color: var(--ink);
-        text-decoration:none;
-        letter-spacing:.06em;
+        padding: .7rem 1.3rem;
+        border: 1px solid var(--border);
+        background: rgba(244,241,234,.55);
+        color: inherit;
+        text-decoration: none;
       }
-      .btn:hover{
-        background: rgba(139,111,78,.07);
-      }
+      .cta:hover{ background: rgba(244,241,234,.8); }
 
-      .orn{
-        margin: 26px auto 34px;
-        width: min(560px, 95%);
+      /* mini riga decorativa */
+      .rule{
+        margin: 1.6rem auto 0 auto;
+        width: min(520px, 80vw);
         height: 1px;
-        background: var(--line);
-        position: relative;
-      }
-      .orn::after{
-        content:"✦";
-        position:absolute;
-        left:50%;
-        transform:translateX(-50%);
-        top:-14px;
-        background: var(--bg);
-        padding: 0 10px;
-        color: var(--accent);
-        font-size: 16px;
-      }
-
-      /* SEZIONI */
-      .section-title{
-        font-size: 40px;
-        margin: 10px 0 18px;
-        font-weight: normal;
-      }
-
-      .cards{
-        display:grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 18px;
-        margin-bottom: 36px;
-      }
-
-      .card{
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,.18);
-        padding: 18px 18px 20px;
-        text-align:left;
-        position:relative;
-        min-height: 110px;
-      }
-      .card h3{
-        margin: 0 0 8px;
-        font-size: 22px;
-        font-weight: normal;
-      }
-      .card p{
-        margin:0;
-        color: var(--muted);
-        font-size: 16px;
-      }
-      .arrow{
-        position:absolute;
-        right:14px;
-        bottom:12px;
-        color: var(--muted);
-        font-size: 22px;
-      }
-
-      .path{
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,.18);
-        padding: 18px;
-        text-align:left;
-        position:relative;
-      }
-      .path h3{
-        margin: 0 0 8px;
-        font-size: 26px;
-        font-weight: normal;
-      }
-      .path p{
-        margin: 0 0 12px;
-        color: var(--muted);
-      }
-      .mini-btn{
-        display:inline-block;
-        border:1px solid var(--line);
-        padding: 6px 12px;
-        text-decoration:none;
-        color: var(--ink);
-        font-size: 14px;
-        background: transparent;
-      }
-
-      .footer-note{
-        margin-top: 26px;
-        color: var(--muted);
-        font-size: 16px;
-        text-align:center;
-        max-width: 760px;
-        margin-left:auto;
-        margin-right:auto;
-      }
-
-      @media (max-width: 520px){
-        h1{ font-size: 36px; }
-        .section-title{ font-size: 32px; }
-        .cover-caption{ right: 18px; bottom: 74px; font-size: 13px; }
+        background: var(--border);
       }
     </style>
   </head>
 
   <body>
-    <main class="wrap">
-      <section class="hero">
-        <div class="cover">
-          <img src={coverImage} alt="Copertina: paesaggio innevato del lago" />
+    <!-- Link/collegamenti sopra la foto -->
+    <nav class="topnav" aria-label="Menu principale">
+      <a href="/inizia">Inizia da qui</a>
+      <a href="/articoli">Articoli</a>
+      <a href="/percorsi">Percorsi</a>
+      <a href="/temi">Temi</a>
+      <a href="/chi-sono">Chi sono</a>
+    </nav>
 
-          <div class="cover-caption" aria-label="Didascalia immagine">
-            <strong>{coverCaptionLine1}</strong><br />
-            <strong>{coverCaptionLine2}</strong><br />
-            {coverCaptionLine3}
-          </div>
-        </div>
+    <!-- Copertina a schermo intero -->
+    <main class="hero">
+      <div class="hero__bg" role="img" aria-label="Copertina: paesaggio innevato del lago"></div>
+      <div class="hero__veil"></div>
 
+      <div class="hero__content">
         <h1>{siteTitle}</h1>
-
-        <p class="subtitle">
-          <span class="cap-words">Tradizioni, Folklore e Stregoneria</span><br />
-          nelle <span class="cap-one">Culture</span> alpine e nei loro intrecci europei nel tempo
-        </p>
-
-        <a class="btn" href="/inizia-da-qui">Inizia da qui</a>
-
-        <div class="orn"></div>
-
-        <h2 class="section-title">Scoperte consigliate</h2>
-
-        <div class="cards">
-          <a class="card" href="https://ilblogdilujanta.blogspot.com/2025/12/la-smara-e-i-molti-nomi-della-trude.html" target="_blank" rel="noreferrer">
-            <h3>La Šmara e i molti nomi della Trude</h3>
-            <p>Figure femminili dell’inverno e del confine.</p>
-            <span class="arrow">→</span>
-          </a>
-
-          <a class="card" href="https://ilblogdilujanta.blogspot.com/2016/12/krampus-e-perchten-gli-oscuri-spiriti.html" target="_blank" rel="noreferrer">
-            <h3>Krampus e Perchten</h3>
-            <p>Gli oscuri spiriti delle tradizioni alpine.</p>
-            <span class="arrow">→</span>
-          </a>
-
-          <a class="card" href="https://ilblogdilujanta.blogspot.com/2016/03/trumusiate-sainate-la-divinita-del.html" target="_blank" rel="noreferrer">
-            <h3>Trumusiate Sainate</h3>
-            <p>La divinità del bosco e dei margini.</p>
-            <span class="arrow">→</span>
-          </a>
-        </div>
-
-        <h2 class="section-title">Percorsi di lettura</h2>
-
-        <div class="path">
-          <h3>Spiriti, miti e tradizioni d’inverno</h3>
-          <p>Figure notturne, rituali stagionali e simboli tra luce e buio.</p>
-          <a class="mini-btn" href="#">Scopri il percorso</a>
-          <span class="arrow">→</span>
-        </div>
-
-        <p class="footer-note">
-          Puoi seguire i percorsi proposti, esplorare per temi o luoghi, oppure iniziare da un singolo articolo.
-        </p>
-      </section>
+        <p class="tagline">{tagline}</p>
+        <a class="cta" href="/inizia">Inizia da qui</a>
+        <div class="rule"></div>
+      </div>
     </main>
   </body>
 </html>
