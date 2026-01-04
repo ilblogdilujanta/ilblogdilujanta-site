@@ -1,0 +1,163 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+
+type Articolo = CollectionEntry<"articoli">;
+
+/* slugify DEVE stare sopra getStaticPaths */
+const slugify = (s: string) =>
+  s
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // toglie accenti
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+
+/* genera tutte le pagine /sentieri/<slug> */
+export async function getStaticPaths() {
+  const articoli = await getCollection("articoli");
+  const set = new Set<string>();
+
+  for (const a of articoli) {
+    for (const s of a.data.sentieri) set.add(slugify(s));
+  }
+
+  return Array.from(set).map((slug) => ({ params: { slug } }));
+}
+
+const articoli: Articolo[] = await getCollection("articoli");
+const { slug } = Astro.params as { slug: string };
+
+/* recupera il “nome bello” del sentiero */
+let sentieroNome = slug;
+for (const a of articoli) {
+  const found = a.data.sentieri.find((s) => slugify(s) === slug);
+  if (found) { sentieroNome = found; break; }
+}
+
+/* filtra gli articoli del sentiero */
+const articoliDelSentiero: Articolo[] = articoli
+  .filter((a) => a.data.sentieri.some((s) => slugify(s) === slug))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const formatDate = (d: Date) =>
+  d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
+---
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{sentieroNome} — Sentieri di Lettura</title>
+
+  <style is:global>
+    :root{ --ink:#2c241c; --bg:#0d8460; }
+
+    body{
+      margin:0; min-height:100vh; background:var(--bg);
+      font-family:"Baskerville Old Face","Baskerville","Libre Baskerville",Georgia,"Times New Roman",serif;
+      color:var(--ink);
+    }
+
+    .topnav{
+      position: sticky; top: 0; z-index: 50;
+      display:flex; justify-content:center; align-items:center; gap:18px;
+      padding:14px;
+      background: rgba(14, 40, 33, 0.55);
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .topnav a{
+      color: rgba(255,245,230,0.92);
+      text-decoration:none;
+      font-size:16px;
+      padding:6px 4px;
+      border-bottom:1px solid transparent;
+    }
+    .topnav a:hover{ border-bottom-color: rgba(255,245,230,0.65); }
+
+    @media (max-width:760px){ .topnav{ gap:12px; flex-wrap:wrap; } }
+
+    main{ display:flex; justify-content:center; padding:32px 14px; }
+
+    .paper{
+      max-width:980px; width:100%; padding:60px;
+      background:
+        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, #efe1c5, #e2caa6 55%, #d8bc93);
+      border-radius:6px;
+      box-shadow:0 18px 60px rgba(0,0,0,0.55);
+    }
+
+    h1{ text-align:center; font-size:44px; font-weight:400; margin:0 0 10px; }
+    .sub{ text-align:center; margin:0 0 26px; font-size:16px; opacity:.85; }
+
+    .back{
+      display:inline-block;
+      margin:0 0 22px;
+      text-decoration:none;
+      color:var(--ink);
+      border-bottom:1px solid rgba(44,36,28,0.25);
+    }
+    .back:hover{ border-bottom-color:rgba(44,36,28,0.6); }
+
+    .list{ list-style:none; padding:0; margin:0; }
+    .list li{ padding:14px 0; border-top:1px solid rgba(44,36,28,0.18); }
+    .list li:first-child{ border-top:none; }
+
+    .title{
+      text-decoration:none;
+      color:var(--ink);
+      border-bottom:1px solid rgba(44,36,28,0.25);
+      font-size:18px;
+      line-height:1.35;
+    }
+    .title:hover{ border-bottom-color:rgba(44,36,28,0.6); }
+
+    .meta{ margin-top:6px; font-size:14px; opacity:0.75; }
+
+    @media (max-width:720px){
+      .paper{ padding:42px 26px; }
+      h1{ font-size:38px; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="topnav" aria-label="Menu principale">
+    <a href="/inizio-da-qui">Inizia da qui</a>
+    <a href="/sentieri">Sentieri di lettura</a>
+    <a href="/articoli">Articoli</a>
+    <a href="/intenti">Intenti del log</a>
+    <a href="/chi-sono">Chi sono</a>
+    <a href="/">Home</a>
+  </nav>
+
+  <main>
+    <article class="paper">
+      <a class="back" href="/sentieri">← Torna ai Sentieri</a>
+
+      <h1>{sentieroNome}</h1>
+      <p class="sub">{articoliDelSentiero.length} articoli</p>
+
+      {articoliDelSentiero.length === 0 ? (
+        <p style="text-align:center; opacity:0.8;">
+          Questo sentiero si aprirà con i prossimi articoli.
+        </p>
+      ) : (
+        <ul class="list">
+          {articoliDelSentiero.map((a) => (
+            <li>
+              <a class="title" href={`/articoli/${a.slug}`}>{a.data.title}</a>
+              <div class="meta">{formatDate(a.data.date)}</div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </article>
+  </main>
+</body>
+</html>

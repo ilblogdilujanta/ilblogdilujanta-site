@@ -1,0 +1,220 @@
+---
+---
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inizia da qui</title>
+
+  <style>
+    :root{
+      --ink: #2c241c;
+
+      --paper1: #efe1c5;
+      --paper2: #e2caa6;
+      --paper3: #d8bc93;
+    }
+
+    /* Base */
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 900px at 50% 35%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 85%, rgba(0,0,0,0.75) 100%),
+        radial-gradient(900px 700px at 50% 35%, rgba(255,240,210,0.35), rgba(0,0,0,0) 70%),
+        #0d8460
+;
+
+      font-family:
+        "Baskerville Old Face",
+        "Baskerville",
+        "Libre Baskerville",
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      color:var(--ink);
+    }
+
+    /* MENU PRINCIPALE (in alto) */
+    .topnav{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+
+      padding: 14px 14px;
+      background: rgba(26, 20, 16, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .topnav a{
+      color: rgba(255, 245, 230, 0.92);
+      text-decoration: none;
+      font-size: 16px;
+      letter-spacing: 0.2px;
+      padding: 6px 4px;
+      border-bottom: 1px solid transparent;
+    }
+
+    .topnav a:hover{
+      border-bottom-color: rgba(255, 245, 230, 0.65);
+    }
+
+    /* evidenzia la pagina corrente */
+    .topnav a[aria-current="page"]{
+      border-bottom-color: rgba(255, 245, 230, 0.95);
+    }
+
+    /* Wrapper per centrare la "pergamena" sotto il menu */
+    .page{
+      display:flex;
+      justify-content:center;
+      padding: 28px 14px;
+    }
+
+    .paper{
+      max-width:980px;
+      width:100%;
+      padding:62px;
+      background:
+        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.38), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
+      border-radius:6px;
+      box-shadow:0 18px 60px rgba(0,0,0,0.55);
+      position:relative;
+    }
+
+    h1{
+      text-align:center;
+      font-size:48px;
+      font-weight:400;
+      margin:0 0 22px;
+      letter-spacing:0.4px;
+    }
+
+    .copy{
+      font-size:16px;
+      line-height:1.62;
+    }
+
+    .copy p{ margin:0 0 14px; }
+
+    .center{ text-align:center; }
+
+    .left-block{ max-width:100%; }
+
+    .hero{
+      float:right;
+      width:min(44%,360px);
+      margin:10px 0 12px 20px;
+      border-radius:6px;
+      overflow:hidden;
+      box-shadow:0 10px 28px rgba(0,0,0,0.25);
+    }
+
+    .hero img{
+      width:100%;
+      display:block;
+      filter:sepia(0.25) contrast(1.05);
+    }
+
+    .closing{
+      text-align:center;
+      margin-top:18px;
+    }
+
+    @media (max-width:760px){
+      .paper{ padding:42px 26px; }
+      h1{ font-size:42px; }
+      .hero{
+        float:none;
+        width:100%;
+        margin:14px 0;
+      }
+      .left-block{ max-width:100%; }
+
+      .topnav{
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Menu principale -->
+  <nav class="topnav" aria-label="Menu principale">
+    <a href="/inizia-da-qui" aria-current="page">Inizia da qui</a>
+    
+    <a href="/sentieri">Sentieri di lettura</a>
+    <a href="/articoli">Articoli</a>
+    <a href="/intenti">Intenti del Blog</a> 
+    <a href="/chi-sono">Chi sono</a>
+    <a href="/">Home</a>
+  </nav>
+
+  <div class="page">
+    <article class="paper">
+      <h1>Inizia da qui</h1>
+
+      <div class="copy">
+        <p class="left-block">
+          Qui non si entra per cercare in fretta. Qui si entra per fermarsi. Questa è una biblioteca di montagna: uno spazio raccolto, antico, dove ciò che è scritto non è disposto per il consumo rapido, ma per la sosta, per il silenzio, per la sedimentazione, come accade alle cose che attraversano il Tempo.
+        </p>
+
+        <p>
+          Ciò che incontri in questo spazio nasce da un lavoro di ascolto e di confronto:
+          sono brani aperti, ciascuno con il proprio ritmo.
+          Tracce materiali, racconti, pratiche, memorie,
+          osservate nei loro strati, nelle loro permanenze e trasformazioni.
+          Nulla è isolato, nulla è fuori contesto.
+        </p>
+
+        <p>
+          Le Tradizioni, il Folklore e la Stregoneria che abitano queste pagine
+          non appartengono a un passato concluso,
+          ma a un Tempo profondo,
+          che riaffiora attraverso i luoghi,
+          nei messaggi della pietra e delle ossa,
+          nei gesti che riverberano in un reperto.
+          Un Tempo che non si attraversa in linea retta,
+          ma che si esplora tornando, sostando, valutando.
+        </p>
+
+        <figure class="hero">
+          <img src="/inizia-da-qui.jpg" alt="Biblioteca di montagna" />
+        </figure>
+
+        <p class="left-block">
+          Questa raccolta non offre un percorso obbligato.<br>
+          Puoi aprire uno scritto e poi tornare indietro,<br>
+          oppure fermarti su una pagina sola.
+        </p>
+
+        <p class="left-block">
+          Puoi leggere seguendo un tema, un territorio, una figura,<br>
+          oppure lasciare che sia un brano a scegliere te.
+        </p>
+
+        <p class="left-block">
+          Se sei arrivata o arrivato sin qui,<br>
+          non è necessario andare oltre subito.<br>
+          Concediti lo spazio che serve.<br>
+          Siediti.<br>
+          Apri ciò che più ti richiama.
+        </p>
+
+        Qui il Tempo non scorre: ritorna.
+      </div>
+    </article>
+  </div>
+</body>
+</html>

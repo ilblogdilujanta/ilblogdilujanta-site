@@ -1,0 +1,243 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+
+type Articolo = CollectionEntry<"articoli">;
+
+const articoli: Articolo[] = await getCollection("articoli");
+
+/* slugify */
+const slugify = (s: string) =>
+  s
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+
+/* SENTIERI (Modello A: derivati dagli articoli) */
+const sentieri: string[] = [
+  ...new Set(articoli.flatMap((a) => a.data.sentieri)),
+].sort((a, b) => a.localeCompare(b, "it"));
+
+/* ARCHIVIO PER ANNO */
+const archivioPerAnno: Record<number, Articolo[]> = {};
+
+for (const a of articoli) {
+  const anno = a.data.date.getFullYear();
+  (archivioPerAnno[anno] ??= []).push(a);
+}
+
+const anni: number[] = Object.keys(archivioPerAnno)
+  .map(Number)
+  .sort((a, b) => b - a);
+---
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sentieri di Lettura</title>
+
+  <style is:global>
+    :root{
+      --ink:#2c241c;
+      --bg:#0d8460;
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background:var(--bg);
+
+      font-family:
+        "Baskerville Old Face",
+        "Baskerville",
+        "Libre Baskerville",
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      color:var(--ink);
+    }
+
+    /* MENU */
+    .topnav{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+
+      padding: 14px 14px;
+      background: rgba(14, 40, 33, 0.55);
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .topnav a{
+      color: rgba(255, 245, 230, 0.92);
+      text-decoration: none;
+      font-size: 16px;
+      letter-spacing: 0.2px;
+      padding: 6px 4px;
+      border-bottom: 1px solid transparent;
+    }
+
+    .topnav a:hover{ border-bottom-color: rgba(255, 245, 230, 0.65); }
+    .topnav a[aria-current="page"]{ border-bottom-color: rgba(255, 245, 230, 0.95); }
+
+    @media (max-width:760px){
+      .topnav{ gap: 12px; flex-wrap: wrap; }
+    }
+
+    main{
+      display:flex;
+      justify-content:center;
+      padding:32px 14px;
+    }
+
+    .paper{
+      max-width:980px;
+      width:100%;
+      padding:60px;
+      background:
+        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, #efe1c5, #e2caa6 55%, #d8bc93);
+      border-radius:6px;
+      box-shadow:0 18px 60px rgba(0,0,0,0.55);
+    }
+
+    h1{ text-align:center; font-size:44px; font-weight:400; margin:0 0 28px; }
+    h2{ font-size:26px; font-weight:400; margin:56px 0 22px; text-align:center; }
+
+    .intro{
+      max-width:640px;
+      margin:0 auto 48px;
+      font-size:16px;
+      line-height:1.6;
+      text-align:center;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+      gap:18px;
+    }
+
+    .sentiero{
+      padding:16px 14px;
+      border:1px solid rgba(44,36,28,0.25);
+      border-radius:4px;
+      text-align:center;
+      text-decoration:none;
+      color:var(--ink);
+      background:rgba(255,255,255,0.25);
+    }
+    .sentiero:hover{ background:rgba(255,255,255,0.45); }
+
+    .anno{
+      margin-bottom:24px;
+      border-bottom:1px solid rgba(44,36,28,0.25);
+      padding-bottom:12px;
+    }
+
+    .anno summary{
+      cursor:pointer;
+      list-style:none;
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:12px;
+      font-size:22px;
+    }
+
+    .anno summary::-webkit-details-marker{ display:none; }
+    .anno summary::before{ content:"▸"; margin-right:8px; font-size:18px; opacity:0.6; }
+    .anno[open] summary::before{ content:"▾"; }
+
+    .anno-count{ font-size:14px; opacity:0.7; }
+
+    .anno ul{ list-style:none; padding:12px 0 0 18px; margin:0; }
+    .anno li{ margin-bottom:6px; }
+
+    .anno a{
+      text-decoration:none;
+      color:var(--ink);
+      border-bottom:1px solid rgba(44,36,28,0.25);
+    }
+    .anno a:hover{ border-bottom-color:rgba(44,36,28,0.6); }
+
+    @media (max-width:720px){
+      .paper{ padding:42px 26px; }
+      h1{ font-size:38px; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="topnav" aria-label="Menu principale">
+    <a href="/inizio-da-qui">Inizia da qui</a>
+    <a href="/sentieri" aria-current="page">Sentieri di lettura</a>
+    <a href="/articoli">Articoli</a>
+    <a href="/intenti">Intenti del Blog</a>
+    <a href="/chi-sono">Chi sono</a>
+    <a href="/">Home</a>
+  </nav>
+
+  <main>
+    <article class="paper">
+      <h1>Sentieri di Lettura</h1>
+
+      <div class="intro">
+        <p>
+          I Sentieri non conducono a una meta unica.<br>
+          Si aprono per essere attraversati, lasciati, ripresi.<br>
+          Ognuno di essi nasce come offerta di lettura,<br>
+          prende senso nell’incontro con chi legge<br>
+          e non pretende di essere concluso.
+        </p>
+      </div>
+
+      <section class="grid">
+        {sentieri.map((s) => (
+          <a class="sentiero" href={`/sentieri/${slugify(s)}`}>
+            {s}
+          </a>
+        ))}
+      </section>
+
+      <h2>Archivio per Anno</h2>
+
+      {anni.length === 0 ? (
+        <p style="text-align:center; opacity:0.75;">
+          L’archivio si popolerà con l’arrivo dei primi articoli.
+        </p>
+      ) : (
+        anni.map((anno) => (
+          <details class="anno">
+            <summary>
+              <span>{anno}</span>
+              <span class="anno-count">{archivioPerAnno[anno].length} articoli</span>
+            </summary>
+            <ul>
+              {archivioPerAnno[anno]
+                .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+                .map((a) => (
+                  <li>
+                    <a href={`/articoli/${a.slug}`}>{a.data.title}</a>
+                  </li>
+                ))}
+            </ul>
+          </details>
+        ))
+      )}
+    </article>
+  </main>
+</body>
+</html>

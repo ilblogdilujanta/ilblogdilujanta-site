@@ -1,0 +1,200 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+
+type Articolo = CollectionEntry<"articoli">;
+
+const slugify = (s: string) =>
+  s
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+
+export async function getStaticPaths() {
+  const articoli = await getCollection("articoli");
+  return articoli.map((a) => ({ params: { slug: a.slug } }));
+}
+
+const { slug } = Astro.params as { slug: string };
+
+const articoli = await getCollection("articoli");
+const articolo = articoli.find((a) => a.slug === slug);
+
+if (!articolo) {
+  throw new Error(`Articolo non trovato: ${slug}`);
+}
+
+const { Content } = await articolo.render();
+
+const formatDate = (d: Date) =>
+  d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
+
+const sentieri: string[] = Array.isArray(articolo.data.sentieri) ? articolo.data.sentieri : [];
+---
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{articolo.data.title}</title>
+
+  <style is:global>
+    :root{ --ink:#2c241c; --bg:#0d8460; }
+
+    body{
+      margin:0; min-height:100vh; background:var(--bg);
+      font-family:"Baskerville Old Face","Baskerville","Libre Baskerville",Georgia,"Times New Roman",serif;
+      color:var(--ink);
+    }
+
+    .topnav{
+      position: sticky; top: 0; z-index: 50;
+      display:flex; justify-content:center; align-items:center; gap:18px;
+      padding:14px;
+      background: rgba(14, 40, 33, 0.55);
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .topnav a{
+      color: rgba(255,245,230,0.92);
+      text-decoration:none;
+      font-size:16px;
+      padding:6px 4px;
+      border-bottom:1px solid transparent;
+    }
+    .topnav a:hover{ border-bottom-color: rgba(255,245,230,0.65); }
+
+    @media (max-width:760px){ .topnav{ gap:12px; flex-wrap:wrap; } }
+
+    main{ display:flex; justify-content:center; padding:32px 14px; }
+
+    .paper{
+      max-width:980px; width:100%; padding:60px;
+      background:
+        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, #efe1c5, #e2caa6 55%, #d8bc93);
+      border-radius:6px;
+      box-shadow:0 18px 60px rgba(0,0,0,0.55);
+    }
+
+    .backrow{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:16px;
+      margin-bottom:18px;
+      flex-wrap:wrap;
+    }
+
+    .back{
+      text-decoration:none;
+      color:var(--ink);
+      border-bottom:1px solid rgba(44,36,28,0.25);
+    }
+    .back:hover{ border-bottom-color:rgba(44,36,28,0.6); }
+
+    h1{
+      text-align:center;
+      font-size:46px;
+      font-weight:400;
+      margin:0 0 10px;
+      letter-spacing:0.2px;
+    }
+
+    .meta{
+      text-align:center;
+      margin:0 0 22px;
+      opacity:0.8;
+      font-size:15px;
+    }
+
+    .chips{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:8px;
+      margin: 0 0 22px;
+    }
+
+    .chip{
+      font-size:13px;
+      text-decoration:none;
+      color:var(--ink);
+      border:1px solid rgba(44,36,28,0.22);
+      padding:4px 8px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.18);
+    }
+    .chip:hover{ background:rgba(255,255,255,0.35); }
+
+    /* Stile base del markdown */
+    .content{
+      font-size:16px;
+      line-height:1.7;
+    }
+    .content p{ margin:0 0 14px; }
+    .content h2{ margin:28px 0 12px; font-size:28px; font-weight:400; }
+    .content h3{ margin:22px 0 10px; font-size:22px; font-weight:400; }
+    .content a{
+      color:var(--ink);
+      text-decoration:none;
+      border-bottom:1px solid rgba(44,36,28,0.25);
+    }
+    .content a:hover{ border-bottom-color:rgba(44,36,28,0.6); }
+    .content blockquote{
+      margin:18px 0;
+      padding:10px 16px;
+      border-left:3px solid rgba(44,36,28,0.25);
+      background:rgba(255,255,255,0.18);
+    }
+
+    @media (max-width:720px){
+      .paper{ padding:42px 26px; }
+      h1{ font-size:38px; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="topnav" aria-label="Menu principale">
+    <a href="/inizio-da-qui">Inizia da qui</a>
+    <a href="/sentieri">Sentieri di lettura</a>
+    <a href="/articoli">Articoli</a>
+    <a href="/intenti">Intenti del log</a>
+    <a href="/chi-sono">Chi sono</a>
+    <a href="/">Home</a>
+  </nav>
+
+  <main>
+    <article class="paper">
+      <div class="backrow">
+        <a class="back" href="/articoli">← Tutti gli articoli</a>
+
+        {sentieri.length > 0 && (
+          <a class="back" href={`/sentieri/${slugify(sentieri[0])}`}>→ Vai al sentiero</a>
+        )}
+      </div>
+
+      <h1>{articolo.data.title}</h1>
+      <p class="meta">{formatDate(articolo.data.date)}</p>
+
+      {sentieri.length > 0 && (
+        <div class="chips" aria-label="Sentieri">
+          {sentieri.map((s) => (
+            <a class="chip" href={`/sentieri/${slugify(s)}`}>{s}</a>
+          ))}
+        </div>
+      )}
+
+      <div class="content">
+        <Content />
+      </div>
+    </article>
+  </main>
+</body>
+</html>
