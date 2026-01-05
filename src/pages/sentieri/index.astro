@@ -1,39 +1,42 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 
-type Articolo = CollectionEntry<"articoli">;
+type Articolo = {
+  slug: string;
+  data: {
+    title: string;
+    date: Date;
+    sentieri?: string[];
+  };
+};
 
-const articoli: Articolo[] = await getCollection("articoli");
+const articoli = (await getCollection("articoli")) as Articolo[];
 
-/* slugify */
 const slugify = (s: string) =>
   s
-    .trim()
     .toLowerCase()
+    .trim()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\u0300-\u036f]/g, "") // via accenti
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 
-/* SENTIERI (Modello A: derivati dagli articoli) */
-const sentieri: string[] = [
-  ...new Set(articoli.flatMap((a) => a.data.sentieri)),
+// SENTIERI (unici)
+const sentieri = [
+  ...new Set(articoli.flatMap((a) => a.data.sentieri ?? [])),
 ].sort((a, b) => a.localeCompare(b, "it"));
 
-/* ARCHIVIO PER ANNO */
+// ARCHIVIO PER ANNO
 const archivioPerAnno: Record<number, Articolo[]> = {};
-
 for (const a of articoli) {
   const anno = a.data.date.getFullYear();
   (archivioPerAnno[anno] ??= []).push(a);
 }
-
-const anni: number[] = Object.keys(archivioPerAnno)
-  .map(Number)
-  .sort((a, b) => b - a);
+const anni = Object.keys(archivioPerAnno).map(Number).sort((a, b) => b - a);
 ---
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="it">
 <head>
   <meta charset="utf-8" />
@@ -43,13 +46,17 @@ const anni: number[] = Object.keys(archivioPerAnno)
   <style is:global>
     :root{
       --ink:#2c241c;
-      --bg:#0d8460;
+      --green:#0d8460;
+
+      --paper1:#efe1c5;
+      --paper2:#e2caa6;
+      --paper3:#d8bc93;
     }
 
     body{
       margin:0;
       min-height:100vh;
-      background:var(--bg);
+      background: var(--green);
 
       font-family:
         "Baskerville Old Face",
@@ -62,39 +69,34 @@ const anni: number[] = Object.keys(archivioPerAnno)
       color:var(--ink);
     }
 
-    /* MENU */
+    /* MENU PRINCIPALE */
     .topnav{
       position: sticky;
       top: 0;
       z-index: 50;
 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 18px;
+      display:flex;
+      gap:18px;
+      justify-content:center;
+      align-items:center;
 
-      padding: 14px 14px;
-      background: rgba(14, 40, 33, 0.55);
-      backdrop-filter: blur(7px);
-      -webkit-backdrop-filter: blur(7px);
+      padding:14px 14px;
+      background: rgba(26, 20, 16, 0.35);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       border-bottom: 1px solid rgba(255,255,255,0.10);
     }
 
     .topnav a{
-      color: rgba(255, 245, 230, 0.92);
-      text-decoration: none;
-      font-size: 16px;
-      letter-spacing: 0.2px;
-      padding: 6px 4px;
-      border-bottom: 1px solid transparent;
+      color: rgba(255,245,230,0.92);
+      text-decoration:none;
+      font-size:16px;
+      letter-spacing:0.2px;
+      padding:6px 4px;
+      border-bottom:1px solid transparent;
     }
-
-    .topnav a:hover{ border-bottom-color: rgba(255, 245, 230, 0.65); }
-    .topnav a[aria-current="page"]{ border-bottom-color: rgba(255, 245, 230, 0.95); }
-
-    @media (max-width:760px){
-      .topnav{ gap: 12px; flex-wrap: wrap; }
-    }
+    .topnav a:hover{ border-bottom-color: rgba(255,245,230,0.65); }
+    .topnav a[aria-current="page"]{ border-bottom-color: rgba(255,245,230,0.95); }
 
     main{
       display:flex;
@@ -106,15 +108,28 @@ const anni: number[] = Object.keys(archivioPerAnno)
       max-width:980px;
       width:100%;
       padding:60px;
+
       background:
         radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
-        linear-gradient(180deg, #efe1c5, #e2caa6 55%, #d8bc93);
+        linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
+
       border-radius:6px;
       box-shadow:0 18px 60px rgba(0,0,0,0.55);
     }
 
-    h1{ text-align:center; font-size:44px; font-weight:400; margin:0 0 28px; }
-    h2{ font-size:26px; font-weight:400; margin:56px 0 22px; text-align:center; }
+    h1{
+      text-align:center;
+      font-size:44px;
+      font-weight:400;
+      margin:0 0 28px;
+    }
+
+    h2{
+      font-size:26px;
+      font-weight:400;
+      margin:56px 0 22px;
+      text-align:center;
+    }
 
     .intro{
       max-width:640px;
@@ -124,6 +139,7 @@ const anni: number[] = Object.keys(archivioPerAnno)
       text-align:center;
     }
 
+    /* GRIGLIA SENTIERI */
     .grid{
       display:grid;
       grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
@@ -141,6 +157,7 @@ const anni: number[] = Object.keys(archivioPerAnno)
     }
     .sentiero:hover{ background:rgba(255,255,255,0.45); }
 
+    /* ARCHIVIO COLLASSABILE */
     .anno{
       margin-bottom:24px;
       border-bottom:1px solid rgba(44,36,28,0.25);
@@ -158,14 +175,23 @@ const anni: number[] = Object.keys(archivioPerAnno)
     }
 
     .anno summary::-webkit-details-marker{ display:none; }
-    .anno summary::before{ content:"▸"; margin-right:8px; font-size:18px; opacity:0.6; }
+    .anno summary::before{
+      content:"▸";
+      margin-right:8px;
+      font-size:18px;
+      opacity:0.6;
+    }
     .anno[open] summary::before{ content:"▾"; }
 
     .anno-count{ font-size:14px; opacity:0.7; }
 
-    .anno ul{ list-style:none; padding:12px 0 0 18px; margin:0; }
-    .anno li{ margin-bottom:6px; }
+    .anno ul{
+      list-style:none;
+      padding:12px 0 0 18px;
+      margin:0;
+    }
 
+    .anno li{ margin-bottom:6px; }
     .anno a{
       text-decoration:none;
       color:var(--ink);
@@ -176,6 +202,7 @@ const anni: number[] = Object.keys(archivioPerAnno)
     @media (max-width:720px){
       .paper{ padding:42px 26px; }
       h1{ font-size:38px; }
+      .topnav{ gap:12px; flex-wrap:wrap; }
     }
   </style>
 </head>
@@ -185,7 +212,7 @@ const anni: number[] = Object.keys(archivioPerAnno)
     <a href="/inizio-da-qui">Inizia da qui</a>
     <a href="/sentieri" aria-current="page">Sentieri di lettura</a>
     <a href="/articoli">Articoli</a>
-    <a href="/intenti">Intenti del Blog</a>
+    <a href="/intenti">Intenti del log</a>
     <a href="/chi-sono">Chi sono</a>
     <a href="/">Home</a>
   </nav>
@@ -204,14 +231,22 @@ const anni: number[] = Object.keys(archivioPerAnno)
         </p>
       </div>
 
-      <section class="grid">
-        {sentieri.map((s) => (
-          <a class="sentiero" href={`/sentieri/${slugify(s)}`}>
-            {s}
-          </a>
-        ))}
-      </section>
+      <!-- SENTIERI -->
+      {sentieri.length === 0 ? (
+        <p style="text-align:center; opacity:0.75;">
+          I Sentieri compariranno con l’arrivo dei primi articoli.
+        </p>
+      ) : (
+        <section class="grid">
+          {sentieri.map((s) => (
+            <a class="sentiero" href={`/sentieri/${slugify(s)}`}>
+              {s}
+            </a>
+          ))}
+        </section>
+      )}
 
+      <!-- ARCHIVIO -->
       <h2>Archivio per Anno</h2>
 
       {anni.length === 0 ? (
@@ -225,8 +260,10 @@ const anni: number[] = Object.keys(archivioPerAnno)
               <span>{anno}</span>
               <span class="anno-count">{archivioPerAnno[anno].length} articoli</span>
             </summary>
+
             <ul>
               {archivioPerAnno[anno]
+                .slice()
                 .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
                 .map((a) => (
                   <li>

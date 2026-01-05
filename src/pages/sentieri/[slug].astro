@@ -1,49 +1,55 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 
-type Articolo = CollectionEntry<"articoli">;
+type Articolo = {
+  slug: string;
+  data: {
+    title: string;
+    date: Date;
+    sentieri?: string[];
+  };
+};
 
-/* slugify DEVE stare sopra getStaticPaths */
 const slugify = (s: string) =>
   s
-    .trim()
     .toLowerCase()
+    .trim()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // toglie accenti
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 
-/* genera tutte le pagine /sentieri/<slug> */
 export async function getStaticPaths() {
-  const articoli = await getCollection("articoli");
+  const articoli = (await getCollection("articoli")) as Articolo[];
   const set = new Set<string>();
 
   for (const a of articoli) {
-    for (const s of a.data.sentieri) set.add(slugify(s));
+    for (const s of a.data.sentieri ?? []) set.add(slugify(s));
   }
 
   return Array.from(set).map((slug) => ({ params: { slug } }));
 }
 
-const articoli: Articolo[] = await getCollection("articoli");
+const articoli = (await getCollection("articoli")) as Articolo[];
 const { slug } = Astro.params as { slug: string };
 
-/* recupera il “nome bello” del sentiero */
+// Nome “umano” del sentiero (con maiuscole originali)
 let sentieroNome = slug;
 for (const a of articoli) {
-  const found = a.data.sentieri.find((s) => slugify(s) === slug);
+  const found = (a.data.sentieri ?? []).find((s) => slugify(s) === slug);
   if (found) { sentieroNome = found; break; }
 }
 
-/* filtra gli articoli del sentiero */
-const articoliDelSentiero: Articolo[] = articoli
-  .filter((a) => a.data.sentieri.some((s) => slugify(s) === slug))
+const articoliDelSentiero = articoli
+  .filter((a) => (a.data.sentieri ?? []).some((s) => slugify(s) === slug))
+  .slice()
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 const formatDate = (d: Date) =>
   d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
 ---
+
 <!doctype html>
 <html lang="it">
 <head>
@@ -52,24 +58,34 @@ const formatDate = (d: Date) =>
   <title>{sentieroNome} — Sentieri di Lettura</title>
 
   <style is:global>
-    :root{ --ink:#2c241c; --bg:#0d8460; }
+    :root{
+      --ink:#2c241c;
+      --green:#0d8460;
+
+      --paper1:#efe1c5;
+      --paper2:#e2caa6;
+      --paper3:#d8bc93;
+    }
 
     body{
-      margin:0; min-height:100vh; background:var(--bg);
-      font-family:"Baskerville Old Face","Baskerville","Libre Baskerville",Georgia,"Times New Roman",serif;
+      margin:0;
+      min-height:100vh;
+      background: var(--green);
+      font-family:
+        "Baskerville Old Face","Baskerville","Libre Baskerville",
+        Georgia,"Times New Roman",serif;
       color:var(--ink);
     }
 
     .topnav{
-      position: sticky; top: 0; z-index: 50;
-      display:flex; justify-content:center; align-items:center; gap:18px;
-      padding:14px;
-      background: rgba(14, 40, 33, 0.55);
-      backdrop-filter: blur(7px);
-      -webkit-backdrop-filter: blur(7px);
+      position: sticky; top:0; z-index:50;
+      display:flex; gap:18px; justify-content:center; align-items:center;
+      padding:14px 14px;
+      background: rgba(26, 20, 16, 0.35);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       border-bottom: 1px solid rgba(255,255,255,0.10);
     }
-
     .topnav a{
       color: rgba(255,245,230,0.92);
       text-decoration:none;
@@ -79,49 +95,37 @@ const formatDate = (d: Date) =>
     }
     .topnav a:hover{ border-bottom-color: rgba(255,245,230,0.65); }
 
-    @media (max-width:760px){ .topnav{ gap:12px; flex-wrap:wrap; } }
-
     main{ display:flex; justify-content:center; padding:32px 14px; }
 
     .paper{
       max-width:980px; width:100%; padding:60px;
       background:
         radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
-        linear-gradient(180deg, #efe1c5, #e2caa6 55%, #d8bc93);
+        linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
       border-radius:6px;
       box-shadow:0 18px 60px rgba(0,0,0,0.55);
     }
 
-    h1{ text-align:center; font-size:44px; font-weight:400; margin:0 0 10px; }
-    .sub{ text-align:center; margin:0 0 26px; font-size:16px; opacity:.85; }
+    h1{ text-align:center; font-size:40px; font-weight:400; margin:0 0 14px; }
+    .sub{ text-align:center; opacity:0.75; margin:0 0 28px; }
 
-    .back{
-      display:inline-block;
-      margin:0 0 22px;
+    ul{ list-style:none; padding:0; margin:0; }
+    li{ padding:12px 0; border-top:1px solid rgba(44,36,28,0.18); }
+    li:first-child{ border-top:0; }
+
+    a.article{
       text-decoration:none;
       color:var(--ink);
       border-bottom:1px solid rgba(44,36,28,0.25);
     }
-    .back:hover{ border-bottom-color:rgba(44,36,28,0.6); }
+    a.article:hover{ border-bottom-color: rgba(44,36,28,0.6); }
 
-    .list{ list-style:none; padding:0; margin:0; }
-    .list li{ padding:14px 0; border-top:1px solid rgba(44,36,28,0.18); }
-    .list li:first-child{ border-top:none; }
-
-    .title{
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid rgba(44,36,28,0.25);
-      font-size:18px;
-      line-height:1.35;
-    }
-    .title:hover{ border-bottom-color:rgba(44,36,28,0.6); }
-
-    .meta{ margin-top:6px; font-size:14px; opacity:0.75; }
+    .meta{ opacity:0.75; font-size:14px; margin-top:6px; }
 
     @media (max-width:720px){
       .paper{ padding:42px 26px; }
-      h1{ font-size:38px; }
+      h1{ font-size:34px; }
+      .topnav{ gap:12px; flex-wrap:wrap; }
     }
   </style>
 </head>
@@ -138,20 +142,18 @@ const formatDate = (d: Date) =>
 
   <main>
     <article class="paper">
-      <a class="back" href="/sentieri">← Torna ai Sentieri</a>
-
       <h1>{sentieroNome}</h1>
       <p class="sub">{articoliDelSentiero.length} articoli</p>
 
       {articoliDelSentiero.length === 0 ? (
-        <p style="text-align:center; opacity:0.8;">
-          Questo sentiero si aprirà con i prossimi articoli.
+        <p style="text-align:center; opacity:0.75;">
+          Nessun articolo ancora associato a questo Sentiero.
         </p>
       ) : (
-        <ul class="list">
+        <ul>
           {articoliDelSentiero.map((a) => (
             <li>
-              <a class="title" href={`/articoli/${a.slug}`}>{a.data.title}</a>
+              <a class="article" href={`/articoli/${a.slug}`}>{a.data.title}</a>
               <div class="meta">{formatDate(a.data.date)}</div>
             </li>
           ))}
