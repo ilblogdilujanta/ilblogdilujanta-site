@@ -3,8 +3,8 @@ import { getCollection, type CollectionEntry } from "astro:content";
 
 type Articolo = CollectionEntry<"articoli">;
 
-function slugify(s: string): string {
-  return s
+const slugify = (s: string) =>
+  s
     .toLowerCase()
     .trim()
     .normalize("NFD")
@@ -12,16 +12,13 @@ function slugify(s: string): string {
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
-}
 
 export async function getStaticPaths() {
   const articoli = await getCollection("articoli");
   const set = new Set<string>();
 
   for (const a of articoli) {
-    for (const s of (a.data.sentieri ?? []) as string[]) {
-      set.add(slugify(s));
-    }
+    for (const s of a.data.sentieri ?? []) set.add(slugify(s));
   }
 
   return Array.from(set).map((slug) => ({ params: { slug } }));
@@ -33,17 +30,24 @@ const { slug } = Astro.params as { slug: string };
 // Nome “umano” del sentiero (con maiuscole originali)
 let sentieroNome = slug;
 for (const a of articoli) {
-  const found = ((a.data.sentieri ?? []) as string[]).find((s: string) => slugify(s) === slug);
-  if (found) { sentieroNome = found; break; }
+  const found = (a.data.sentieri ?? []).find((s) => slugify(s) === slug);
+  if (found) {
+    sentieroNome = found;
+    break;
+  }
 }
 
 const articoliDelSentiero = articoli
-  .filter((a) => ((a.data.sentieri ?? []) as string[]).some((s: string) => slugify(s) === slug))
+  .filter((a) => (a.data.sentieri ?? []).some((s) => slugify(s) === slug))
   .slice()
-  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 const formatDate = (d: Date) =>
-  d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
+  d.toLocaleDateString("it-IT", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+  });
 ---
 
 <!doctype html>
@@ -57,6 +61,7 @@ const formatDate = (d: Date) =>
     :root{
       --ink:#2c241c;
       --green:#0d8460;
+
       --paper1:#efe1c5;
       --paper2:#e2caa6;
       --paper3:#d8bc93;
@@ -149,9 +154,8 @@ const formatDate = (d: Date) =>
         <ul>
           {articoliDelSentiero.map((a) => (
             <li>
-              {/* IMPORTANTISSIMO: link con lo slug reale dell’entry */}
               <a class="article" href={`/articoli/${a.slug}`}>{a.data.title}</a>
-              <div class="meta">{formatDate(new Date(a.data.date))}</div>
+              <div class="meta">{formatDate(a.data.date)}</div>
             </li>
           ))}
         </ul>
