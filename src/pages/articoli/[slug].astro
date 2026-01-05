@@ -1,82 +1,258 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 
-type Articolo = {
-  slug: string;
-  data: { title: string; date: Date; sentieri?: string[] };
-  body: string;
-  render: () => Promise<{ Content: any }>;
-};
+type Articolo = CollectionEntry<"articoli">;
 
 export async function getStaticPaths() {
   const articoli = await getCollection("articoli");
-  return articoli.map((a) => ({ params: { slug: a.slug } }));
+  return articoli.map((a) => ({
+    params: { slug: a.slug },
+  }));
 }
 
 const articoli = await getCollection("articoli");
-const { slug } = Astro.params as { slug: string };
-const articolo = articoli.find((a) => a.slug === slug) as Articolo;
 
-if (!articolo) throw new Error("Articolo non trovato");
+// Ordine: più recente -> più vecchio
+const ordinati = articoli
+  .slice()
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const { slug } = Astro.params as { slug: string };
+
+const currentIndex = ordinati.findIndex((a) => a.slug === slug);
+const articolo = ordinati[currentIndex];
+
+// “Successivo” = più recente (quindi indice - 1 nella lista desc)
+const successivo = currentIndex > 0 ? ordinati[currentIndex - 1] : null;
+// “Precedente” = più vecchio (quindi indice + 1)
+const precedente =
+  currentIndex >= 0 && currentIndex < ordinati.length - 1
+    ? ordinati[currentIndex + 1]
+    : null;
+
+if (!articolo) {
+  throw new Error(`Articolo non trovato: ${slug}`);
+}
 
 const { Content } = await articolo.render();
 
 const formatDate = (d: Date) =>
-  d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
+  d.toLocaleDateString("it-IT", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+  });
 ---
 
 <!doctype html>
 <html lang="it">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{articolo.data.title}</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{articolo.data.title}</title>
 
-  <style is:global>
-    body{
-      margin:0;
-      min-height:100vh;
-      background:#0d8460;
-      font-family:
-        "Baskerville Old Face","Baskerville","Libre Baskerville",
-        Georgia,"Times New Roman",serif;
-      color:#2c241c;
-    }
+    <style is:global>
+      :root {
+        --ink: #2c241c;
+        --green: #0d8460;
 
-    main{ display:flex; justify-content:center; padding:32px 14px; }
+        --paper1: #efe1c5;
+        --paper2: #e2caa6;
+        --paper3: #d8bc93;
+      }
 
-    .paper{
-      max-width:980px; width:100%; padding:60px;
-      background:
-        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
-        linear-gradient(180deg, #efe1c5, #e2caa6 55%, #d8bc93);
-      border-radius:6px;
-      box-shadow:0 18px 60px rgba(0,0,0,0.55);
-    }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--green);
 
-    h1{ text-align:center; font-size:44px; font-weight:400; margin:0 0 10px; }
-    .meta{ text-align:center; opacity:0.75; margin:0 0 28px; }
+        font-family: "Baskerville Old Face", "Baskerville", "Libre Baskerville",
+          Georgia, "Times New Roman", serif;
 
-    .prose{ font-size:16px; line-height:1.7; }
-    .prose p{ margin:0 0 14px; }
+        color: var(--ink);
+      }
 
-    @media (max-width:720px){
-      .paper{ padding:42px 26px; }
-      h1{ font-size:38px; }
-    }
-  </style>
-</head>
+      /* ===== MENU (come le altre pagine) ===== */
+      .topnav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
 
-<body>
-  <main>
-    <article class="paper">
-      <h1>{articolo.data.title}</h1>
-      <p class="meta">{formatDate(articolo.data.date)}</p>
+        display: flex;
+        gap: 18px;
+        justify-content: center;
+        align-items: center;
 
-      <div class="prose">
-        <Content />
-      </div>
-    </article>
-  </main>
-</body>
+        padding: 14px 14px;
+        background: rgba(26, 20, 16, 0.35);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .topnav a {
+        color: rgba(255, 245, 230, 0.92);
+        text-decoration: none;
+        font-size: 16px;
+        padding: 6px 4px;
+        border-bottom: 1px solid transparent;
+      }
+
+      .topnav a:hover {
+        border-bottom-color: rgba(255, 245, 230, 0.65);
+      }
+
+      main {
+        display: flex;
+        justify-content: center;
+        padding: 32px 14px;
+      }
+
+      .paper {
+        max-width: 980px;
+        width: 100%;
+        padding: 60px;
+
+        background: radial-gradient(
+            120% 90% at 50% 20%,
+            rgba(255, 255, 255, 0.35),
+            rgba(255, 255, 255, 0) 55%
+          ),
+          linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
+
+        border-radius: 6px;
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 52px;
+        font-weight: 400;
+        margin: 0 0 10px;
+      }
+
+      .date {
+        text-align: center;
+        opacity: 0.75;
+        margin: 0 0 34px;
+        font-size: 18px;
+      }
+
+      .content {
+        font-size: 20px;
+        line-height: 1.75;
+      }
+
+      .content p {
+        margin: 0 0 18px;
+      }
+
+      /* ===== NAV PREV/NEXT ===== */
+      .pager {
+        margin-top: 42px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(44, 36, 28, 0.2);
+
+        display: flex;
+        gap: 14px;
+        justify-content: space-between;
+        align-items: stretch;
+        flex-wrap: wrap;
+      }
+
+      .pager a {
+        flex: 1;
+        min-width: 220px;
+
+        text-decoration: none;
+        color: var(--ink);
+
+        border: 1px solid rgba(44, 36, 28, 0.25);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.22);
+
+        padding: 14px 14px;
+      }
+
+      .pager a:hover {
+        background: rgba(255, 255, 255, 0.38);
+      }
+
+      .pager .label {
+        font-size: 14px;
+        opacity: 0.75;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .pager .title {
+        font-size: 18px;
+        line-height: 1.35;
+      }
+
+      .pager .empty {
+        flex: 1;
+        min-width: 220px;
+      }
+
+      @media (max-width: 720px) {
+        .paper {
+          padding: 42px 26px;
+        }
+        h1 {
+          font-size: 40px;
+        }
+        .topnav {
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="topnav" aria-label="Menu principale">
+      <a href="/inizio-da-qui">Inizia da qui</a>
+      <a href="/sentieri">Sentieri di lettura</a>
+      <a href="/articoli" aria-current="page">Articoli</a>
+      <a href="/intenti">Intenti del Blog</a>
+      <a href="/chi-sono">Chi sono</a>
+      <a href="/">Home</a>
+    </nav>
+
+    <main>
+      <article class="paper">
+        <h1>{articolo.data.title}</h1>
+        <p class="date">{formatDate(articolo.data.date)}</p>
+
+        <div class="content">
+          <Content />
+        </div>
+
+        <nav class="pager" aria-label="Navigazione articoli">
+          {precedente ? (
+            <a href={`/articoli/${precedente.slug}`}>
+              <div class="label">← Precedente (più vecchio)</div>
+              <div class="title">{precedente.data.title}</div>
+            </a>
+          ) : (
+            <div class="empty"></div>
+          )}
+
+          {successivo ? (
+            <a href={`/articoli/${successivo.slug}`} style="text-align:right;">
+              <div class="label" style="justify-content:flex-end;">
+                Successivo (più recente) →
+              </div>
+              <div class="title">{successivo.data.title}</div>
+            </a>
+          ) : (
+            <div class="empty"></div>
+          )}
+        </nav>
+      </article>
+    </main>
+  </body>
 </html>

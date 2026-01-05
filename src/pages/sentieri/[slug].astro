@@ -3,32 +3,6 @@ import { getCollection, type CollectionEntry } from "astro:content";
 
 type Articolo = CollectionEntry<"articoli">;
 
-export async function getStaticPaths() {
-  // slugify QUI dentro = impossibile che Netlify dica "non definito"
-  function slugify(s: string) {
-    return s
-      .toLowerCase()
-      .trim()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-");
-  }
-
-  const articoli = await getCollection("articoli");
-  const set = new Set<string>();
-
-  for (const a of articoli) {
-    for (const s of (a.data.sentieri ?? []) as string[]) {
-      set.add(slugify(s));
-    }
-  }
-
-  return Array.from(set).map((slug) => ({ params: { slug } }));
-}
-
-// Qui possiamo ri-usare slugify (lo ridefiniamo fuori, uguale identico)
 function slugify(s: string) {
   return s
     .toLowerCase()
@@ -40,135 +14,318 @@ function slugify(s: string) {
     .replace(/-+/g, "-");
 }
 
-const articoli = await getCollection("articoli");
-const { slug } = Astro.params as { slug: string };
-
-// Nome “umano” del sentiero
-let sentieroNome = slug;
-for (const a of articoli) {
-  const found = ((a.data.sentieri ?? []) as string[]).find((s) => slugify(s) === slug);
-  if (found) { sentieroNome = found; break; }
+export async function getStaticPaths() {
+  const articoli = await getCollection("articoli");
+  return articoli.map((a) => ({
+    params: { slug: a.slug },
+  }));
 }
 
-const articoliDelSentiero = articoli
-  .filter((a) => ((a.data.sentieri ?? []) as string[]).some((s) => slugify(s) === slug))
+const articoli = await getCollection("articoli");
+
+// Ordine: più recente -> più vecchio
+const ordinati = articoli
   .slice()
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
+const { slug } = Astro.params as { slug: string };
+
+const currentIndex = ordinati.findIndex((a) => a.slug === slug);
+const articolo = ordinati[currentIndex];
+
+// “Successivo” = più recente (quindi indice - 1 nella lista desc)
+const successivo = currentIndex > 0 ? ordinati[currentIndex - 1] : null;
+// “Precedente” = più vecchio (quindi indice + 1)
+const precedente =
+  currentIndex >= 0 && currentIndex < ordinati.length - 1
+    ? ordinati[currentIndex + 1]
+    : null;
+
+if (!articolo) {
+  throw new Error(`Articolo non trovato: ${slug}`);
+}
+
+const { Content } = await articolo.render();
+
 const formatDate = (d: Date) =>
-  d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
+  d.toLocaleDateString("it-IT", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+  });
+
+const sentieri = articolo.data.sentieri ?? [];
 ---
 
 <!doctype html>
 <html lang="it">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{sentieroNome} — Sentieri di Lettura</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{articolo.data.title}</title>
 
-  <style is:global>
-    :root{
-      --ink:#2c241c;
-      --green:#0d8460;
-      --paper1:#efe1c5;
-      --paper2:#e2caa6;
-      --paper3:#d8bc93;
-    }
+    <style is:global>
+      :root {
+        --ink: #2c241c;
+        --green: #0d8460;
 
-    body{
-      margin:0;
-      min-height:100vh;
-      background: var(--green);
-      font-family:
-        "Baskerville Old Face","Baskerville","Libre Baskerville",
-        Georgia,"Times New Roman",serif;
-      color:var(--ink);
-    }
+        --paper1: #efe1c5;
+        --paper2: #e2caa6;
+        --paper3: #d8bc93;
+      }
 
-    .topnav{
-      position: sticky; top:0; z-index:50;
-      display:flex; gap:18px; justify-content:center; align-items:center;
-      padding:14px 14px;
-      background: rgba(26, 20, 16, 0.35);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-    }
-    .topnav a{
-      color: rgba(255,245,230,0.92);
-      text-decoration:none;
-      font-size:16px;
-      padding:6px 4px;
-      border-bottom:1px solid transparent;
-    }
-    .topnav a:hover{ border-bottom-color: rgba(255,245,230,0.65); }
-    .topnav a[aria-current="page"]{ border-bottom-color: rgba(255,245,230,0.95); }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--green);
 
-    main{ display:flex; justify-content:center; padding:32px 14px; }
+        font-family: "Baskerville Old Face", "Baskerville", "Libre Baskerville",
+          Georgia, "Times New Roman", serif;
 
-    .paper{
-      max-width:980px; width:100%; padding:60px;
-      background:
-        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
-        linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
-      border-radius:6px;
-      box-shadow:0 18px 60px rgba(0,0,0,0.55);
-    }
+        color: var(--ink);
+      }
 
-    h1{ text-align:center; font-size:40px; font-weight:400; margin:0 0 14px; }
-    .sub{ text-align:center; opacity:0.75; margin:0 0 28px; }
+      /* ===== MENU (come le altre pagine) ===== */
+      .topnav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
 
-    ul{ list-style:none; padding:0; margin:0; }
-    li{ padding:12px 0; border-top:1px solid rgba(44,36,28,0.18); }
-    li:first-child{ border-top:0; }
+        display: flex;
+        gap: 18px;
+        justify-content: center;
+        align-items: center;
 
-    a.article{
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid rgba(44,36,28,0.25);
-    }
-    a.article:hover{ border-bottom-color: rgba(44,36,28,0.6); }
+        padding: 14px 14px;
+        background: rgba(26, 20, 16, 0.35);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
 
-    .meta{ opacity:0.75; font-size:14px; margin-top:6px; }
+      .topnav a {
+        color: rgba(255, 245, 230, 0.92);
+        text-decoration: none;
+        font-size: 16px;
+        padding: 6px 4px;
+        border-bottom: 1px solid transparent;
+      }
 
-    @media (max-width:720px){
-      .paper{ padding:42px 26px; }
-      h1{ font-size:34px; }
-      .topnav{ gap:12px; flex-wrap:wrap; }
-    }
-  </style>
-</head>
+      .topnav a:hover {
+        border-bottom-color: rgba(255, 245, 230, 0.65);
+      }
 
-<body>
-  <nav class="topnav" aria-label="Menu principale">
-    <a href="/inizio-da-qui">Inizia da qui</a>
-    <a href="/sentieri" aria-current="page">Sentieri di lettura</a>
-    <a href="/articoli">Articoli</a>
-    <a href="/intenti">Intenti del log</a>
-    <a href="/chi-sono">Chi sono</a>
-    <a href="/">Home</a>
-  </nav>
+      main {
+        display: flex;
+        justify-content: center;
+        padding: 32px 14px;
+      }
 
-  <main>
-    <article class="paper">
-      <h1>{sentieroNome}</h1>
-      <p class="sub">{articoliDelSentiero.length} articoli</p>
+      .paper {
+        max-width: 980px;
+        width: 100%;
+        padding: 60px;
 
-      {articoliDelSentiero.length === 0 ? (
-        <p style="text-align:center; opacity:0.75;">
-          Nessun articolo ancora associato a questo Sentiero.
-        </p>
-      ) : (
-        <ul>
-          {articoliDelSentiero.map((a) => (
-            <li>
-              <a class="article" href={`/articoli/${a.slug}`}>{a.data.title}</a>
-              <div class="meta">{formatDate(a.data.date)}</div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </article>
-  </main>
-</body>
+        background: radial-gradient(
+            120% 90% at 50% 20%,
+            rgba(255, 255, 255, 0.35),
+            rgba(255, 255, 255, 0) 55%
+          ),
+          linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
+
+        border-radius: 6px;
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 52px;
+        font-weight: 400;
+        margin: 0 0 10px;
+      }
+
+      .metaRow {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin: 0 0 10px;
+        opacity: 0.78;
+        font-size: 18px;
+      }
+
+      .backlink {
+        opacity: 0.9;
+        font-size: 16px;
+        text-decoration: none;
+        color: var(--ink);
+        border-bottom: 1px solid rgba(44, 36, 28, 0.25);
+        padding-bottom: 2px;
+      }
+      .backlink:hover {
+        border-bottom-color: rgba(44, 36, 28, 0.6);
+      }
+
+      .sentieri {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 0 0 30px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        padding: 7px 12px;
+        border-radius: 999px;
+
+        border: 1px solid rgba(44, 36, 28, 0.22);
+        background: rgba(255, 255, 255, 0.22);
+
+        text-decoration: none;
+        color: var(--ink);
+        font-size: 15px;
+        line-height: 1;
+      }
+
+      .pill:hover {
+        background: rgba(255, 255, 255, 0.38);
+      }
+
+      .content {
+        font-size: 20px;
+        line-height: 1.75;
+      }
+
+      .content p {
+        margin: 0 0 18px;
+      }
+
+      /* ===== NAV PREV/NEXT ===== */
+      .pager {
+        margin-top: 42px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(44, 36, 28, 0.2);
+
+        display: flex;
+        gap: 14px;
+        justify-content: space-between;
+        align-items: stretch;
+        flex-wrap: wrap;
+      }
+
+      .pager a {
+        flex: 1;
+        min-width: 220px;
+
+        text-decoration: none;
+        color: var(--ink);
+
+        border: 1px solid rgba(44, 36, 28, 0.25);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.22);
+
+        padding: 14px 14px;
+      }
+
+      .pager a:hover {
+        background: rgba(255, 255, 255, 0.38);
+      }
+
+      .pager .label {
+        font-size: 14px;
+        opacity: 0.75;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .pager .title {
+        font-size: 18px;
+        line-height: 1.35;
+      }
+
+      .pager .empty {
+        flex: 1;
+        min-width: 220px;
+      }
+
+      @media (max-width: 720px) {
+        .paper {
+          padding: 42px 26px;
+        }
+        h1 {
+          font-size: 40px;
+        }
+        .topnav {
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="topnav" aria-label="Menu principale">
+      <a href="/inizio-da-qui">Inizia da qui</a>
+      <a href="/sentieri">Sentieri di lettura</a>
+      <a href="/articoli" aria-current="page">Articoli</a>
+      <a href="/intenti">Intenti del log</a>
+      <a href="/chi-sono">Chi sono</a>
+      <a href="/">Home</a>
+    </nav>
+
+    <main>
+      <article class="paper">
+        <h1>{articolo.data.title}</h1>
+
+        <div class="metaRow">
+          <span>{formatDate(articolo.data.date)}</span>
+          <span aria-hidden="true">•</span>
+          <a class="backlink" href="/sentieri">Torna a Sentieri</a>
+        </div>
+
+        {sentieri.length > 0 && (
+          <div class="sentieri" aria-label="Sentieri collegati">
+            {sentieri.map((s) => (
+              <a class="pill" href={`/sentieri/${slugify(s)}`}>
+                {s}
+              </a>
+            ))}
+          </div>
+        )}
+
+        <div class="content">
+          <Content />
+        </div>
+
+        <nav class="pager" aria-label="Navigazione articoli">
+          {precedente ? (
+            <a href={`/articoli/${precedente.slug}`}>
+              <div class="label">← Precedente (più vecchio)</div>
+              <div class="title">{precedente.data.title}</div>
+            </a>
+          ) : (
+            <div class="empty"></div>
+          )}
+
+          {successivo ? (
+            <a href={`/articoli/${successivo.slug}`} style="text-align: right;">
+              <div class="label" style="justify-content: flex-end;">
+                Successivo (più recente) →
+              </div>
+              <div class="title">{successivo.data.title}</div>
+            </a>
+          ) : (
+            <div class="empty"></div>
+          )}
+        </nav>
+      </article>
+    </main>
+  </body>
 </html>
