@@ -3,6 +3,32 @@ import { getCollection, type CollectionEntry } from "astro:content";
 
 type Articolo = CollectionEntry<"articoli">;
 
+export async function getStaticPaths() {
+  // slugify QUI dentro = impossibile che Netlify dica "non definito"
+  function slugify(s: string) {
+    return s
+      .toLowerCase()
+      .trim()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  }
+
+  const articoli = await getCollection("articoli");
+  const set = new Set<string>();
+
+  for (const a of articoli) {
+    for (const s of (a.data.sentieri ?? []) as string[]) {
+      set.add(slugify(s));
+    }
+  }
+
+  return Array.from(set).map((slug) => ({ params: { slug } }));
+}
+
+// Qui possiamo ri-usare slugify (lo ridefiniamo fuori, uguale identico)
 function slugify(s: string) {
   return s
     .toLowerCase()
@@ -14,36 +40,24 @@ function slugify(s: string) {
     .replace(/-+/g, "-");
 }
 
-export async function getStaticPaths() {
-  const articoli = await getCollection("articoli");
-  const set = new Set<string>();
-
-  for (const a of articoli) {
-    for (const s of a.data.sentieri ?? []) set.add(slugify(s));
-  }
-
-  return Array.from(set).map((slug) => ({ params: { slug } }));
-}
-
 const articoli = await getCollection("articoli");
 const { slug } = Astro.params as { slug: string };
 
-// Nome “umano”
+// Nome “umano” del sentiero
 let sentieroNome = slug;
 for (const a of articoli) {
-  const found = (a.data.sentieri ?? []).find((s) => slugify(s) === slug);
+  const found = ((a.data.sentieri ?? []) as string[]).find((s) => slugify(s) === slug);
   if (found) { sentieroNome = found; break; }
 }
 
 const articoliDelSentiero = articoli
-  .filter((a) => (a.data.sentieri ?? []).some((s) => slugify(s) === slug))
+  .filter((a) => ((a.data.sentieri ?? []) as string[]).some((s) => slugify(s) === slug))
   .slice()
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 const formatDate = (d: Date) =>
   d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
 ---
-
 
 <!doctype html>
 <html lang="it">
@@ -56,7 +70,6 @@ const formatDate = (d: Date) =>
     :root{
       --ink:#2c241c;
       --green:#0d8460;
-
       --paper1:#efe1c5;
       --paper2:#e2caa6;
       --paper3:#d8bc93;
