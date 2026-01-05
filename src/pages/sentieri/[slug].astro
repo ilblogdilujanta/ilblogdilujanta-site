@@ -3,8 +3,8 @@ import { getCollection, type CollectionEntry } from "astro:content";
 
 type Articolo = CollectionEntry<"articoli">;
 
-const slugify = (s: string) =>
-  s
+function slugify(s: string) {
+  return s
     .toLowerCase()
     .trim()
     .normalize("NFD")
@@ -12,6 +12,7 @@ const slugify = (s: string) =>
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
+}
 
 export async function getStaticPaths() {
   const articoli = await getCollection("articoli");
@@ -27,14 +28,11 @@ export async function getStaticPaths() {
 const articoli = await getCollection("articoli");
 const { slug } = Astro.params as { slug: string };
 
-// Nome “umano” del sentiero (con maiuscole originali)
+// Nome “umano”
 let sentieroNome = slug;
 for (const a of articoli) {
   const found = (a.data.sentieri ?? []).find((s) => slugify(s) === slug);
-  if (found) {
-    sentieroNome = found;
-    break;
-  }
+  if (found) { sentieroNome = found; break; }
 }
 
 const articoliDelSentiero = articoli
@@ -43,12 +41,9 @@ const articoliDelSentiero = articoli
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 const formatDate = (d: Date) =>
-  d.toLocaleDateString("it-IT", {
-    year: "numeric",
-    month: "long",
-    day: "2-digit",
-  });
+  d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
 ---
+
 
 <!doctype html>
 <html lang="it">
