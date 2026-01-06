@@ -1,14 +1,29 @@
 ---
 import { getCollection, type CollectionEntry } from "astro:content";
+import { slugify } from "../../lib/slugify";
 
 type Articolo = CollectionEntry<"articoli">;
 
+// Prendo tutti gli articoli e li ordino: più recente -> più vecchio
 const articoli: Articolo[] = (await getCollection("articoli"))
+  .slice()
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 const formatDate = (d: Date) =>
   d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
+
+// Raggruppo per anno (mantenendo l’ordine già decrescente)
+const byYear = new Map<number, Articolo[]>();
+for (const a of articoli) {
+  const y = a.data.date.getFullYear();
+  if (!byYear.has(y)) byYear.set(y, []);
+  byYear.get(y)!.push(a);
+}
+
+// Lista anni (desc)
+const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
 ---
+
 <!doctype html>
 <html lang="it">
 <head>
@@ -75,6 +90,21 @@ const formatDate = (d: Date) =>
       opacity:.85;
     }
 
+    /* ===== Raggruppamento per anni ===== */
+    .year{
+      margin: 34px 0 10px;
+      font-size: 26px;
+      font-weight: 400;
+      opacity: 0.95;
+      border-top: 1px solid rgba(44,36,28,0.18);
+      padding-top: 18px;
+    }
+    .year:first-of-type{
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
     .list{ list-style:none; padding:0; margin:0; }
     .list li{ padding:14px 0; border-top:1px solid rgba(44,36,28,0.18); }
     .list li:first-child{ border-top:none; }
@@ -114,6 +144,7 @@ const formatDate = (d: Date) =>
     @media (max-width:720px){
       .paper{ padding:42px 26px; }
       h1{ font-size:38px; }
+      .year{ font-size: 24px; }
     }
   </style>
 </head>
@@ -123,8 +154,9 @@ const formatDate = (d: Date) =>
     <a href="/inizio-da-qui">Inizia da qui</a>
     <a href="/sentieri">Sentieri di lettura</a>
     <a href="/articoli" aria-current="page">Articoli</a>
-    <a href="/intenti">Intenti del log</a>
+    <a href="/intenti">Intenti del Blog</a>
     <a href="/chi-sono">Chi sono</a>
+    <a href="/testimonianze">Testimonianze</a>
     <a href="/">Home</a>
   </nav>
 
@@ -138,35 +170,33 @@ const formatDate = (d: Date) =>
           Gli articoli compariranno qui non appena verranno aggiunti.
         </p>
       ) : (
-        <ul class="list">
-          {articoli.map((a) => (
-            <li>
-              <a class="title" href={`/articoli/${a.slug}`}>{a.data.title}</a>
+        <>
+          {anni.map((anno) => (
+            <section aria-label={`Articoli ${anno}`}>
+              <h2 class="year">{anno}</h2>
 
-              <div class="meta">
-                <span>{formatDate(a.data.date)}</span>
+              <ul class="list">
+                {byYear.get(anno)!.map((a) => (
+                  <li>
+                    <a class="title" href={`/articoli/${a.slug}`}>{a.data.title}</a>
 
-                {Array.isArray(a.data.sentieri) && a.data.sentieri.length > 0 && (
-                  <span class="chips" aria-label="Sentieri">
-                    {a.data.sentieri.map((s) => (
-                      <a class="chip" href={`/sentieri/${s
-                        .trim()
-                        .toLowerCase()
-                        .normalize("NFD")
-                        .replace(/[\u0300-\u036f]/g, "")
-                        .replace(/[^a-z0-9\s-]/g, "")
-                        .replace(/\s+/g, "-")
-                        .replace(/-+/g, "-")
-                      }`}>
-                        {s}
-                      </a>
-                    ))}
-                  </span>
-                )}
-              </div>
-            </li>
+                    <div class="meta">
+                      <span>{formatDate(a.data.date)}</span>
+
+                      {Array.isArray(a.data.sentieri) && a.data.sentieri.length > 0 && (
+                        <span class="chips" aria-label="Sentieri">
+                          {a.data.sentieri.map((s) => (
+                            <a class="chip" href={`/sentieri/${slugify(s)}`}>{s}</a>
+                          ))}
+                        </span>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
           ))}
-        </ul>
+        </>
       )}
     </article>
   </main>

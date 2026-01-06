@@ -1,0 +1,293 @@
+---
+const title = "Testimonianze";
+
+// data/ora per intestazione (nel testo)
+const d = new Date("2014-04-24T21:42:00");
+const formatDateTime = (dt: Date) =>
+  dt.toLocaleDateString("it-IT", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }) +
+  " — ore " +
+  dt.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
+
+const dateline = formatDateTime(d);
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+
+    <style is:global>
+      :root {
+        --ink: #2c241c;
+        --green: #0d8460;
+
+        --paper1: #efe1c5;
+        --paper2: #e2caa6;
+        --paper3: #d8bc93;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--green);
+        font-family: "Baskerville Old Face", "Baskerville", "Libre Baskerville",
+          Georgia, "Times New Roman", serif;
+        color: var(--ink);
+      }
+
+      /* ===== MENU (come le altre pagine) ===== */
+      .topnav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        display: flex;
+        gap: 18px;
+        justify-content: center;
+        align-items: center;
+        padding: 14px 14px;
+        background: rgba(26, 20, 16, 0.35);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .topnav a {
+        color: rgba(255, 245, 230, 0.92);
+        text-decoration: none;
+        font-size: 16px;
+        padding: 6px 4px;
+        border-bottom: 1px solid transparent;
+      }
+
+      .topnav a:hover {
+        border-bottom-color: rgba(255, 245, 230, 0.65);
+      }
+
+      .topnav a[aria-current="page"] {
+        border-bottom-color: rgba(255, 245, 230, 0.95);
+      }
+
+      main {
+        display: flex;
+        justify-content: center;
+        padding: 32px 14px;
+      }
+
+      .paper {
+        max-width: 980px;
+        width: 100%;
+        padding: 60px;
+        background: radial-gradient(
+            120% 90% at 50% 20%,
+            rgba(255, 255, 255, 0.35),
+            rgba(255, 255, 255, 0) 55%
+          ),
+          linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
+        border-radius: 6px;
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 20px;
+        font-weight: 400;
+        margin: 0 0 10px;
+      }
+
+      .sub {
+        text-align: center;
+        opacity: 0.75;
+        margin: 0 0 34px;
+        font-size: 18px;
+      }
+
+      .content {
+        font-size: 20px;
+        line-height: 1.75;
+      }
+
+      .content p {
+        margin: 0 0 18px;
+      }
+
+      .content h2 {
+        font-weight: 400;
+        margin: 32px 0 10px;
+        line-height: 1.2;
+        font-size: 24px;
+      }
+
+      .content h3 {
+        font-weight: 400;
+        margin: 16px 0 18px;
+        line-height: 1.2;
+        font-size: 24px;
+        opacity: 0.95;
+      }
+
+      /* Immagine apertura: centrata, proporzionata */
+      .hero-img {
+        display: block;
+        max-width: 30%;
+        height: auto;
+        margin: 26px auto 10px;
+        border-radius: 6px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+      }
+
+      .caption {
+        text-align: center;
+        font-size: 16px;
+        opacity: 0.8;
+        margin: 0 0 26px;
+      }
+
+      /* Parole in grassetto dentro i paragrafi */
+      .content strong {
+        font-weight: 700;
+      }
+
+      /* Righe/sep tipo Word */
+      hr {
+        border: none;
+        border-top: 3px solid rgba(44, 36, 28, 0.35);
+        width: 0px;
+        margin: 26px 0 26px 0; /* a sinistra */
+      }
+
+      @media (max-width: 720px) {
+        .paper { padding: 42px 26px; }
+        h1 { font-size: 40px; }
+        .topnav { gap: 12px; flex-wrap: wrap; }
+        .content { font-size: 19px; }
+        .hero-img { max-width: 92%; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="topnav" aria-label="Menu principale">
+      <a href="/inizio-da-qui">Inizia da qui</a>
+      <a href="/sentieri">Sentieri di lettura</a>
+      <a href="/articoli">Articoli</a>
+      <a href="/intenti">Intenti del Blog</a>
+      <a href="/chi-sono">Chi sono</a>
+      <a href="/testimonianze" aria-current="page">Testimonianze</a>
+      <a href="/">Home</a>
+    </nav>
+
+    <main>
+      <article class="paper">
+        <h1>Testimonianze</h1>
+        <p class="sub">Scienza, coscienza e incoscienza</p>
+
+        <img
+          class="hero-img"
+          src="/immagini/friedrich-donna-alla-finestra.jpg"
+          alt="Frau am Fenster — Donna alla finestra (1818–1822), Caspar David Friedrich"
+          loading="lazy"
+        />
+        <p class="caption">
+          <em>Frau am Fenster — Donna alla finestra</em> (1818–1822), Caspar David Friedrich (1774–1840). Alte Nationalgalerie, Berlino.
+        </p>
+
+        <div class="content">
+          <h2>{dateline}</h2>
+          <h3>Scienza, coscienza e incoscienza.</h3>
+
+          <p>
+            Alcuni lettori mi domandano: come si fa ad essere sicuri dei segnali che provengono dall’Aldilà?
+            Come fai ad essere sicuro che un determinato segnale non lo hai interpretato in modo soggettivo e magari significava tutt’altro?
+          </p>
+
+          <p>
+            Il metodo è quello che si deve usare per qualsiasi cosa: un certo buon senso, quando non un criterio addirittura scientifico.
+            Rimanendo nell’attesa e senza giudizio, finché non si ha la certezza.
+          </p>
+
+          <p>
+            Faccio un esempio con i messaggi dall’Aldilà che mi comunica la mia amica Lujanta costantemente, da qualche settimana,
+            che riguardano Mariapaola e il suo stato di salute.
+          </p>
+
+          <p>
+            Lujanta — che ho conosciuto all’ultima conferenza tenuta a Resana, e che quindi ho visto in totale, in vita mia, non più di una mezz’ora —
+            da settimane mi comunica cose che vede e sente di me, e di Mariapaola. Noto con sorpresa e un certo divertimento che azzecca perfettamente
+            cose che non poteva sapere, che riguardavano sia me, sia Mariapaola, sia altre persone.
+          </p>
+
+          <p>
+            A un certo punto mi manda una comunicazione “problematica”. Almeno per me. Vede le metastasi di Mariapaola, e vede che sono localizzate
+            a fegato, ossa e cervello. In effetti era così. Lei però vede una cosa in più: i polmoni. Non vede una vera e propria metastasi, ma vede che lì
+            l’energia è compromessa.
+          </p>
+
+          <p>
+            La cosa mi preoccupa, perché temo che possano partirle delle metastasi al polmone. Dopo qualche giorno, tra l’altro, Mariapaola comincia
+            a respirare male ed affannosamente. Non posso che essere preoccupato. Ma la TAC nega che il polmone sia compromesso.
+          </p>
+
+          <p>
+            A questo punto è lecita la domanda: è Lujanta che si è sbagliata, oppure dobbiamo pensare qualcos’altro? Mi faccio la domanda e rimango in attesa.
+            Spero ovviamente che Lujanta si sia sbagliata, e anche se si fosse sbagliata sui polmoni va detto che comunque ha azzeccato tutto il resto,
+            quindi non perderei la mia fiducia in lei.
+          </p>
+
+          <p>
+            Mariapaola se ne andrà dopo qualche giorno, spegnendo il respiro. Era quello il problema al polmone che Lujanta vedeva. Ho quindi la conferma,
+            purtroppo, che Lujanta è davvero brava e finora non ha sbagliato un colpo.
+          </p>
+
+          <p>
+            Quando quindi mi comunica che Mariapaola dopo aver lasciato il corpo era la prima anima che le capitava, che nel momento del trapasso era felice
+            della sua nuova condizione e quasi gongolava, le ho creduto.
+          </p>
+
+          <p>Perché?</p>
+
+          <p>Primo: perché ho visto il sorriso sereno di Mariapaola.</p>
+
+          <p>
+            Secondo: perché so che Mariapaola è così. Lei era e faceva tutto il contrario di quello che era ragionevole aspettarsi, e dunque anche nell’Aldilà fa
+            il contrario di quello che fanno le anime dei defunti normali. Quello che dice, insomma, fa parte del suo carattere.
+          </p>
+
+          <p>
+            Mi sento sereno, perché sento che tutto il lavoro fatto dalle persone che hanno organizzato gruppi di meditazione e preghiera ha funzionato.
+            Mariapaola se n’è andata serena, con i fratelli accanto come aveva chiesto, sorridendo come raramente accade, e addirittura nella sua nuova condizione
+            non prova lo smarrimento che in genere provano le anime dei defunti. Sono felice per lei.
+          </p>
+
+          <p>
+            Poi certo — mi domando — ma possibile che ora rimane felice e serena in modo duraturo? Non è nella sua natura — mi dico — e una parte della personalità
+            dei vivi viene conservata anche dal defunto.
+          </p>
+
+          <p>
+            Infatti Lujanta mi manda oggi un’altra comunicazione (pochi minuti fa). Mariapaola ha cambiato umore ed è un po’ meno tranquilla. Mi faccio una serie di domande.
+          </p>
+
+          <p>
+            Ho scritto o fatto capire che Mariapaola era soggetta a sbalzi di umore spaventosi, in modo che Lujanta possa aver avuto questa intuizione leggendo questa cosa che ho scritto?
+            No, non l’ho scritto; anzi, a leggere l’articolo che ho scritto su Mariapaola, pare che lei abbia mantenuto solo e sempre un atteggiamento negativo.
+          </p>
+
+          <p>
+            La verità è invece che non potevo raccontare tutto per non essere noioso, quindi per esigenze “letterarie” nell’articolo “Cronaca di un tumore annunciato”,
+            avevo evitato di dire che talvolta aveva anche dei picchi positivi; il problema è che tali picchi corrispondevano ad una minima parte della giornata o addirittura della settimana.
+            Quindi non c’era bisogno di dirlo. Quindi Lujanta non può averlo tratto dal mio racconto. Lo sbalzo di umore era tipico di Mariapaola.
+          </p>
+
+          <p>
+            Qui interviene la scienza. Ovvero sia la statistica. Quante possibilità c’erano che Lujanta potesse anticipare i problemi al polmone? Poche, pochissime.
+            Quante possibilità c’erano che capisse molte cose del rapporto tra me e Mariapaola?
+          </p>
+
+          <hr />
+        </div>
+      </article>
+    </main>
+  </body>
+</html>
