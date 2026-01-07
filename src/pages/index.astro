@@ -2,7 +2,6 @@
 const siteTitle = "Il Blog di Lujanta";
 const tagline =
   "Tradizioni, Folklore e Stregoneria\nnelle Culture alpine e nei loro intrecci europei nel Tempo";
-
 ---
 
 <!doctype html>
@@ -11,87 +10,100 @@ const tagline =
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{siteTitle}</title>
+
     <style>
       :root{
         --ink:#2b2a26;
-        --paper: rgba(244,241,234,.78); /* velo “avorio” sopra l’immagine */
+        --paper: rgba(244,241,234,.78);
         --border: rgba(43,42,38,.35);
       }
 
       body{
-  margin:0;
-  font-family: "Baskerville Old Face","Baskerville","Libre Baskerville",Georgia,"Times New Roman",serif;
-  color:var(--ink);
-}
+        margin:0;
+        font-family: "Baskerville Old Face","Baskerville","Libre Baskerville",Georgia,"Times New Roman",serif;
+        color:var(--ink);
+      }
 
-
-      /* HERO full-screen */
+      /* ===== HERO (ora cresce con il contenuto) ===== */
       .hero{
         min-height: 100vh;
         position: relative;
         overflow: hidden;
-        display: grid;
-        place-items: center;
+        display: block;              /* <-- non più grid/center */
+        padding: 110px 0 80px;       /* spazio per menu + respiro */
       }
 
       .hero__bg{
-  position:absolute; inset:0;
-  background-image: url("/hero.jpg");
-  background-size: cover;
-  background-position: top center;  /* <-- QUESTA è la chiave */
-  background-repeat: no-repeat;
-  transform: none;                 /* opzionale: evita crop extra */
-}
+        position:absolute; inset:0;
+        background-image: url("/hero.jpg");
+        background-size: cover;
+        background-position: top center;
+        background-repeat: no-repeat;
+        transform: none;
+        z-index: 0;
+      }
 
-
-      /* leggera patina avorio per far “stare” la grafica */
+      /* velo: rende leggibile quando scendi con testo e box */
       .hero__veil{
-  display: none;
-
+        position:absolute;
+        inset:0;
+        background: linear-gradient(
+          to bottom,
+          rgba(244,241,234,0.10),
+          rgba(244,241,234,0.82) 70%,
+          rgba(244,241,234,0.92)
+        );
+        z-index: 1;
       }
 
       /* contenuto sopra */
       .hero__content{
         position: relative;
+        z-index: 2;
         width: min(980px, 92vw);
+        margin: 0 auto;
         text-align: center;
-        padding: 2.5rem 1rem;
-        margin-top: 100vh;   /* ← QUESTA È LA RIGA CHIAVE */
+        padding: 0 1rem;
+        margin-top: 200px;
       }
 
-      /* barra link in alto */
-  .topnav{
-  position: fixed;
-  top: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(980px, 92vw);
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  padding: .7rem 1rem;
-  background: transparent;
-  border: 0;
-  z-index: 10;
-}
+      /* ===== MENU ===== */
+      .topnav{
+        position: fixed;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(980px, 92vw);
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        padding: .7rem 1rem;
+        background: transparent;
+        border: 0;
+        z-index: 10;
+      }
 
-.topnav a{
-  color: #2b2a26;
-  text-decoration: none;
-  padding: .2rem .4rem;
-  text-shadow: 0 1px 8px rgba(244,241,234,.9);
-}
+      .topnav a{
+        color: #2b2a26;
+        text-decoration: none;
+        padding: .2rem .4rem;
+        text-shadow: 0 1px 8px rgba(244,241,234,.9);
+      }
 
-.topnav a:hover{
-  text-decoration: underline;
-}
+      .topnav a:hover{ text-decoration: underline; }
+
+      h1{
+        margin: 0 0 1rem;
+        font-size: clamp(2.2rem, 5vw, 3.6rem);
+        font-weight: 600;
+      }
 
       .tagline{
         margin: 0 auto 1.4rem auto;
         max-width: 62ch;
         font-size: clamp(1rem, 1.6vw, 1.15rem);
         line-height: 1.8;
-        white-space: pre-line; /* per la riga a capo in tagline */
+        white-space: pre-line;
       }
 
       .cta{
@@ -104,28 +116,136 @@ const tagline =
       }
       .cta:hover{ background: rgba(244,241,234,.8); }
 
-      /* mini riga decorativa */
       .rule{
         margin: 1.6rem auto 0 auto;
         width: min(520px, 80vw);
         height: 1px;
         background: var(--border);
       }
+
+      /* ===== SEZIONE "SCOPERTE CONSIGLIATE" (dentro la hero) ===== */
+      .discoveries{
+        margin: 70px auto 0;
+        text-align: center;
+      }
+
+      .discoveries h2{
+        margin: 0 0 10px;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 500;
+      }
+
+      .discoveries .sub{
+        margin: 0 auto 40px;
+        max-width: 60ch;
+        font-size: 1.2rem;
+        opacity: .9;
+      }
+
+      .discoveries-grid{
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 26px;
+        align-items: start;
+      }
+
+      /* colonna sinistra (9 consigliati) + colonna destra (più letti) */
+      @media (min-width: 860px){
+        .discoveries-grid{
+          grid-template-columns: 1.7fr 1fr;
+          gap: 34px;
+          text-align: left;
+        }
+        .discoveries{ text-align: left; }
+        .discoveries .sub{ margin-left: 0; }
+      }
+
+      .card{
+        border: 1px solid rgba(43,42,38,.25);
+        background: rgba(255,255,255,.28);
+        box-shadow: 0 10px 30px rgba(0,0,0,.08);
+        border-radius: 4px;
+        padding: 22px;
+      }
+
+      .card h3{
+        margin: 0 0 16px;
+        font-size: 1.5rem;
+        font-weight: 500;
+      }
+
+      /* griglia 3x3 */
+      .pick-grid{
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 14px;
+      }
+      @media (min-width: 560px){
+        .pick-grid{ grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (min-width: 980px){
+        .pick-grid{ grid-template-columns: repeat(3, 1fr); }
+      }
+
+      .pick{
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        padding: 14px 14px;
+        border: 1px solid rgba(43,42,38,.20);
+        background: rgba(244,241,234,.35);
+        border-radius: 4px;
+      }
+      .pick:hover{
+        background: rgba(244,241,234,.60);
+      }
+      .pick .t{
+        font-size: 1.15rem;
+        margin: 0 0 8px;
+        font-weight: 500;
+      }
+      .pick .y{
+        margin: 0;
+        opacity: .8;
+      }
+
+      .top-list a{
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        padding: 10px 0;
+        border-top: 1px solid rgba(43,42,38,.18);
+      }
+      .top-list a:first-child{ border-top: none; padding-top: 0; }
+      .top-list a:hover{ text-decoration: underline; }
+
+      /* mobile spacing */
+      @media (max-width: 480px){
+        .hero{ padding-top: 96px; }
+      }
+
+      .pick img.thumb{
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  box-shadow: 0 6px 14px rgba(0,0,0,.15);
+}
+
     </style>
   </head>
 
   <body>
-    <!-- Link/collegamenti sopra la foto -->
     <nav class="topnav" aria-label="Menu principale">
-      <a href="/inizio-da-qui">Inizia da qui</a>      
-      <a href="/sentieri">Sentieri di lettura</a>   
-         <a href="/articoli">Articoli</a>
-      <a href="/intenti">Intenti del Blog</a> 
+      <a href="/inizio-da-qui">Inizia da qui</a>
+      <a href="/sentieri">Sentieri di lettura</a>
+      <a href="/articoli">Articoli</a>
+      <a href="/intenti">Intenti del Blog</a>
       <a href="/testimonianze">Testimonianze</a>
       <a href="/chi-sono">Chi sono</a>
     </nav>
 
-    <!-- Copertina a schermo intero -->
     <main class="hero">
       <div class="hero__bg" role="img" aria-label="Copertina: paesaggio innevato del lago"></div>
       <div class="hero__veil"></div>
@@ -135,6 +255,49 @@ const tagline =
         <p class="tagline">{tagline}</p>
         <a class="cta" href="/inizio-da-qui">Inizia da qui</a>
         <div class="rule"></div>
+
+        <!-- SCOPERTE CONSIGLIATE -->
+        <section class="discoveries" aria-label="Scoperte consigliate">
+          <h2>Scoperte consigliate</h2>
+          <p class="sub">Percorsi suggeriti per entrare nel Mondo di Lujanta</p>
+
+          <div class="discoveries-grid">
+            <!-- 9 consigliati -->
+            <div class="card">
+              <h3>Consigliati</h3>
+
+              <div class="pick-grid">
+                <!-- Sostituisci href/titolo/anno con i tuoi veri articoli -->
+                <a class="pick" href="/articoli/2-2016-lungo-la-via-dolomiti">
+  <img class="thumb" src="/immagini/2016/2.2016/2016-valle-casies.jpg" alt="Lungo la Via Dolomiti" />
+  <p class="t">Lungo la Via Dolomiti</p>
+  <p class="y">2016</p>
+</a>
+                <a class="pick" href="/articoli/slug-2"><p class="t">Titolo articolo</p><p class="y">2016</p></a>
+                <a class="pick" href="/articoli/slug-3"><p class="t">Titolo articolo</p><p class="y">2017</p></a>
+                <a class="pick" href="/articoli/slug-4"><p class="t">Titolo articolo</p><p class="y">2018</p></a>
+                <a class="pick" href="/articoli/slug-5"><p class="t">Titolo articolo</p><p class="y">2019</p></a>
+                <a class="pick" href="/articoli/slug-6"><p class="t">Titolo articolo</p><p class="y">2020</p></a>
+                <a class="pick" href="/articoli/slug-7"><p class="t">Titolo articolo</p><p class="y">2021</p></a>
+                <a class="pick" href="/articoli/slug-8"><p class="t">Titolo articolo</p><p class="y">2022</p></a>
+                <a class="pick" href="/articoli/slug-9"><p class="t">Titolo articolo</p><p class="y">2023</p></a>
+              </div>
+            </div>
+
+            <!-- più letti -->
+            <aside class="card" aria-label="I più letti della settimana">
+              <h3>I più letti della settimana</h3>
+              <div class="top-list">
+                <a href="/articoli/slug-1">Titolo articolo</a>
+                <a href="/articoli/slug-2">Titolo articolo</a>
+                <a href="/articoli/slug-3">Titolo articolo</a>
+              </div>
+              <p style="margin:16px 0 0; opacity:.85;">
+                (Qui per ora è manuale: quando vorrai, si può automatizzare con statistiche/analytics.)
+              </p>
+            </aside>
+          </div>
+        </section>
       </div>
     </main>
   </body>

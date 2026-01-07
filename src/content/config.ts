@@ -1,12 +1,14 @@
+// src/content/config.ts
 import { defineCollection, z } from "astro:content";
 
 const articoli = defineCollection({
-  type: "content",
   schema: z.object({
     title: z.string(),
-    date: z.coerce.date(),                 // accetta "2016-01-24" e lo converte in Date
-    sentieri: z.array(z.string()).default([]),
+    date: z.date(),
+    sentieri: z.array(z.string()).optional(),
+    cover: z.string().optional(), // ✅ aggiungi questo
   }),
 });
 
 export const collections = { articoli };
+

@@ -34,6 +34,10 @@ const formatDate = (d: Date) =>
   d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
 
 const sentieri = (articolo.data.sentieri ?? []) as string[];
+
+// ✅ COPERTINA: mettila nel frontmatter dei .md come cover: "/immagini/....jpg"
+
+
 ---
 
 <!doctype html>
@@ -136,7 +140,7 @@ const sentieri = (articolo.data.sentieri ?? []) as string[];
         justify-content: center;
         gap: 14px;
         flex-wrap: wrap;
-        margin: 0 0 30px;
+        margin: 0 0 26px;
       }
 
       .back {
@@ -170,7 +174,23 @@ const sentieri = (articolo.data.sentieri ?? []) as string[];
         background: rgba(255, 255, 255, 0.38);
       }
 
-      /* ===== CONTENUTO MARKDOWN: bello e leggibile ===== */
+      /* ===== COPERTINA ARTICOLO (dal frontmatter) ===== */
+      .cover {
+        margin: 12px auto 34px;
+        max-width: 900px;
+      }
+
+      .cover img {
+        width: 100%;
+        height: auto;
+        max-height: 62vh;
+        object-fit: cover;
+        display: block;
+        border-radius: 8px;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+      }
+
+      /* ===== CONTENUTO MARKDOWN ===== */
       .content {
         font-size: 20px;
         line-height: 1.75;
@@ -213,33 +233,29 @@ const sentieri = (articolo.data.sentieri ?? []) as string[];
         margin: 28px 0;
       }
 
-      /* Immagini: proporzionate + centrate + margini */
+      /* Immagini dentro il markdown: default “media” */
       .content img {
         display: block;
-        max-width: 50%;
+        max-width: 60%;
         height: auto;
         margin: 70px auto;
         border-radius: 6px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.18);
       }
 
+      /* ✅ Se vuoi una singola immagine più grande/piccola, usa classi:
+         <img class="img-large" ...> oppure <img class="img-small" ...>
+      */
+      .content img.img-large { max-width: 85%; margin: 70px auto; }
+      .content img.img-small { max-width: 40%; margin: 60px auto; }
+
       /* Sottolineatura “sicura” */
-
-       .content .underline {
-       display: inline-block;
-       margin-top: 100px;
-       margin-bottom: 0px;
-       border-bottom: 0px solid currentColor;
-       padding-bottom: 0px;
-}.content .underline {
-  text-decoration-line: underline;
-  text-decoration-thickness: 2px;      /* spessore */
-  text-underline-offset: 0.12em;       /* distanza dalla parola */
-  text-decoration-skip-ink: auto;
-}
-
-
-      
+      .content .underline {
+        text-decoration-line: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 0.12em;
+        text-decoration-skip-ink: auto;
+      }
 
       /* ===== NAV PREV/NEXT ===== */
       .pager {
@@ -305,6 +321,10 @@ const sentieri = (articolo.data.sentieri ?? []) as string[];
         .content {
           font-size: 19px;
         }
+        .content img {
+          max-width: 92%;
+          margin: 50px auto;
+        }
       }
     </style>
   </head>
@@ -336,6 +356,8 @@ const sentieri = (articolo.data.sentieri ?? []) as string[];
             </div>
           )}
         </div>
+
+        
 
         <div class="content">
           <Content />
