@@ -1,0 +1,165 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+const titoloPagina = "Contatti";
+
+// ✅ CAMBIA QUI
+const EMAIL = "ilblogdilujanta@gmail.com";
+const TELEGRAM_USER = "blogdilujanta";      // senza @
+const TELEGRAM_CHANNEL = "ilblodilujanta";    // senza @  (oppure metti "t.me/+INVITO" sotto)
+const ACADEMIA_URL = "https://independent.academia.edu/AlberoDaniela"; // o link ai tuoi lavori
+---
+
+<BaseLayout title={titoloPagina}>
+  <style is:global>
+    :root{
+      --ink:#2c241c;
+      --green:#0d8460;
+      --paper1:#efe1c5;
+      --paper2:#e2caa6;
+      --paper3:#d8bc93;
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background: var(--green);
+      font-family:
+        "Baskerville Old Face",
+        "Baskerville",
+        "Libre Baskerville",
+        Georgia,
+        "Times New Roman",
+        serif;
+      color:var(--ink);
+    }
+
+    main{ display:flex; justify-content:center; padding:32px 14px; }
+
+    .paper{
+      max-width:980px;
+      width:100%;
+      padding:60px;
+      background:
+        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
+      border-radius:6px;
+      box-shadow:0 18px 60px rgba(0,0,0,0.55);
+    }
+
+    h1{
+      text-align:center;
+      font-size:44px;
+      font-weight:400;
+      margin:0 0 18px;
+      letter-spacing:0.2px;
+    }
+
+    .sub{
+      text-align:center;
+      margin:0 0 34px;
+      font-size:18px;
+      opacity:.85;
+      line-height:1.6;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:18px;
+      margin-top: 18px;
+    }
+    @media (min-width: 820px){
+      .cards{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .card{
+      border: 1px solid rgba(44,36,28,0.22);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.20);
+      padding: 18px 18px;
+    }
+
+    .card h2{
+      margin: 0 0 10px;
+      font-size: 22px;
+      font-weight: 400;
+    }
+
+    .card p{
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1.65;
+      opacity: .92;
+    }
+
+    .contact-link{
+      display:inline-block;
+      text-decoration:none;
+      color: var(--ink);
+      border-bottom: 1px solid rgba(44,36,28,0.25);
+      font-size: 18px;
+      padding-bottom: 2px;
+      word-break: break-word;
+    }
+    .contact-link:hover{ border-bottom-color: rgba(44,36,28,0.6); }
+
+    .note{
+      margin-top: 26px;
+      font-size: 16px;
+      opacity: .8;
+      text-align:center;
+      line-height: 1.6;
+    }
+
+    @media (max-width:720px){
+      .paper{ padding:42px 26px; }
+      h1{ font-size:38px; }
+    }
+  </style>
+
+  <main>
+    <article class="paper">
+      <h1>Contatti</h1>
+      <p class="sub">
+        Se vuoi scrivermi, questi sono i canali più diretti.<br />
+        Rispondo appena possibile.
+      </p>
+
+      <section class="cards" aria-label="Canali di contatto">
+        <div class="card">
+          <h2>Email</h2>
+          <p>Per messaggi più lunghi o materiali da condividere.</p>
+          <a class="contact-link" href={`mailto:${EMAIL}`}>{EMAIL}</a>
+        </div>
+
+        <div class="card">
+          <h2>Telegram</h2>
+          <p>Per un contatto rapido in privato.</p>
+          <a class="contact-link" href={`https://t.me/${TELEGRAM_USER}`} target="_blank" rel="noopener noreferrer">
+            @{TELEGRAM_USER}
+          </a>
+        </div>
+
+        <div class="card">
+          <h2>Canale Telegram</h2>
+          <p>Aggiornamenti e comunicazioni.</p>
+          <a class="contact-link" href={`https://t.me/${TELEGRAM_CHANNEL}`} target="_blank" rel="noopener noreferrer">
+            t.me/{TELEGRAM_CHANNEL}
+          </a>
+        </div>
+
+        <div class="card">
+          <h2>Academia.edu</h2>
+          <p>I miei lavori e le ricerche.</p>
+          <a class="contact-link" href={ACADEMIA_URL} target="_blank" rel="noopener noreferrer">
+            Vai al profilo / articoli
+          </a>
+        </div>
+      </section>
+
+      <p class="note">
+        
+      </p>
+    </article>
+  </main>
+</BaseLayout>
