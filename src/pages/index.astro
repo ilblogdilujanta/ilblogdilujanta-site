@@ -235,6 +235,18 @@ const tagline =
 
     </style>
   </head>
+<script is:inline>
+  function translateTo(lang) {
+    const url = encodeURIComponent(window.location.href);
+    window.open(
+      `https://translate.google.com/translate?sl=it&tl=${lang}&u=${url}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+</script>
+
+
 
   <body>
     <nav class="topnav" aria-label="Menu principale">
@@ -244,6 +256,9 @@ const tagline =
       <a href="/intenti">Intenti del Blog</a>
       <a href="/testimonianze">Testimonianze</a>
       <a href="/chi-sono">Chi sono</a>
+       <!-- Traduzione -->
+  <a href="#" onclick="translateTo('en'); return false;">EN</a>
+  <a href="#" onclick="translateTo('de'); return false;">DE</a>
     </nav>
 
     <main class="hero">
@@ -273,7 +288,15 @@ const tagline =
   <p class="t">Lungo la Via Dolomiti</p>
   <p class="y">2016</p>
 </a>
-                <a class="pick" href="/articoli/slug-2"><p class="t">Titolo articolo</p><p class="y">2016</p></a>
+                <a class="pick" href="/articoli/12016-ringraziamenti">
+  <img
+    class="thumb"
+    src="/immagini/2016/1.2016/2016-tre-cime.jpg"
+    alt="Ringraziamenti"
+  />
+  <p class="t">Ringraziamenti</p>
+  <p class="y">2016</p>
+</a>
                 <a class="pick" href="/articoli/slug-3"><p class="t">Titolo articolo</p><p class="y">2017</p></a>
                 <a class="pick" href="/articoli/slug-4"><p class="t">Titolo articolo</p><p class="y">2018</p></a>
                 <a class="pick" href="/articoli/slug-5"><p class="t">Titolo articolo</p><p class="y">2019</p></a>
