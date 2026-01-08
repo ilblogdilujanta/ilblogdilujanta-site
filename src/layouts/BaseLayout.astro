@@ -1,0 +1,31 @@
+---
+const { title = "Il Blog di Lujanta" } = Astro.props;
+import TopNav from "../components/TopNav.astro";
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+
+    <script is:inline>
+      window.gtranslateSettings = {
+        default_language: "it",
+        native_language_names: true,
+        detect_browser_language: true,
+        languages: ["it","de","en","fr"],
+        wrapper_selector: ".gtranslate_wrapper"
+      };
+    </script>
+    <script src="https://cdn.gtranslate.net/widgets/latest/lc.js" defer></script>
+
+    <slot name="head" />
+  </head>
+
+  <body>
+    <TopNav />
+    <slot />
+  </body>
+</html>

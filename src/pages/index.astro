@@ -11,6 +11,19 @@ const tagline =
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{siteTitle}</title>
 
+    <!-- GTranslate (UNA SOLA VOLTA per pagina) -->
+    <script is:inline>
+      // evita errore TS su window.gtranslateSettings
+      window.gtranslateSettings = {
+        default_language: "it",
+        native_language_names: true,
+        detect_browser_language: true,
+        languages: ["it", "de", "en", "fr"],
+        wrapper_selector: ".gtranslate_wrapper",
+      };
+    </script>
+    <script src="https://cdn.gtranslate.net/widgets/latest/lc.js" defer></script>
+
     <style>
       :root{
         --ink:#2b2a26;
@@ -24,13 +37,13 @@ const tagline =
         color:var(--ink);
       }
 
-      /* ===== HERO (ora cresce con il contenuto) ===== */
+      /* ===== HERO (cresce con il contenuto) ===== */
       .hero{
         min-height: 100vh;
         position: relative;
         overflow: hidden;
-        display: block;              /* <-- non più grid/center */
-        padding: 110px 0 80px;       /* spazio per menu + respiro */
+        display: block;
+        padding: 110px 0 80px; /* spazio per menu + respiro */
       }
 
       .hero__bg{
@@ -43,7 +56,6 @@ const tagline =
         z-index: 0;
       }
 
-      /* velo: rende leggibile quando scendi con testo e box */
       .hero__veil{
         position:absolute;
         inset:0;
@@ -56,7 +68,6 @@ const tagline =
         z-index: 1;
       }
 
-      /* contenuto sopra */
       .hero__content{
         position: relative;
         z-index: 2;
@@ -67,20 +78,32 @@ const tagline =
         margin-top: 200px;
       }
 
-      /* ===== MENU ===== */
+      /* ===== MENU + TRADUTTORE A DESTRA ===== */
       .topnav{
         position: fixed;
         top: 1rem;
         left: 50%;
         transform: translateX(-50%);
         width: min(980px, 92vw);
+        z-index: 10;
+
         display: flex;
-        justify-content: center;
+        justify-content: space-between; /* links a sx, traduttore a dx */
+        align-items: center;
         gap: 1rem;
+
         padding: .7rem 1rem;
         background: transparent;
         border: 0;
-        z-index: 10;
+      }
+
+      .nav-left{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        flex: 1;
       }
 
       .topnav a{
@@ -88,9 +111,21 @@ const tagline =
         text-decoration: none;
         padding: .2rem .4rem;
         text-shadow: 0 1px 8px rgba(244,241,234,.9);
+        white-space: nowrap;
+      }
+      .topnav a:hover{ text-decoration: underline; }
+
+      .nav-right{
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        min-width: 90px;
       }
 
-      .topnav a:hover{ text-decoration: underline; }
+      /* Il widget a volte spinge: lo rendiamo compatto */
+      .gtranslate_wrapper{
+        transform: translateY(1px);
+      }
 
       h1{
         margin: 0 0 1rem;
@@ -123,7 +158,7 @@ const tagline =
         background: var(--border);
       }
 
-      /* ===== SEZIONE "SCOPERTE CONSIGLIATE" (dentro la hero) ===== */
+      /* ===== SCOPERTE CONSIGLIATE ===== */
       .discoveries{
         margin: 70px auto 0;
         text-align: center;
@@ -149,7 +184,6 @@ const tagline =
         align-items: start;
       }
 
-      /* colonna sinistra (9 consigliati) + colonna destra (più letti) */
       @media (min-width: 860px){
         .discoveries-grid{
           grid-template-columns: 1.7fr 1fr;
@@ -174,7 +208,6 @@ const tagline =
         font-weight: 500;
       }
 
-      /* griglia 3x3 */
       .pick-grid{
         display: grid;
         grid-template-columns: repeat(1, 1fr);
@@ -196,9 +229,8 @@ const tagline =
         background: rgba(244,241,234,.35);
         border-radius: 4px;
       }
-      .pick:hover{
-        background: rgba(244,241,234,.60);
-      }
+      .pick:hover{ background: rgba(244,241,234,.60); }
+
       .pick .t{
         font-size: 1.15rem;
         margin: 0 0 8px;
@@ -207,6 +239,15 @@ const tagline =
       .pick .y{
         margin: 0;
         opacity: .8;
+      }
+
+      .pick img.thumb{
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        box-shadow: 0 6px 14px rgba(0,0,0,.15);
       }
 
       .top-list a{
@@ -219,47 +260,32 @@ const tagline =
       .top-list a:first-child{ border-top: none; padding-top: 0; }
       .top-list a:hover{ text-decoration: underline; }
 
-      /* mobile spacing */
       @media (max-width: 480px){
         .hero{ padding-top: 96px; }
+        .topnav{
+          align-items: flex-start;
+        }
+        .nav-right{
+          min-width: auto;
+        }
       }
-
-      .pick img.thumb{
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  box-shadow: 0 6px 14px rgba(0,0,0,.15);
-}
-
     </style>
   </head>
-<script is:inline>
-  function translateTo(lang) {
-    const url = encodeURIComponent(window.location.href);
-    window.open(
-      `https://translate.google.com/translate?sl=it&tl=${lang}&u=${url}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
-  }
-</script>
-
-
 
   <body>
     <nav class="topnav" aria-label="Menu principale">
-      <a href="/inizio-da-qui">Inizia da qui</a>
-      <a href="/sentieri">Sentieri di lettura</a>
-      <a href="/articoli">Articoli</a>
-      <a href="/intenti">Intenti del Blog</a>
-      <a href="/testimonianze">Testimonianze</a>
-      <a href="/chi-sono">Chi sono</a>
-       <!-- Traduzione -->
-      <a href="#" onclick="translateTo('de'); return false;">DE</a>      
-      <a href="#" onclick="translateTo('en'); return false;">EN</a>
-  
+      <div class="nav-left">
+        <a href="/inizio-da-qui">Inizia da qui</a>
+        <a href="/sentieri">Sentieri di lettura</a>
+        <a href="/articoli">Articoli</a>
+        <a href="/intenti">Intenti del Blog</a>
+        <a href="/testimonianze">Testimonianze</a>
+        <a href="/chi-sono">Chi sono</a>
+      </div>
+
+      <div class="nav-right" aria-label="Traduzione">
+        <div class="gtranslate_wrapper"></div>
+      </div>
     </nav>
 
     <main class="hero">
@@ -272,32 +298,27 @@ const tagline =
         <a class="cta" href="/inizio-da-qui">Inizia da qui</a>
         <div class="rule"></div>
 
-        <!-- SCOPERTE CONSIGLIATE -->
         <section class="discoveries" aria-label="Scoperte consigliate">
           <h2>Scoperte consigliate</h2>
           <p class="sub">Percorsi suggeriti per entrare nel Mondo di Lujanta</p>
 
           <div class="discoveries-grid">
-            <!-- 9 consigliati -->
             <div class="card">
               <h3>Consigliati</h3>
 
               <div class="pick-grid">
-                <!-- Sostituisci href/titolo/anno con i tuoi veri articoli -->
                 <a class="pick" href="/articoli/2-2016-lungo-la-via-dolomiti">
-  <img class="thumb" src="/immagini/2016/2.2016/2016-valle-casies.jpg" alt="Lungo la Via Dolomiti" />
-  <p class="t">Lungo la Via Dolomiti</p>
-  <p class="y">2016</p>
-</a>
+                  <img class="thumb" src="/immagini/2016/2.2016/2016-valle-casies.jpg" alt="Lungo la Via Dolomiti" />
+                  <p class="t">Lungo la Via Dolomiti</p>
+                  <p class="y">2016</p>
+                </a>
+
                 <a class="pick" href="/articoli/12016-ringraziamenti">
-  <img
-    class="thumb"
-    src="/immagini/2016/1.2016/2016-tre-cime.jpg"
-    alt="Ringraziamenti"
-  />
-  <p class="t">Ringraziamenti</p>
-  <p class="y">2016</p>
-</a>
+                  <img class="thumb" src="/immagini/2016/1.2016/2016-tre-cime.jpg" alt="Ringraziamenti" />
+                  <p class="t">Ringraziamenti</p>
+                  <p class="y">2016</p>
+                </a>
+
                 <a class="pick" href="/articoli/slug-3"><p class="t">Titolo articolo</p><p class="y">2017</p></a>
                 <a class="pick" href="/articoli/slug-4"><p class="t">Titolo articolo</p><p class="y">2018</p></a>
                 <a class="pick" href="/articoli/slug-5"><p class="t">Titolo articolo</p><p class="y">2019</p></a>
@@ -308,7 +329,6 @@ const tagline =
               </div>
             </div>
 
-            <!-- più letti -->
             <aside class="card" aria-label="I più letti della settimana">
               <h3>I più letti della settimana</h3>
               <div class="top-list">
@@ -316,6 +336,7 @@ const tagline =
                 <a href="/articoli/slug-2">Titolo articolo</a>
                 <a href="/articoli/slug-3">Titolo articolo</a>
               </div>
+
               <p style="margin:16px 0 0; opacity:.85;">
                 (Qui per ora è manuale: quando vorrai, si può automatizzare con statistiche/analytics.)
               </p>

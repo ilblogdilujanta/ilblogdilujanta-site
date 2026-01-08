@@ -1,4 +1,5 @@
 ---
+import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
 import { slugify } from "../../lib/slugify";
 
@@ -24,13 +25,7 @@ for (const a of articoli) {
 const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
 ---
 
-<!doctype html>
-<html lang="it">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Articoli</title>
-
+<BaseLayout title="Articoli">
   <style is:global>
     :root{
       --ink:#2c241c;
@@ -43,27 +38,8 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
       color:var(--ink);
     }
 
-    .topnav{
-      position: sticky; top: 0; z-index: 50;
-      display:flex; justify-content:center; align-items:center; gap:18px;
-      padding:14px;
-      background: rgba(14, 40, 33, 0.55);
-      backdrop-filter: blur(7px);
-      -webkit-backdrop-filter: blur(7px);
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-    }
-
-    .topnav a{
-      color: rgba(255,245,230,0.92);
-      text-decoration:none;
-      font-size:16px;
-      padding:6px 4px;
-      border-bottom:1px solid transparent;
-    }
-    .topnav a:hover{ border-bottom-color: rgba(255,245,230,0.65); }
-    .topnav a[aria-current="page"]{ border-bottom-color: rgba(255,245,230,0.95); }
-
-    @media (max-width:760px){ .topnav{ gap:12px; flex-wrap:wrap; } }
+    /* ⚠️ Il menu (.topnav) adesso è nel BaseLayout.
+       Qui lasciamo solo gli stili della pagina contenuto. */
 
     main{ display:flex; justify-content:center; padding:32px 14px; }
 
@@ -147,18 +123,6 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
       .year{ font-size: 24px; }
     }
   </style>
-</head>
-
-<body>
-  <nav class="topnav" aria-label="Menu principale">
-    <a href="/inizio-da-qui">Inizia da qui</a>
-    <a href="/sentieri">Sentieri di lettura</a>
-    <a href="/articoli" aria-current="page">Articoli</a>
-    <a href="/intenti">Intenti del Blog</a>
-    <a href="/chi-sono">Chi sono</a>
-    <a href="/testimonianze">Testimonianze</a>
-    <a href="/">Home</a>
-  </nav>
 
   <main>
     <article class="paper">
@@ -200,5 +164,4 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
       )}
     </article>
   </main>
-</body>
-</html>
+</BaseLayout>

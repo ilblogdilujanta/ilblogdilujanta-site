@@ -1,167 +1,119 @@
 ---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const titoloPagina = "Intenti del Blog";
 ---
-<!doctype html>
-<html lang="it">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Intenti del Blog</title>
 
-    <style is:global>
-      :root{
-        --ink:#2c241c;
-        --green:#0d8460;
+<BaseLayout title={titoloPagina}>
+  <style is:global>
+    :root{
+      --ink:#2c241c;
+      --green:#0d8460;
 
-        --paper1:#efe1c5;
-        --paper2:#e2caa6;
-        --paper3:#d8bc93;
-      }
+      --paper1:#efe1c5;
+      --paper2:#e2caa6;
+      --paper3:#d8bc93;
+    }
 
-      body{
-        margin:0;
-        min-height:100vh;
-        background: var(--green);
-        font-family:
-          "Baskerville Old Face",
-          "Baskerville",
-          "Libre Baskerville",
-          Georgia,
-          "Times New Roman",
-          serif;
-        color:var(--ink);
-      }
+    body{
+      margin:0;
+      min-height:100vh;
+      background: var(--green);
+      font-family:
+        "Baskerville Old Face",
+        "Baskerville",
+        "Libre Baskerville",
+        Georgia,
+        "Times New Roman",
+        serif;
+      color:var(--ink);
+    }
 
-      /* ===== MENU (come le altre pagine) ===== */
-      .topnav{
-        position: sticky;
-        top: 0;
-        z-index: 50;
+    main{
+      display:flex;
+      justify-content:center;
+      padding:32px 14px;
+    }
 
-        display:flex;
-        gap:18px;
-        justify-content:center;
-        align-items:center;
+    .paper{
+      max-width:980px;
+      width:100%;
+      padding:60px;
 
-        padding:14px 14px;
-        background: rgba(26, 20, 16, 0.35);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        border-bottom: 1px solid rgba(255,255,255,0.10);
-      }
+      background:
+        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
 
-      .topnav a{
-        color: rgba(255,245,230,0.92);
-        text-decoration:none;
-        font-size:16px;
-        padding:6px 4px;
-        border-bottom:1px solid transparent;
-      }
+      border-radius:6px;
+      box-shadow:0 18px 60px rgba(0,0,0,0.55);
+    }
 
-      .topnav a:hover{ border-bottom-color: rgba(255,245,230,0.65); }
-      .topnav a[aria-current="page"]{ border-bottom-color: rgba(255,245,230,0.95); }
+    h1{
+      text-align:center;
+      font-size:44px;
+      font-weight:400;
+      margin:0 0 26px;
+      letter-spacing:0.2px;
+    }
 
-      @media (max-width:760px){
-        .topnav{ gap:12px; flex-wrap:wrap; }
-      }
+    .copy{
+      font-size:20px;
+      line-height:1.62;
+    }
 
-      main{
-        display:flex;
-        justify-content:center;
-        padding:32px 14px;
-      }
+    .copy p{
+      margin:0 0 14px;
+    }
 
-      .paper{
-        max-width:980px;
-        width:100%;
-        padding:60px;
+    .copy em{ font-style: italic; }
 
-        background:
-          radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
-          linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
+    @media (max-width:720px){
+      .paper{ padding:42px 26px; }
+      h1{ font-size:38px; }
+    }
+  </style>
 
-        border-radius:6px;
-        box-shadow:0 18px 60px rgba(0,0,0,0.55);
-      }
+  <main>
+    <article class="paper">
+      <h1>Intenti del Blog</h1>
 
-      h1{
-        text-align:center;
-        font-size:44px;
-        font-weight:400;
-        margin:0 0 26px;
-        letter-spacing:0.2px;
-      }
+      <div class="copy">
+        <p>
+          Fin dai suoi esordi, il blog di Lujanta ha inteso dedicarsi all'esplorazione di un'ampia gamma di argomenti, tutti accomunati dall'interesse primario per il Sacro Femminino e la Cultura Celtica, ma non solo. La passione per l'archeologia e l'antropologia si unisce all'esplorazione di antiche storie dolomitiche e di luoghi di potere arcaici. La ricerca, in un'area di matrice prevalentemente germanofona, conduce naturalmente ad approfondimenti con territori affini dal punto di vista culturale, e con località che, sebbene apparentemente distanti, condividono la stessa impronta originaria e tradizioni comuni, attingendo a un antico bacino culturale condiviso.
+        </p>
 
-      .copy{
-        font-size:20px;
-        line-height:1.62;
-      }
+        <p>
+          Provare ad analizzare ciò che Goethe definì l’Eterno Femminino implica, secondo la visione di questo spazio, esplorare non solo la figura di un Sacro Femminile che affonda le sue radici nella notte dei tempi e che rappresenta l'elemento fondante dell’Antica Europa. Questo viaggio si sviluppa attraverso leggende e narrazioni, giunte fino a noi, pur rimaneggiate nel corso dei millenni. L'obiettivo è non solo quello di indagare le fonti storiche e i reperti archeologici, ma anche di esplorare l'aspetto folklorico, chiaramente riconducibile a un'origine comune a diversi territori.
+        </p>
 
-      .copy p{
-        margin:0 0 14px;
-      }
+        <p>
+          Il folklore è spesso, ed erroneamente, considerato un “ambito minore”; si dimentica così che esso rappresenta una manifestazione fondamentale del patrimonio culturale di una società. Attraverso leggende, canti, tradizioni e usanze, il folklore trasmette nel tempo una vasta gamma di informazioni, tramandate oralmente di generazione in generazione. Questo processo protegge e preserva l'identità di un popolo, mantenendo vivo il suo senso di appartenenza.
+        </p>
 
-      .copy em{ font-style: italic; }
+        <p>
+          Il termine folklore deriva da due parole anglosassoni: folk, che significa “popolo” e lore, che significa “saggezza” o “conoscenza”. Sebbene il termine, nella forma in cui lo conosciamo oggi, sia nato solo nella seconda metà dell'Ottocento, esso racchiude tutta la saggezza popolare contenuta nell'ampio bagaglio culturale fatto di miti, leggende, racconti, superstizioni, proverbi e canti. In altre parole, tutto quel retaggio che rappresenta una ricchezza culturale. Un concetto simile si ritrova anche nel termine tedesco <em>Volkskunde</em>, di origine ancora più antica (fine Settecento), che descrive, al pari del termine britannico, lo studio delle tradizioni popolari.
+        </p>
 
-      @media (max-width:720px){
-        .paper{ padding:42px 26px; }
-        h1{ font-size:38px; }
-      }
-    </style>
-  </head>
+        <p>
+          A fianco dei parallelismi fra aree germanofone, sorgono anche studi e comparazioni con regioni confinanti, italiane e non, sempre nell’ottica di uno sguardo d’insieme che, pur partendo da questa zona, mira a tessere una trama di interconnessioni che evidenzi analogie e differenze.
+        </p>
 
-  <body>
-    <nav class="topnav" aria-label="Menu principale">
-      <a href="/inizio-da-qui">Inizia da qui</a>
-      <a href="/sentieri">Sentieri di lettura</a>
-      <a href="/articoli">Articoli</a>
-      <a href="/intenti" aria-current="page">Intenti del Blog</a>
-      <a href="/chi-sono">Chi sono</a>
-      <a href="/testimonianze">Testimonianze</a>
-      <a href="/">Home</a>
-    </nav>
+        <p>
+          I Celti, altro tema centrale del blog che ne definisce e delimita in parte il focus, si collegano non solo alla Cultura Celtica, ma anche a quella di altre popolazioni che condivisero con questo popolo le stesse zone e la stessa storia in questa Regione. I Celti diventano così un punto di delimitazione, ma anche un'apertura verso le interconnessioni tra comunità e gruppi che, pur nelle loro specificità, spesso condivisero Divinità, Credenze e Visioni del Mondo, creando un tessuto culturale ricco e complesso, in cui il Sacro si intrecciava con la vita quotidiana.
+        </p>
 
-    <main>
-      <article class="paper">
-        <h1>Intenti del Blog</h1>
+        <p>
+          L'attenzione principale del blog è sicuramente rivolta ai Celti originari della Cultura di Hallstatt, a cui apparteneva anche l'area in cui vivo. Tuttavia, un altro scopo è quello di approfondire lo studio di tutto ciò che precedette questa Cultura dell'Età dei Metalli. L'Europa arcaica, dal Paleolitico in poi, diventa così oggetto di analisi, rappresentando il substrato culturale che gli Indoeuropei trovarono al loro arrivo nel Continente.
+        </p>
 
-        <div class="copy">
-          <p>
-            Fin dai suoi esordi, il blog di Lujanta ha inteso dedicarsi all'esplorazione di un'ampia gamma di argomenti, tutti accomunati dall'interesse primario per il Sacro Femminino e la Cultura Celtica, ma non solo. La passione per l'archeologia e l'antropologia si unisce all'esplorazione di antiche storie dolomitiche e di luoghi di potere arcaici. La ricerca, in un'area di matrice prevalentemente germanofona, conduce naturalmente ad approfondimenti con territori affini dal punto di vista culturale, e con località che, sebbene apparentemente distanti, condividono la stessa impronta originaria e tradizioni comuni, attingendo a un antico bacino culturale condiviso.
-          </p>
+        <p>
+          Questa prospettiva indaga come i diversi retroterra culturali si siano influenzati e, infine, fusi. Questo spazio diventa così un luogo di dialogo, in cui il confronto tra simboli, narrazioni e testimonianze evidenzia la diffusione di una Cultura antico-europea più omogenea di quanto si sia portati a immaginare.
+        </p>
 
-          <p>
-            Provare ad analizzare ciò che Goethe definì l’Eterno Femminino implica, secondo la visione di questo spazio, esplorare non solo la figura di un Sacro Femminile che affonda le sue radici nella notte dei tempi e che rappresenta l'elemento fondante dell’Antica Europa. Questo viaggio si sviluppa attraverso leggende e narrazioni, giunte fino a noi, pur rimaneggiate nel corso dei millenni. L'obiettivo è non solo quello di indagare le fonti storiche e i reperti archeologici, ma anche di esplorare l'aspetto folklorico, chiaramente riconducibile a un'origine comune a diversi territori.
-          </p>
-
-          <p>
-            Il folklore è spesso, ed erroneamente, considerato un “ambito minore”; si dimentica così che esso rappresenta una manifestazione fondamentale del patrimonio culturale di una società. Attraverso leggende, canti, tradizioni e usanze, il folklore trasmette nel tempo una vasta gamma di informazioni, tramandate oralmente di generazione in generazione. Questo processo protegge e preserva l'identità di un popolo, mantenendo vivo il suo senso di appartenenza.
-          </p>
-
-          <p>
-            Il termine folklore deriva da due parole anglosassoni: folk, che significa “popolo” e lore, che significa “saggezza” o “conoscenza”. Sebbene il termine, nella forma in cui lo conosciamo oggi, sia nato solo nella seconda metà dell'Ottocento, esso racchiude tutta la saggezza popolare contenuta nell'ampio bagaglio culturale fatto di miti, leggende, racconti, superstizioni, proverbi e canti. In altre parole, tutto quel retaggio che rappresenta una ricchezza culturale. Un concetto simile si ritrova anche nel termine tedesco <em>Volkskunde</em>, di origine ancora più antica (fine Settecento), che descrive, al pari del termine britannico, lo studio delle tradizioni popolari.
-          </p>
-
-          <p>
-            A fianco dei parallelismi fra aree germanofone, sorgono anche studi e comparazioni con regioni confinanti, italiane e non, sempre nell’ottica di uno sguardo d’insieme che, pur partendo da questa zona, mira a tessere una trama di interconnessioni che evidenzi analogie e differenze.
-          </p>
-
-          <p>
-            I Celti, altro tema centrale del blog che ne definisce e delimita in parte il focus, si collegano non solo alla Cultura Celtica, ma anche a quella di altre popolazioni che condivisero con questo popolo le stesse zone e la stessa storia in questa Regione. I Celti diventano così un punto di delimitazione, ma anche un'apertura verso le interconnessioni tra comunità e gruppi che, pur nelle loro specificità, spesso condivisero Divinità, Credenze e Visioni del Mondo, creando un tessuto culturale ricco e complesso, in cui il Sacro si intrecciava con la vita quotidiana.
-          </p>
-
-          <p>
-            L'attenzione principale del blog è sicuramente rivolta ai Celti originari della Cultura di Hallstatt, a cui apparteneva anche l'area in cui vivo. Tuttavia, un altro scopo è quello di approfondire lo studio di tutto ciò che precedette questa Cultura dell'Età dei Metalli. L'Europa arcaica, dal Paleolitico in poi, diventa così oggetto di analisi, rappresentando il substrato culturale che gli Indoeuropei trovarono al loro arrivo nel Continente.
-          </p>
-
-          <p>
-            Questa prospettiva indaga come i diversi retroterra culturali si siano influenzati e, infine, fusi. Questo spazio diventa così un luogo di dialogo, in cui il confronto tra simboli, narrazioni e testimonianze evidenzia la diffusione di una Cultura antico-europea più omogenea di quanto si sia portati a immaginare.
-          </p>
-
-          <p>
-            Questi argomenti suscitano domande mentre passeggio tra musei e siti archeologici, o mentre analizzo leggende e usanze. Sebbene l’archeologia e l’etnografia rappresentino ambiti di profondo interesse e passione personale, l’intento non è quello di sostituirsi agli addetti ai lavori, ma di attingere alle loro ricerche e interpretazioni per diffondere informazioni, offrendo chiavi di lettura e decodifiche di quanto incontro nelle mie escursioni e nei miei viaggi, nel tentativo di restituire una narrazione il più possibile aderente alle fonti e ai contesti descritti. In questo modo, il mio sguardo diviene lo sguardo della lettrice o del lettore che, attraverso la mia osservazione e narrazione della Storia e delle Storie, entra a far parte di un dialogo tra luoghi talvolta anche lontani, capaci di comunicare attraverso simbologie condivise, in un approccio multidisciplinare che prende forma nel Mondo di Lujanta.
-          </p>
-        </div>
-      </article>
-    </main>
-  </body>
-</html>
+        <p>
+          Questi argomenti suscitano domande mentre passeggio tra musei e siti archeologici, o mentre analizzo leggende e usanze. Sebbene l’archeologia e l’etnografia rappresentino ambiti di profondo interesse e passione personale, l’intento non è quello di sostituirsi agli addetti ai lavori, ma di attingere alle loro ricerche e interpretazioni per diffondere informazioni, offrendo chiavi di lettura e decodifiche di quanto incontro nelle mie escursioni e nei miei viaggi, nel tentativo di restituire una narrazione il più possibile aderente alle fonti e ai contesti descritti. In questo modo, il mio sguardo diviene lo sguardo della lettrice o del lettore che, attraverso la mia osservazione e narrazione della Storia e delle Storie, entra a far parte di un dialogo tra luoghi talvolta anche lontani, capaci di comunicare attraverso simbologie condivise, in un approccio multidisciplinare che prende forma nel Mondo di Lujanta.
+        </p>
+      </div>
+    </article>
+  </main>
+</BaseLayout>

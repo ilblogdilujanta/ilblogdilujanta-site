@@ -1,29 +1,23 @@
 ---
+import BaseLayout from "../../layouts/BaseLayout.astro";
 ---
-<html lang="it">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Inizia da qui</title>
 
-  <style>
+<BaseLayout title="Inizia da qui">
+  <style is:global>
     :root{
       --ink: #2c241c;
-
       --paper1: #efe1c5;
       --paper2: #e2caa6;
       --paper3: #d8bc93;
     }
 
-    /* Base */
     body{
       margin:0;
       min-height:100vh;
       background:
         radial-gradient(1200px 900px at 50% 35%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 85%, rgba(0,0,0,0.75) 100%),
         radial-gradient(900px 700px at 50% 35%, rgba(255,240,210,0.35), rgba(0,0,0,0) 70%),
-        #0d8460
-;
+        #0d8460;
 
       font-family:
         "Baskerville Old Face",
@@ -36,44 +30,6 @@
       color:var(--ink);
     }
 
-    /* MENU PRINCIPALE (in alto) */
-    .topnav{
-      position: sticky;
-      top: 0;
-      z-index: 50;
-
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      align-items: center;
-
-      padding: 14px 14px;
-      background: rgba(26, 20, 16, 0.55);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .topnav a{
-      color: rgba(255, 245, 230, 0.92);
-      text-decoration: none;
-      font-size: 16px;
-      letter-spacing: 0.2px;
-      padding: 6px 4px;
-      border-bottom: 1px solid transparent;
-    }
-
-    .topnav a:hover{
-      border-bottom-color: rgba(255, 245, 230, 0.65);
-    }
-
-    /* evidenzia la pagina corrente */
-    .topnav a[aria-current="page"]{
-      border-bottom-color: rgba(255, 245, 230, 0.95);
-    }
-
-    /* Wrapper per centrare la "pergamena" sotto il menu */
     .page{
       display:flex;
       justify-content:center;
@@ -107,8 +63,6 @@
 
     .copy p{ margin:0 0 14px; }
 
-    .center{ text-align:center; }
-
     .left-block{ max-width:100%; }
 
     .hero{
@@ -126,11 +80,6 @@
       filter:sepia(0.25) contrast(1.05);
     }
 
-    .closing{
-      text-align:center;
-      margin-top:18px;
-    }
-
     @media (max-width:760px){
       .paper{ padding:42px 26px; }
       h1{ font-size:42px; }
@@ -139,28 +88,8 @@
         width:100%;
         margin:14px 0;
       }
-      .left-block{ max-width:100%; }
-
-      .topnav{
-        gap: 12px;
-        flex-wrap: wrap;
-      }
     }
   </style>
-</head>
-
-<body>
-  <!-- Menu principale -->
-  <nav class="topnav" aria-label="Menu principale">
-    <a href="/inizia-da-qui" aria-current="page">Inizia da qui</a>
-    
-    <a href="/sentieri">Sentieri di lettura</a>
-    <a href="/articoli">Articoli</a>
-    <a href="/intenti">Intenti del Blog</a> 
-    <a href="/chi-sono">Chi sono</a>
-    <a href="/testimonianze">Testimonianze</a>
-    <a href="/">Home</a>
-  </nav>
 
   <div class="page">
     <article class="paper">
@@ -195,27 +124,26 @@
         </figure>
 
         <p class="left-block">
-          Questa raccolta non offre un percorso obbligato.<br>
-          Puoi aprire uno scritto e poi tornare indietro,<br>
+          Questa raccolta non offre un percorso obbligato.<br />
+          Puoi aprire uno scritto e poi tornare indietro,<br />
           oppure fermarti su una pagina sola.
         </p>
 
         <p class="left-block">
-          Puoi leggere seguendo un tema, un territorio, una figura,<br>
+          Puoi leggere seguendo un tema, un territorio, una figura,<br />
           oppure lasciare che sia un brano a scegliere te.
         </p>
 
         <p class="left-block">
-          Se sei arrivata o arrivato sin qui,<br>
-          non è necessario andare oltre subito.<br>
-          Concediti lo spazio che serve.<br>
-          Siediti.<br>
+          Se sei arrivata o arrivato sin qui,<br />
+          non è necessario andare oltre subito.<br />
+          Concediti lo spazio che serve.<br />
+          Siediti.<br />
           Apri ciò che più ti richiama.
         </p>
 
-        Qui il Tempo non scorre: ritorna.
+        <p>Qui il Tempo non scorre: ritorna.</p>
       </div>
     </article>
   </div>
-</body>
-</html>
+</BaseLayout>

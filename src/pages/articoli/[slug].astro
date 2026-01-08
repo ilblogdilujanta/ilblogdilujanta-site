@@ -1,5 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 import { slugify } from "../../lib/slugify";
 
 type Articolo = CollectionEntry<"articoli">;
@@ -35,356 +36,295 @@ const formatDate = (d: Date) =>
 
 const sentieri = (articolo.data.sentieri ?? []) as string[];
 
-// ✅ COPERTINA: mettila nel frontmatter dei .md come cover: "/immagini/....jpg"
+// (opzionale) cover dal frontmatter del .md: cover: "/immagini/....jpg"
+const cover = (articolo.data as any).cover as string | undefined;
 
-
+const pageTitle = articolo.data.title;
 ---
 
-<!doctype html>
-<html lang="it">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{articolo.data.title}</title>
+<BaseLayout title={pageTitle}>
+  <style is:global>
+    :root {
+      --ink: #2c241c;
+      --green: #0d8460;
 
-    <style is:global>
-      :root {
-        --ink: #2c241c;
-        --green: #0d8460;
+      --paper1: #efe1c5;
+      --paper2: #e2caa6;
+      --paper3: #d8bc93;
+    }
 
-        --paper1: #efe1c5;
-        --paper2: #e2caa6;
-        --paper3: #d8bc93;
-      }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--green);
+      font-family:
+        "Baskerville Old Face",
+        "Baskerville",
+        "Libre Baskerville",
+        Georgia,
+        "Times New Roman",
+        serif;
+      color: var(--ink);
+    }
 
-      body {
-        margin: 0;
-        min-height: 100vh;
-        background: var(--green);
-        font-family:
-          "Baskerville Old Face",
-          "Baskerville",
-          "Libre Baskerville",
-          Georgia,
-          "Times New Roman",
-          serif;
-        color: var(--ink);
-      }
+    main {
+      display: flex;
+      justify-content: center;
+      padding: 32px 14px;
+    }
 
-      /* ===== MENU (come le altre pagine) ===== */
-      .topnav {
-        position: sticky;
-        top: 0;
-        z-index: 50;
+    .paper {
+      max-width: 980px;
+      width: 100%;
+      padding: 60px;
 
-        display: flex;
-        gap: 18px;
-        justify-content: center;
-        align-items: center;
+      background:
+        radial-gradient(120% 90% at 50% 20%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 55%),
+        linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
 
-        padding: 14px 14px;
-        background: rgba(26, 20, 16, 0.35);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
+      border-radius: 6px;
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+    }
 
-      .topnav a {
-        color: rgba(255, 245, 230, 0.92);
-        text-decoration: none;
-        font-size: 16px;
-        padding: 6px 4px;
-        border-bottom: 1px solid transparent;
-      }
+    h1 {
+      text-align: center;
+      font-size: 52px;
+      font-weight: 400;
+      margin: 0 0 10px;
+    }
 
-      .topnav a:hover {
-        border-bottom-color: rgba(255, 245, 230, 0.65);
-      }
+    .date {
+      text-align: center;
+      opacity: 0.75;
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
 
-      main {
-        display: flex;
-        justify-content: center;
-        padding: 32px 14px;
-      }
+    /* Riga utility sotto data */
+    .meta-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin: 0 0 26px;
+    }
 
-      .paper {
-        max-width: 980px;
-        width: 100%;
-        padding: 60px;
+    .back {
+      text-decoration: none;
+      color: var(--ink);
+      border-bottom: 1px solid rgba(44, 36, 28, 0.25);
+      opacity: 0.9;
+    }
+    .back:hover {
+      border-bottom-color: rgba(44, 36, 28, 0.6);
+    }
 
-        background:
-          radial-gradient(120% 90% at 50% 20%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 55%),
-          linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
+    .tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-        border-radius: 6px;
-        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
-      }
+    .tag {
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid rgba(44, 36, 28, 0.22);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.22);
+      font-size: 15px;
+      opacity: 0.95;
+    }
+    .tag:hover {
+      background: rgba(255, 255, 255, 0.38);
+    }
 
-      h1 {
-        text-align: center;
-        font-size: 52px;
-        font-weight: 400;
-        margin: 0 0 10px;
-      }
+    /* ===== COPERTINA ARTICOLO (dal frontmatter) ===== */
+    .cover {
+      margin: 12px auto 34px;
+      max-width: 900px;
+    }
 
-      .date {
-        text-align: center;
-        opacity: 0.75;
-        margin: 0 0 14px;
-        font-size: 18px;
-      }
+    .cover img {
+      width: 100%;
+      height: auto;
+      max-height: 62vh;
+      object-fit: cover;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+    }
 
-      /* Riga utility sotto data */
-      .meta-row {
-        display: flex;
-        justify-content: center;
-        gap: 14px;
-        flex-wrap: wrap;
-        margin: 0 0 26px;
-      }
+    /* ===== CONTENUTO MARKDOWN ===== */
+    .content {
+      font-size: 20px;
+      line-height: 1.75;
+    }
 
-      .back {
-        text-decoration: none;
-        color: var(--ink);
-        border-bottom: 1px solid rgba(44, 36, 28, 0.25);
-        opacity: 0.9;
-      }
-      .back:hover {
-        border-bottom-color: rgba(44, 36, 28, 0.6);
-      }
+    .content p {
+      margin: 0 0 18px;
+    }
 
-      .tags {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
+    .content h2,
+    .content h3 {
+      font-weight: 400;
+      margin: 38px 0 14px;
+      line-height: 1.2;
+    }
 
-      .tag {
-        text-decoration: none;
-        color: var(--ink);
-        border: 1px solid rgba(44, 36, 28, 0.22);
-        border-radius: 999px;
-        padding: 6px 10px;
-        background: rgba(255, 255, 255, 0.22);
-        font-size: 15px;
-        opacity: 0.95;
-      }
-      .tag:hover {
-        background: rgba(255, 255, 255, 0.38);
-      }
+    .content h2 { font-size: 30px; }
+    .content h3 { font-size: 24px; opacity: 0.95; }
 
-      /* ===== COPERTINA ARTICOLO (dal frontmatter) ===== */
-      .cover {
-        margin: 12px auto 34px;
-        max-width: 900px;
-      }
+    .content ul,
+    .content ol {
+      margin: 0 0 18px 22px;
+      padding: 0;
+    }
 
-      .cover img {
-        width: 100%;
-        height: auto;
-        max-height: 62vh;
-        object-fit: cover;
-        display: block;
-        border-radius: 8px;
-        box-shadow: 0 14px 40px rgba(0,0,0,0.18);
-      }
+    .content li {
+      margin: 8px 0;
+    }
 
-      /* ===== CONTENUTO MARKDOWN ===== */
-      .content {
-        font-size: 20px;
-        line-height: 1.75;
-      }
+    .content blockquote {
+      margin: 22px 0;
+      padding: 12px 16px;
+      border-left: 3px solid rgba(44, 36, 28, 0.28);
+      background: rgba(255, 255, 255, 0.18);
+    }
 
-      .content p {
-        margin: 0 0 18px;
-      }
+    .content hr {
+      border: 0;
+      border-top: 1px solid rgba(44, 36, 28, 0.22);
+      margin: 28px 0;
+    }
 
-      .content h2,
-      .content h3 {
-        font-weight: 400;
-        margin: 38px 0 14px;
-        line-height: 1.2;
-      }
+    /* Immagini dentro il markdown: default “media” */
+    .content img {
+      display: block;
+      max-width: 60%;
+      height: auto;
+      margin: 70px auto;
+      border-radius: 6px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    }
 
-      .content h2 { font-size: 30px; }
-      .content h3 { font-size: 24px; opacity: 0.95; }
+    .content img.img-large { max-width: 85%; margin: 70px auto; }
+    .content img.img-small { max-width: 40%; margin: 60px auto; }
 
-      .content ul,
-      .content ol {
-        margin: 0 0 18px 22px;
-        padding: 0;
-      }
+    .content .underline {
+      text-decoration-line: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.12em;
+      text-decoration-skip-ink: auto;
+    }
 
-      .content li {
-        margin: 8px 0;
-      }
+    /* ===== NAV PREV/NEXT ===== */
+    .pager {
+      margin-top: 42px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(44, 36, 28, 0.2);
 
-      .content blockquote {
-        margin: 22px 0;
-        padding: 12px 16px;
-        border-left: 3px solid rgba(44, 36, 28, 0.28);
-        background: rgba(255, 255, 255, 0.18);
-      }
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      align-items: stretch;
+      flex-wrap: wrap;
+    }
 
-      .content hr {
-        border: 0;
-        border-top: 1px solid rgba(44, 36, 28, 0.22);
-        margin: 28px 0;
-      }
+    .pager a {
+      flex: 1;
+      min-width: 220px;
 
-      /* Immagini dentro il markdown: default “media” */
-      .content img {
-        display: block;
-        max-width: 60%;
-        height: auto;
-        margin: 70px auto;
-        border-radius: 6px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-      }
+      text-decoration: none;
+      color: var(--ink);
 
-      /* ✅ Se vuoi una singola immagine più grande/piccola, usa classi:
-         <img class="img-large" ...> oppure <img class="img-small" ...>
-      */
-      .content img.img-large { max-width: 85%; margin: 70px auto; }
-      .content img.img-small { max-width: 40%; margin: 60px auto; }
+      border: 1px solid rgba(44, 36, 28, 0.25);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.22);
 
-      /* Sottolineatura “sicura” */
-      .content .underline {
-        text-decoration-line: underline;
-        text-decoration-thickness: 2px;
-        text-underline-offset: 0.12em;
-        text-decoration-skip-ink: auto;
-      }
+      padding: 14px 14px;
+    }
 
-      /* ===== NAV PREV/NEXT ===== */
-      .pager {
-        margin-top: 42px;
-        padding-top: 18px;
-        border-top: 1px solid rgba(44, 36, 28, 0.2);
+    .pager a:hover {
+      background: rgba(255, 255, 255, 0.38);
+    }
 
-        display: flex;
-        gap: 14px;
-        justify-content: space-between;
-        align-items: stretch;
-        flex-wrap: wrap;
-      }
+    .pager .label {
+      font-size: 14px;
+      opacity: 0.75;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-      .pager a {
-        flex: 1;
-        min-width: 220px;
+    .pager .title {
+      font-size: 18px;
+      line-height: 1.35;
+    }
 
-        text-decoration: none;
-        color: var(--ink);
+    .pager .empty {
+      flex: 1;
+      min-width: 220px;
+    }
 
-        border: 1px solid rgba(44, 36, 28, 0.25);
-        border-radius: 6px;
-        background: rgba(255, 255, 255, 0.22);
+    @media (max-width: 720px) {
+      .paper { padding: 42px 26px; }
+      h1 { font-size: 40px; }
+      .content { font-size: 19px; }
+      .content img { max-width: 92%; margin: 50px auto; }
+    }
+  </style>
 
-        padding: 14px 14px;
-      }
+  <main>
+    <article class="paper">
+      <h1>{articolo.data.title}</h1>
+      <p class="date">{formatDate(articolo.data.date)}</p>
 
-      .pager a:hover {
-        background: rgba(255, 255, 255, 0.38);
-      }
+      <div class="meta-row">
+        <a class="back" href="/sentieri">← Torna a Sentieri</a>
 
-      .pager .label {
-        font-size: 14px;
-        opacity: 0.75;
-        margin-bottom: 6px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
+        {sentieri.length > 0 && (
+          <div class="tags" aria-label="Sentieri dell’articolo">
+            {sentieri.map((s) => (
+              <a class="tag" href={`/sentieri/${slugify(s)}`}>{s}</a>
+            ))}
+          </div>
+        )}
+      </div>
 
-      .pager .title {
-        font-size: 18px;
-        line-height: 1.35;
-      }
+      {cover && (
+        <figure class="cover" aria-label="Copertina articolo">
+          <img src={cover} alt={`Copertina: ${articolo.data.title}`} loading="lazy" />
+        </figure>
+      )}
 
-      .pager .empty {
-        flex: 1;
-        min-width: 220px;
-      }
+      <div class="content">
+        <Content />
+      </div>
 
-      @media (max-width: 720px) {
-        .paper {
-          padding: 42px 26px;
-        }
-        h1 {
-          font-size: 40px;
-        }
-        .topnav {
-          gap: 12px;
-          flex-wrap: wrap;
-        }
-        .content {
-          font-size: 19px;
-        }
-        .content img {
-          max-width: 92%;
-          margin: 50px auto;
-        }
-      }
-    </style>
-  </head>
+      <nav class="pager" aria-label="Navigazione articoli">
+        {precedente ? (
+          <a href={`/articoli/${precedente.slug}`}>
+            <div class="label">← Precedente (più vecchio)</div>
+            <div class="title">{precedente.data.title}</div>
+          </a>
+        ) : (
+          <div class="empty"></div>
+        )}
 
-  <body>
-    <nav class="topnav" aria-label="Menu principale">
-      <a href="/inizio-da-qui">Inizia da qui</a>
-      <a href="/sentieri">Sentieri di lettura</a>
-      <a href="/articoli">Articoli</a>
-      <a href="/intenti">Intenti del Blog</a>
-      <a href="/chi-sono">Chi sono</a>
-      <a href="/testimonianze">Testimonianze</a>
-      <a href="/">Home</a>
-    </nav>
-
-    <main>
-      <article class="paper">
-        <h1>{articolo.data.title}</h1>
-        <p class="date">{formatDate(articolo.data.date)}</p>
-
-        <div class="meta-row">
-          <a class="back" href="/sentieri">← Torna a Sentieri</a>
-
-          {sentieri.length > 0 && (
-            <div class="tags" aria-label="Sentieri dell’articolo">
-              {sentieri.map((s) => (
-                <a class="tag" href={`/sentieri/${slugify(s)}`}>{s}</a>
-              ))}
+        {successivo ? (
+          <a href={`/articoli/${successivo.slug}`} style="text-align:right;">
+            <div class="label" style="justify-content:flex-end;">
+              Successivo (più recente) →
             </div>
-          )}
-        </div>
-
-        
-
-        <div class="content">
-          <Content />
-        </div>
-
-        <nav class="pager" aria-label="Navigazione articoli">
-          {precedente ? (
-            <a href={`/articoli/${precedente.slug}`}>
-              <div class="label">← Precedente (più vecchio)</div>
-              <div class="title">{precedente.data.title}</div>
-            </a>
-          ) : (
-            <div class="empty"></div>
-          )}
-
-          {successivo ? (
-            <a href={`/articoli/${successivo.slug}`} style="text-align:right;">
-              <div class="label" style="justify-content:flex-end;">
-                Successivo (più recente) →
-              </div>
-              <div class="title">{successivo.data.title}</div>
-            </a>
-          ) : (
-            <div class="empty"></div>
-          )}
-        </nav>
-      </article>
-    </main>
-  </body>
-</html>
+            <div class="title">{successivo.data.title}</div>
+          </a>
+        ) : (
+          <div class="empty"></div>
+        )}
+      </nav>
+    </article>
+  </main>
+</BaseLayout>

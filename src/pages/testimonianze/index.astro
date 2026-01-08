@@ -1,292 +1,312 @@
 ---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
 const titoloPagina = "Testimonianze";
 ---
 
-<!doctype html>
-<html lang="it">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{titoloPagina}</title>
+<BaseLayout title={titoloPagina}>
+  <style is:global>
+    :root {
+      --ink: #2c241c;
+      --green: #0d8460;
 
-    <style is:global>
-      :root {
-        --ink: #2c241c;
-        --green: #0d8460;
+      --paper1: #efe1c5;
+      --paper2: #e2caa6;
+      --paper3: #d8bc93;
+    }
 
-        --paper1: #efe1c5;
-        --paper2: #e2caa6;
-        --paper3: #d8bc93;
-      }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--green);
+      font-family:
+        "Baskerville Old Face",
+        "Baskerville",
+        "Libre Baskerville",
+        Georgia,
+        "Times New Roman",
+        serif;
+      color: var(--ink);
+    }
 
-      body {
-        margin: 0;
-        min-height: 100vh;
-        background: var(--green);
-        font-family:
-          "Baskerville Old Face",
-          "Baskerville",
-          "Libre Baskerville",
-          Georgia,
-          "Times New Roman",
-          serif;
-        color: var(--ink);
-      }
+    main {
+      display: flex;
+      justify-content: center;
+      padding: 32px 14px;
+    }
 
-      /* ===== MENU ===== */
-      .topnav {
-        position: sticky;
-        top: 0;
-        z-index: 50;
+    .paper {
+      max-width: 980px;
+      width: 100%;
+      padding: 60px;
 
-        display: flex;
-        gap: 18px;
-        justify-content: center;
-        align-items: center;
+      background:
+        radial-gradient(
+          120% 90% at 50% 20%,
+          rgba(255, 255, 255, 0.35),
+          rgba(255, 255, 255, 0) 55%
+        ),
+        linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
 
-        padding: 14px 14px;
-        background: rgba(26, 20, 16, 0.35);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
+      border-radius: 6px;
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+    }
 
-      .topnav a {
-        color: rgba(255, 245, 230, 0.92);
-        text-decoration: none;
-        font-size: 16px;
-        padding: 6px 4px;
-        border-bottom: 1px solid transparent;
-      }
+    h1 {
+      text-align: center;
+      font-size: 56px;
+      font-weight: 400;
+      margin: 0 0 26px;
+    }
 
-      .topnav a:hover {
-        border-bottom-color: rgba(255, 245, 230, 0.65);
-      }
+    /* ===== BLOCCO TESTIMONIANZA ===== */
+    .testimonianza {
+      margin: 0 0 46px;
+      padding: 0 0 46px;
+      border-bottom: 1px solid rgba(44, 36, 28, 0.18);
+    }
+    .testimonianza:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
 
-      .topnav a[aria-current="page"] {
-        border-bottom-color: rgba(255, 245, 230, 0.95);
-      }
+    .hero-figure {
+      margin: 0 auto 18px;
+      text-align: center;
+    }
 
-      main {
-        display: flex;
-        justify-content: center;
-        padding: 32px 14px;
-      }
+    .hero-figure img {
+      display: block;
+      margin: 0 auto;
+      width: min(420px, 30%);
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    }
 
+    /* (se un domani vuoi un formato grande “pulito”, usa class hero-figure--large) */
+    .hero-figure--large img {
+      width: min(860px, 90%);
+    }
+
+    .hero-figure figcaption {
+      margin-top: 14px;
+      margin-bottom: 32px;
+      font-size: 18px;
+      line-height: 1.6;
+      font-style: italic;
+      text-align: center;
+      opacity: 0.9;
+    }
+
+    .dateline {
+      margin: 26px 0 6px;
+      font-size: 22px;
+      font-weight: 400;
+    }
+
+    .sottotitolo {
+      margin: 0 0 18px;
+      font-size: 22px;
+      font-weight: 400;
+      opacity: 0.95;
+    }
+
+    .content {
+      font-size: 20px;
+      line-height: 1.75;
+    }
+
+    .content p {
+      margin: 0 0 18px;
+    }
+
+    .firma {
+      margin-top: 24px;
+      font-style: italic;
+      text-align: right;
+    }
+
+    @media (max-width: 720px) {
       .paper {
-        max-width: 980px;
-        width: 100%;
-        padding: 60px;
-
-        background:
-          radial-gradient(
-            120% 90% at 50% 20%,
-            rgba(255, 255, 255, 0.35),
-            rgba(255, 255, 255, 0) 55%
-          ),
-          linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
-
-        border-radius: 6px;
-        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+        padding: 42px 26px;
       }
-
       h1 {
-        text-align: center;
-        font-size: 56px;
-        font-weight: 400;
-        margin: 0 0 26px;
+        font-size: 44px;
       }
-
-      /* ===== BLOCCO TESTIMONIANZA ===== */
-      .testimonianza {
-        margin: 0 0 46px;
-        padding: 0 0 46px;
-        border-bottom: 1px solid rgba(44, 36, 28, 0.18);
+      .dateline,
+      .sottotitolo {
+        font-size: 20px;
       }
-      .testimonianza:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-        margin-bottom: 0;
-      }
-
-      .hero-figure {
-        margin: 0 auto 18px;
-        text-align: center;
+      .content {
+        font-size: 20px;
       }
 
       .hero-figure img {
-        display: block;
-        margin: 0 auto;
-        width: min(420px, 30%);
-        height: auto;
-        border-radius: 8px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-        .hero-figure--large img {
-  width: min(860px, 180%);
-}
-
+        width: min(520px, 80%);
       }
+    }
+  </style>
 
-      .hero-figure figcaption {
-  margin-top: 14px;        /* spazio tra immagine e didascalia */
-  margin-bottom: 32px;     /* spazio tra didascalia e testo */
-  font-size: 18px;
-  line-height: 1.6;
-  font-style: italic;     /* ← corsivo */
-  text-align: center;
-  opacity: 0.9;
-}
+  <main>
+    <article class="paper">
+      <h1>Testimonianze</h1>
 
-      .dateline {
-        margin: 26px 0 6px;
-        font-size: 22px;
-        font-weight: 400;
-      }
-
-      .sottotitolo {
-        margin: 0 0 18px;
-        font-size: 22px;
-        font-weight: 400;
-        opacity: 0.95;
-      }
-
-      .content {
-        font-size: 20px;
-        line-height: 1.75;
-      }
-
-      .content p {
-        margin: 0 0 18px;
-      }
-
-      .firma {
-        margin-top: 24px;
-        font-style: italic;
-        text-align: right;
-      }
-
-      @media (max-width: 720px) {
-        .paper {
-          padding: 42px 26px;
-        }
-        h1 {
-          font-size: 44px;
-        }
-        .dateline,
-        .sottotitolo {
-          font-size: 20px;
-        }
-        .content {
-          font-size: 20px;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <nav class="topnav" aria-label="Menu principale">
-      <a href="/inizio-da-qui">Inizia da qui</a>
-      <a href="/sentieri">Sentieri di lettura</a>
-      <a href="/articoli">Articoli</a>
-      <a href="/intenti">Intenti del Blog</a>
-      <a href="/chi-sono">Chi sono</a>
-      <a href="/testimonianze" aria-current="page">Testimonianze</a>
-      <a href="/">Home</a>
-    </nav>
-
-    <main>
-      <article class="paper">
-        <h1>Testimonianze</h1>
-
-        <!-- ================= TESTIMONIANZA 1 ================= -->
-        <!-- (la tua testimonianza precedente resta qui, invariata) -->
-<!-- ✅ Qui è TESTO, quindi la G resta maiuscola --><!-- ✅ TESTIMONIANZA 1 --> <section class="testimonianza" aria-label="Testimonianza: Scienza, coscienza e incoscienza"> <figure class="hero-figure"> <img src="/immagini/friedrich-donna-alla-finestra.jpg" alt="Frau am Fenster — Donna alla finestra (1818–1822), Caspar David Friedrich" loading="lazy" /> <figcaption> Frau am Fenster — Donna alla finestra (1818–1822), Caspar David Friedrich (1774–1840). Alte Nationalgalerie, Berlino </figcaption> </figure> <h2 class="dateline">Giovedì 24 Aprile 2014 — ore 21:42</h2> <h3 class="sottotitolo">Scienza, coscienza e incoscienza.</h3> <div class="content"> <p> Alcuni lettori mi domandano: come si fa ad essere sicuri dei segnali che provengono dall’Aldilà? Come fai ad essere sicuro che un determinato segnale non lo hai interpretato in modo soggettivo e magari significava tutt’altro? </p> <p> Il metodo è quello che si deve usare per qualsiasi cosa. Un certo buon senso, quando non un criterio addirittura scientifico. Rimanendo nell’attesa e senza giudizio, finché non si ha la certezza. </p> <p> Faccio un esempio con i messaggi dall’Aldilà che mi comunica la mia amica Lujanta costantemente, da qualche settimana, che riguardano Mariapaola e il suo stato di salute. </p> <p> Lujanta — che ho conosciuto all’ultima conferenza tenuta a Resana, e che quindi ho visto in totale, in vita mia, non più di una mezz’ora — da settimane mi comunica cose che vede e sente di me, e di Mariapaola. Noto con sorpresa e un certo divertimento che azzecca perfettamente cose che non poteva sapere, che riguardavano sia me, sia Mariapaola, sia altre persone. </p> <p> A un certo punto mi manda una comunicazione “problematica”. Almeno per me. Vede le metastasi di Mariapaola, e vede che sono localizzate a fegato, ossa e cervello. In effetti era così. Lei però vede una cosa in più. I polmoni. Non vede una vera e propria metastasi, ma vede che lì l’energia è compromessa. </p> <p> La cosa mi preoccupa, perché temo che possano partirle delle metastasi al polmone. Dopo qualche giorno, tra l’altro, Mariapaola comincia a respirare male ed affannosamente. Non posso che essere preoccupato. Ma la TAC nega che il polmone sia compromesso. </p> <p> A questo punto è lecita la domanda: è Lujanta che si è sbagliata, oppure dobbiamo pensare qualcos’altro? Mi faccio la domanda e rimango in attesa. Spero ovviamente che Lujanta si sia sbagliata, e anche se si fosse sbagliata sui polmoni va detto che comunque ha azzeccato tutto il resto, quindi non perderei la mia fiducia in lei. </p> <p> Mariapaola se ne andrà dopo qualche giorno, spegnendo il respiro. Era quello il problema al polmone che Lujanta vedeva. Ho quindi la conferma, purtroppo, che Lujanta è davvero brava e finora non ha sbagliato un colpo. </p> <p> Quando quindi mi comunica che Mariapaola dopo aver lasciato il corpo era la prima anima che le capitava, che nel momento del trapasso era felice della sua nuova condizione e quasi gongolava, le ho creduto. </p> <p>Perché?</p> <p>Primo: perché ho visto il sorriso sereno di Mariapaola.</p> <p> Secondo: perché so che Mariapaola è così. Lei era e faceva tutto il contrario di quello che era ragionevole aspettarsi, e dunque anche nell’Aldilà fa il contrario di quello che fanno le anime dei defunti normali. Quello che dice, insomma, fa parte del suo carattere. </p> <p> Mi sento sereno, perché sento che tutto il lavoro fatto dalle persone che hanno organizzato gruppi di meditazione e preghiera ha funzionato. Mariapaola se n’è andata serena, con i fratelli accanto come aveva chiesto, sorridendo come raramente accade, e addirittura nella sua nuova condizione non prova lo smarrimento che in genere provano le anime dei defunti. Sono felice per lei. </p> <p> Poi certo — mi domando — ma possibile che ora rimane felice e serena in modo duraturo? Non è nella sua natura — mi dico — e una parte della personalità dei vivi viene conservata anche dal defunto. </p> <p> Infatti Lujanta mi manda oggi un’altra comunicazione (pochi minuti fa). Mariapaola ha cambiato umore ed è un po’ meno tranquilla. Mi faccio una serie di domande. </p> <p> Ho scritto o fatto capire che Mariapaola era soggetta a sbalzi di umore spaventosi, in modo che Lujanta possa aver avuto questa intuizione leggendo questa cosa che ho scritto? No, non l’ho scritto; anzi, a leggere l’articolo che ho scritto su Mariapaola, pare che lei abbia mantenuto solo e sempre un atteggiamento negativo. </p> <p> La verità è invece che non potevo raccontare tutto per non essere noioso, quindi per esigenze “letterarie” nell’articolo “Cronaca di un tumore annunciato”, avevo evitato di dire che talvolta aveva anche dei picchi positivi; il problema è che tali picchi corrispondevano ad una minima parte della giornata o addirittura della settimana. Quindi non c’era bisogno di dirlo. Quindi Lujanta non può averlo tratto dal mio racconto. Lo sbalzo di umore era tipico di Mariapaola. </p> <p> Qui interviene la scienza. Ovvero sia la statistica. Quante possibilità c’erano che Lujanta potesse anticipare i problemi al polmone? Poche, pochissime. Quante possibilità c’erano che capisse molte cose del rapporto tra me e Mariapaola? </p> </div> </section>
-        <!-- ================= TESTIMONIANZA 2 ================= -->
-       
-       <section class="testimonianza" aria-label="Testimonianza S. B.">
+      <!-- ================= TESTIMONIANZA 1 ================= -->
+      <section class="testimonianza" aria-label="Testimonianza: Scienza, coscienza e incoscienza">
         <figure class="hero-figure">
-  <img
-    src="/immagini/abbazia-nel-querceto.jpg"
-    style="width: min(560px, 45%);"
-    alt="Immagine associata alla testimonianza S. B."
-    loading="lazy"
-  />
-  <figcaption>
-    Abtei im Eichwald — Abbazia nel Querceto (1809-1810), Caspar David Friedrich (1774-1840) 
-Alte Nationalgalerie, Berlino sbm.museum
-  </figcaption>
-</figure>
+          <img
+            src="/immagini/friedrich-donna-alla-finestra.jpg"
+            alt="Frau am Fenster — Donna alla finestra (1818–1822), Caspar David Friedrich"
+            loading="lazy"
+          />
+          <figcaption>
+            Frau am Fenster — Donna alla finestra (1818–1822), Caspar David Friedrich (1774–1840). Alte Nationalgalerie, Berlino
+          </figcaption>
+        </figure>
 
-          <h2 class="sottotitolo">Testimonianza S. B.</h2>
+        <h2 class="dateline">Giovedì 24 Aprile 2014 — ore 21:42</h2>
+        <h3 class="sottotitolo">Scienza, coscienza e incoscienza.</h3>
 
-          <div class="content">
-            <p>
-              Lujanta è entrata nella mia vita con tatto, eleganza, simpatia e “in punta di piedi” il 16 dicembre del 2013.
-              Ci siamo incontrati in un gruppo di discussione virtuale sul Catarismo, argomento di cui mi occupo per
-              interesse personale (e, in parte, professionale) da diversi anni.
-            </p>
+        <div class="content">
+          <p>
+            Alcuni lettori mi domandano: come si fa ad essere sicuri dei segnali che provengono dall’Aldilà? Come fai ad essere sicuro che un determinato segnale non lo hai interpretato in modo soggettivo e magari significava tutt’altro?
+          </p>
+          <p>
+            Il metodo è quello che si deve usare per qualsiasi cosa. Un certo buon senso, quando non un criterio addirittura scientifico. Rimanendo nell’attesa e senza giudizio, finché non si ha la certezza.
+          </p>
+          <p>
+            Faccio un esempio con i messaggi dall’Aldilà che mi comunica la mia amica Lujanta costantemente, da qualche settimana, che riguardano Mariapaola e il suo stato di salute.
+          </p>
+          <p>
+            Lujanta — che ho conosciuto all’ultima conferenza tenuta a Resana, e che quindi ho visto in totale, in vita mia, non più di una mezz’ora — da settimane mi comunica cose che vede e sente di me, e di Mariapaola. Noto con sorpresa e un certo divertimento che azzecca perfettamente cose che non poteva sapere, che riguardavano sia me, sia Mariapaola, sia altre persone.
+          </p>
+          <p>
+            A un certo punto mi manda una comunicazione “problematica”. Almeno per me. Vede le metastasi di Mariapaola, e vede che sono localizzate a fegato, ossa e cervello. In effetti era così. Lei però vede una cosa in più. I polmoni. Non vede una vera e propria metastasi, ma vede che lì l’energia è compromessa.
+          </p>
+          <p>
+            La cosa mi preoccupa, perché temo che possano partirle delle metastasi al polmone. Dopo qualche giorno, tra l’altro, Mariapaola comincia a respirare male ed affannosamente. Non posso che essere preoccupato. Ma la TAC nega che il polmone sia compromesso.
+          </p>
+          <p>
+            A questo punto è lecita la domanda: è Lujanta che si è sbagliata, oppure dobbiamo pensare qualcos’altro? Mi faccio la domanda e rimango in attesa. Spero ovviamente che Lujanta si sia sbagliata, e anche se si fosse sbagliata sui polmoni va detto che comunque ha azzeccato tutto il resto, quindi non perderei la mia fiducia in lei.
+          </p>
+          <p>
+            Mariapaola se ne andrà dopo qualche giorno, spegnendo il respiro. Era quello il problema al polmone che Lujanta vedeva. Ho quindi la conferma, purtroppo, che Lujanta è davvero brava e finora non ha sbagliato un colpo.
+          </p>
+          <p>
+            Quando quindi mi comunica che Mariapaola dopo aver lasciato il corpo era la prima anima che le capitava, che nel momento del trapasso era felice della sua nuova condizione e quasi gongolava, le ho creduto.
+          </p>
+          <p>Perché?</p>
+          <p>Primo: perché ho visto il sorriso sereno di Mariapaola.</p>
+          <p>
+            Secondo: perché so che Mariapaola è così. Lei era e faceva tutto il contrario di quello che era ragionevole aspettarsi, e dunque anche nell’Aldilà fa il contrario di quello che fanno le anime dei defunti normali. Quello che dice, insomma, fa parte del suo carattere.
+          </p>
+          <p>
+            Mi sento sereno, perché sento che tutto il lavoro fatto dalle persone che hanno organizzato gruppi di meditazione e preghiera ha funzionato. Mariapaola se n’è andata serena, con i fratelli accanto come aveva chiesto, sorridendo come raramente accade, e addirittura nella sua nuova condizione non prova lo smarrimento che in genere provano le anime dei defunti. Sono felice per lei.
+          </p>
+          <p>
+            Poi certo — mi domando — ma possibile che ora rimane felice e serena in modo duraturo? Non è nella sua natura — mi dico — e una parte della personalità dei vivi viene conservata anche dal defunto.
+          </p>
+          <p>
+            Infatti Lujanta mi manda oggi un’altra comunicazione (pochi minuti fa). Mariapaola ha cambiato umore ed è un po’ meno tranquilla. Mi faccio una serie di domande.
+          </p>
+          <p>
+            Ho scritto o fatto capire che Mariapaola era soggetta a sbalzi di umore spaventosi, in modo che Lujanta possa aver avuto questa intuizione leggendo questa cosa che ho scritto? No, non l’ho scritto; anzi, a leggere l’articolo che ho scritto su Mariapaola, pare che lei abbia mantenuto solo e sempre un atteggiamento negativo.
+          </p>
+          <p>
+            La verità è invece che non potevo raccontare tutto per non essere noioso, quindi per esigenze “letterarie” nell’articolo “Cronaca di un tumore annunciato”, avevo evitato di dire che talvolta aveva anche dei picchi positivi; il problema è che tali picchi corrispondevano ad una minima parte della giornata o addirittura della settimana. Quindi non c’era bisogno di dirlo. Quindi Lujanta non può averlo tratto dal mio racconto. Lo sbalzo di umore era tipico di Mariapaola.
+          </p>
+          <p>
+            Qui interviene la scienza. Ovvero sia la statistica. Quante possibilità c’erano che Lujanta potesse anticipare i problemi al polmone? Poche, pochissime. Quante possibilità c’erano che capisse molte cose del rapporto tra me e Mariapaola?
+          </p>
+        </div>
+      </section>
 
-            <p>
-              Con gentilezza mi ha chiesto l’amicizia, con cortesia mi ha posto alcune domande, a cui sono stato
-              lietissimo di rispondere, riconoscendo in lei genuina curiosità intellettuale e apertura mentale,
-              soprattutto dato che sul Catarismo nel corso dei secoli sono state volutamente e programmaticamente
-              sparse bugie e calunnie.
-            </p>
+      <!-- ================= TESTIMONIANZA 2 ================= -->
+      <section class="testimonianza" aria-label="Testimonianza S. B.">
+        <figure class="hero-figure">
+          <img
+            src="/immagini/abbazia-nel-querceto.jpg"
+            style="width: min(560px, 45%);"
+            alt="Immagine associata alla testimonianza S. B."
+            loading="lazy"
+          />
+          <figcaption>
+            Abtei im Eichwald — Abbazia nel Querceto (1809-1810), Caspar David Friedrich (1774-1840)
+            Alte Nationalgalerie, Berlino sbm.museum
+          </figcaption>
+        </figure>
 
-            <p>
-              Lujanta si è mostrata aperta, “in sintonia”, cortese, comunicativa, empatica.
-            </p>
+        <h2 class="sottotitolo">Testimonianza S. B.</h2>
 
-            <p>
-              Sulla mia bacheca di Facebook pubblico molte cose sui miei interessi di tutti i tipi, cose anche che non
-              necessariamente condivido, ma di cui sono curioso; ma raramente pubblico cose personali.
-              Lei non mi ha fatto particolari domande riguardo alla mia vita privata, né io riguardo alla sua;
-              si è sviluppata simpatia reciproca, sintonia.
-            </p>
+        <div class="content">
+          <p>
+            Lujanta è entrata nella mia vita con tatto, eleganza, simpatia e “in punta di piedi” il 16 dicembre del 2013.
+            Ci siamo incontrati in un gruppo di discussione virtuale sul Catarismo, argomento di cui mi occupo per
+            interesse personale (e, in parte, professionale) da diversi anni.
+          </p>
 
-            <p>
-              L’11 dicembre del 2014, sempre con tatto, eleganza, cura e signorilità di altri tempi, Lujanta mi ha
-              cambiato la vita. Mi ha scritto parlandomi di un sogno che aveva avuto la notte precedente.
-            </p>
+          <p>
+            Con gentilezza mi ha chiesto l’amicizia, con cortesia mi ha posto alcune domande, a cui sono stato
+            lietissimo di rispondere, riconoscendo in lei genuina curiosità intellettuale e apertura mentale,
+            soprattutto dato che sul Catarismo nel corso dei secoli sono state volutamente e programmaticamente
+            sparse bugie e calunnie.
+          </p>
 
-            <p>
-              In quel sogno c’ero io e, insieme a lei, che mi guardava, ma senza che io potessi vederla o percepirne
-              la presenza, c’era una donna di una certa età. Ha descritto in dettaglio cosa stavo facendo io,
-              in modo molto specifico; si trattava di una situazione e di circostanze inusuali.
-            </p>
+          <p>
+            Lujanta si è mostrata aperta, “in sintonia”, cortese, comunicativa, empatica.
+          </p>
 
-            <p>
-              La persona che aveva descritto come presente insieme a lei era mia madre; mia madre com’era da viva,
-              e come può apparire nella dimensione dell’eternità, sempre presente, solo separata dalla nostra realtà
-              incarnata “da un velo”.
-            </p>
+          <p>
+            Sulla mia bacheca di Facebook pubblico molte cose sui miei interessi di tutti i tipi, cose anche che non
+            necessariamente condivido, ma di cui sono curioso; ma raramente pubblico cose personali.
+            Lei non mi ha fatto particolari domande riguardo alla mia vita privata, né io riguardo alla sua;
+            si è sviluppata simpatia reciproca, sintonia.
+          </p>
 
-            <p>
-              Lujanta sapeva che io mi definivo agnostico all’epoca. Non mi ha imposto nulla, ma ha proposto fatti e
-              pensieri; stava a me interpretarli e, eventualmente, decidere.
-            </p>
+          <p>
+            L’11 dicembre del 2014, sempre con tatto, eleganza, cura e signorilità di altri tempi, Lujanta mi ha
+            cambiato la vita. Mi ha scritto parlandomi di un sogno che aveva avuto la notte precedente.
+          </p>
 
-            <p>
-              Nei giorni seguenti sono arrivate molte altre comunicazioni: parole ben precise, definite, particolari,
-              che solo mia madre aveva usato in vita e che nessuno avrebbe potuto conoscere.
-            </p>
+          <p>
+            In quel sogno c’ero io e, insieme a lei, che mi guardava, ma senza che io potessi vederla o percepirne
+            la presenza, c’era una donna di una certa età. Ha descritto in dettaglio cosa stavo facendo io,
+            in modo molto specifico; si trattava di una situazione e di circostanze inusuali.
+          </p>
 
-            <p>
-              Lujanta è sensitiva. Come spiega lei stessa, ha avuto accesso a strumenti che sono di ciascuno di noi,
-              potenzialmente.
-            </p>
+          <p>
+            La persona che aveva descritto come presente insieme a lei era mia madre; mia madre com’era da viva,
+            e come può apparire nella dimensione dell’eternità, sempre presente, solo separata dalla nostra realtà
+            incarnata “da un velo”.
+          </p>
 
-            <p>
-              Grazie ai suoi messaggi, la vita ha un “sapore” e “colori” diversi. Tutto diventa relativo quando si ha
-              consapevolezza che la vita è una ed eterna: quella dell’anima.
-            </p>
+          <p>
+            Lujanta sapeva che io mi definivo agnostico all’epoca. Non mi ha imposto nulla, ma ha proposto fatti e
+            pensieri; stava a me interpretarli e, eventualmente, decidere.
+          </p>
 
-            <p class="firma">S. B.</p>
-          </div>
-        </section>
+          <p>
+            Nei giorni seguenti sono arrivate molte altre comunicazioni: parole ben precise, definite, particolari,
+            che solo mia madre aveva usato in vita e che nessuno avrebbe potuto conoscere.
+          </p>
 
-        <!-- 👉 Le prossime testimonianze vanno aggiunte qui sotto -->
-      </article>
-    </main>
-  </body>
-</html>
+          <p>
+            Lujanta è sensitiva. Come spiega lei stessa, ha avuto accesso a strumenti che sono di ciascuno di noi,
+            potenzialmente.
+          </p>
+
+          <p>
+            Grazie ai suoi messaggi, la vita ha un “sapore” e “colori” diversi. Tutto diventa relativo quando si ha
+            consapevolezza che la vita è una ed eterna: quella dell’anima.
+          </p>
+
+          <p class="firma">S. B.</p>
+        </div>
+      </section>
+
+      <!-- 👉 Le prossime testimonianze vanno aggiunte qui sotto -->
+    </article>
+  </main>
+</BaseLayout>

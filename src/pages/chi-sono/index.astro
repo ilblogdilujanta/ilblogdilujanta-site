@@ -1,211 +1,155 @@
 ---
+import BaseLayout from "../../layouts/BaseLayout.astro";
 ---
-<!doctype html>
-<html lang="it">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Chi sono</title>
 
-    <style is:global>
-      :root{
-        --ink:#2c241c;
-        --green:#0d8460;
+<BaseLayout title="Chi sono">
+  <style is:global>
+    :root{
+      --ink:#2c241c;
+      --green:#0d8460;
 
-        --paper1:#efe1c5;
-        --paper2:#e2caa6;
-        --paper3:#d8bc93;
-      }
+      --paper1:#efe1c5;
+      --paper2:#e2caa6;
+      --paper3:#d8bc93;
+    }
 
-      body{
-        margin:0;
-        min-height:100vh;
-        background: var(--green);
-        font-family:
-          "Baskerville Old Face",
-          "Baskerville",
-          "Libre Baskerville",
-          Georgia,
-          "Times New Roman",
-          serif;
-        color:var(--ink);
-      }
+    body{
+      margin:0;
+      min-height:100vh;
+      background: var(--green);
+      font-family:
+        "Baskerville Old Face",
+        "Baskerville",
+        "Libre Baskerville",
+        Georgia,
+        "Times New Roman",
+        serif;
+      color:var(--ink);
+    }
 
-      /* ===== MENU (come le altre pagine) ===== */
-      .topnav{
-        position: sticky;
-        top: 0;
-        z-index: 50;
+    main{
+      display:flex;
+      justify-content:center;
+      padding:32px 14px;
+    }
 
-        display:flex;
-        gap:18px;
-        justify-content:center;
-        align-items:center;
+    .paper{
+      max-width:980px;
+      width:100%;
+      padding:60px;
 
-        padding:14px 14px;
-        background: rgba(26, 20, 16, 0.35);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        border-bottom: 1px solid rgba(255,255,255,0.10);
-      }
+      background:
+        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
 
-      .topnav a{
-        color: rgba(255,245,230,0.92);
-        text-decoration:none;
-        font-size:16px;
-        padding:6px 4px;
-        border-bottom:1px solid transparent;
-      }
+      border-radius:6px;
+      box-shadow:0 18px 60px rgba(0,0,0,0.55);
+    }
 
-      .topnav a:hover{ border-bottom-color: rgba(255,245,230,0.65); }
-      .topnav a[aria-current="page"]{ border-bottom-color: rgba(255,245,230,0.95); }
+    h1{
+      text-align:center;
+      font-size:44px;
+      font-weight:400;
+      margin:0 0 26px;
+      letter-spacing:0.2px;
+    }
 
-      @media (max-width:760px){
-        .topnav{ gap:12px; flex-wrap:wrap; }
-      }
+    .copy{
+      font-size:20px;
+      line-height:1.62;
+    }
 
-      main{
-        display:flex;
-        justify-content:center;
-        padding:32px 14px;
-      }
+    .copy p{
+      margin:0 0 14px;
+    }
 
-      .paper{
-        max-width:980px;
-        width:100%;
-        padding:60px;
+    .copy hr{
+      border:0;
+      border-top:1px solid rgba(44,36,28,0.22);
+      margin:28px 0;
+    }
 
-        background:
-          radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
-          linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
+    .closing{
+      text-align:center;
+      margin-top:18px;
+    }
 
-        border-radius:6px;
-        box-shadow:0 18px 60px rgba(0,0,0,0.55);
-      }
+    @media (max-width:720px){
+      .paper{ padding:42px 26px; }
+      h1{ font-size:38px; }
+    }
 
-      h1{
-        text-align:center;
-        font-size:44px;
-        font-weight:400;
-        margin:0 0 26px;
-        letter-spacing:0.2px;
-      }
+    .firma-sep{
+      width: 150px;
+      height: 1px;
+      margin: 18px auto 28px auto;
+      background-color: rgb(41, 11, 11);
+      border: none;
+    }
+  </style>
 
+  <main>
+    <article class="paper">
+      <h1>Chi sono</h1>
 
+      <div class="copy">
+        <p>
+          Si narra che un tempo esistesse una popolazione leggendaria, quella dei Fanes, che vide la nascita di due gemelle: Dolasilla e Lujanta. La prima, la più conosciuta, è la guerriera che difenderà il suo popolo fino alla morte. La gemella, Lujanta, invece, fin dalla nascita viene scambiata con le marmotte e trascorrerà la sua vita accolta dalle profondità della terra. Al di là della narrazione letteraria, qualcosa mi ha sempre condotto verso colei che non è conosciuta, verso colei il cui nome, in ladino, significa luminosa, pur avendo vissuto tutta la sua esistenza nel grembo oscuro della roccia, poiché Figlia della profondità della Montagna. Lujanta appare all'inizio e alla fine della storia, come due punti agli antipodi che delimitano lo spazio ideale per tracciare un cerchio: quello della Vita.
+        </p>
 
+        <p>
+          La Lujanta di questo blog nasce, in questa esistenza, il 2 novembre 1968. Fin da bambina manifesta una predisposizione peculiare per la riflessione e l’introspezione, tratti che emergono già nei primi scritti composti sui banchi della scuola primaria. Proprio questa inclinazione mi porta presto a sviluppare un amore profondo: quello per la conoscenza e la cultura, intese come un patrimonio inestinguibile a cui possiamo attingere a piene mani ogni giorno. La cultura per me è l’espressione dell’Essere Umano che, attraverso la sua creazione, diventa il tramite del sé e del fremito interiore del mondo. Tra le arti, amo particolarmente la pittura, con una predilezione per quella medievale e rinascimentale. Mi tocca profondamente la pittura esoterica di Albrecht Dürer, così come i contrasti drammatici di rossi e neri nelle opere di Caravaggio mi suscitano un grande apprezzamento. Infine, le tonalità vivaci della pittura impressionista di Armand Guillaumin evocano in me un forte coinvolgimento emotivo. Amo molto il teatro, a differenza del cinema. L'attore teatrale si rinnova in ogni pièce, ed è proprio attraverso questo continuo rinnovamento interiore che, salendo sul palco, riesce a comunicare profondamente con il pubblico. La musica, anch’essa, ha sempre avuto un ruolo fondamentale nella mia vita: dalla classica, con Bach in primis, alla musica celtica e folk.
+        </p>
 
+        <p>
+          La lettura fa parte di me sin da bambina, quando il più bel regalo, allora come oggi, era ed è un libro. La scrittura è sempre stata la mia seconda passione. Un testo può essere letto e riletto, immortalando pensieri e parole che non solo rendono consapevole chi scrive, ma possono anche essere spunto di riflessione, offrire nuove visioni e creare quel dialogo che, in fondo, è fondamentale per aprire la mente e aprirsi agli altri.
+        </p>
 
-      .copy{
-        font-size:20px;
-        line-height:1.62;
-      }
+        <p>
+          Di contro, ciò che non ho mai amato è la grettezza, nei modi come nei dialoghi, l’ottusità dei concetti, i giudizi gratuiti e ogni forma di imposizione, anche quando si presenta in modo sottile. Detesto chi non sa mettersi in discussione, chi si arrocca nelle proprie certezze e rifiuta l’apertura necessaria a un incontro autentico. Amo chi pensa diversamente da me, perché mi costringe a muovermi, a interrogarmi, a spostare il punto di vista. Questo continuo esercizio di relazione è una delle costanti della mia vita: con me stessa, con gli altri e con ciò che mi circonda. È uno dei fulcri dell’esistenza, senza il quale credo non possa esprimere appieno il suo valore.
+        </p>
 
-      .copy p{
-        margin:0 0 14px;
-      }
+        <p>
+          Questo percorso ha avuto come primo terreno me stessa. Ci fu un momento in cui, in questo “Spazio Sacro” che è la Vita, emerse un nuovo aspetto del mio essere con cui dovetti fare i conti, non senza difficoltà. Circa due decenni fa, mi ritrovai, da un giorno all’altro, in punto di morte. Fra lo stupore generale, invece, riaprii gli occhi e mi ripresi. Da quel momento iniziò quella che io, con ironia, definisco la mia “vita 2.0”. Oltre i cinque sensi comunemente usati, mi resi conto di aver sviluppato qualcosa di più. Riscoprii ciò che oggi viene definito sensitività, ma che io preferisco chiamare semplicemente una sensibilità più profonda.
+        </p>
 
-      .copy hr{
-        border:0;
-        border-top:1px solid rgba(44,36,28,0.22);
-        margin:28px 0;
-      }
+        <p>
+          Vorrei sfatare un mito: non ho mai considerato questa sensibilità un dono, perché, in mezzo a mille incertezze, ho una certezza: le facoltà psichiche appartengono a tutti e possono essere sviluppate. Siamo stati culturalmente distaccati dal percepire, capacità peculiare dell'essere umano, che nei secoli è stata prima perseguitata e poi spesso ridicolizzata. Chi ha voluto mantenere la Donna e l'Uomo in una condizione frammentata rispetto al proprio Essere ci ha inculcato l'idea che esista solo ciò che è visibile, quando in realtà il visibile rappresenta solo una minuscola parte del Tutto. Fortunatamente, la fisica quantistica e alcuni ricercatori seri ci stanno documentando che siamo molto più completi di quanto siamo stati abituati a pensare.
+        </p>
 
-      .closing{
-        text-align:center;
-        margin-top:18px;
-      }
+        <p>
+          Così iniziai a vedere oltre ciò che è comunemente visibile, a udire oltre ciò che è abituale, e a percepire eventi che non avrei potuto conoscere. Ho dovuto imparare a riconoscere, valutare, ascoltare e discernere, ma soprattutto a fare silenzio dentro di me. Ho imparato a mettere da parte le acquisizioni culturali e sociali della mente, per accogliere qualcosa che, latente in me, aveva trovato la via per manifestarsi. In seguito sono arrivati il Dharma, la Meditazione e il Reiki, che sono diventati fondamenti della mia vita, così come l'amore e il legame profondo con la Natura e i cicli legati ad essa e alla Terra. Questo legame mi porta, appena possibile, a camminare specialmente in montagna, dove il silenzio unico dei monti è la più alta forma di comunicazione che la Natura possa offrirci per entrare in contatto con noi stessi.
+        </p>
 
-      @media (max-width:720px){
-        .paper{ padding:42px 26px; }
-        h1{ font-size:38px; }
-      }
+        <p>
+          Attraverso il sentire ho dovuto imparare un rispetto più profondo: per ciò che percepisco, ma anche per chi ho davanti, nei suoi pensieri e sentimenti. Ho imparato ad affiancare ciò che c'è di più sacro nella Vita, l'Esperienza, e a lasciare che ognuno faccia le proprie.
+        </p>
 
-      .firma-sep {
-  width: 150px;
-  height: 1px;
-  margin: 18px 0 28px 0;
-  background-color: rgb(41, 11, 11);
-  border: none;
-}
+        <p>
+          Se dovessi inscrivere un quadrato, simbolo della natura umana e della fase terrena e fisica di questa esistenza, all'interno della circolarità della Vita, intesa nel suo senso più ampio e non limitata a questa dimensione, identificherei quattro punti cardine. Questi riferimenti, che nel tempo sono diventati ricordo e consapevolezza, rappresentano i miei interessi principali: l'Antico Egitto, l'Eresia Catara, le Culture originarie politeiste dell'Antica Europa con particolare riguardo alle Tradizioni Celtiche di matrice celto-germanica, e infine il Tibet. A prima vista, queste coordinate possono sembrare distanti tra loro, ma lo sono solo per l'apparente divisione del Tempo.
+        </p>
 
-    </style>
-  </head>
+        <p>
+          Questo blog nasce così, non solo per portarvi attraverso le mie ricerche, ma anche per condurvi nei miei ricordi, in reminiscenze sopite e risvegliate, in contatti attraverso storie, narrazioni e riflessioni, che avranno l’intento di offrirvi spunti e di invogliarvi all’ascolto di voi stessi, all’osservazione, al riconoscervi nella giusta misura e nella vostra infinità immensità oltre le apparenze ed i cliché.
+        </p>
 
-  <body>
-    <nav class="topnav" aria-label="Menu principale">
-      <a href="/inizio-da-qui">Inizia da qui</a>
-      <a href="/sentieri">Sentieri di lettura</a>
-      <a href="/articoli">Articoli</a>
-      <a href="/intenti">Intenti del Blog</a>
-      <a href="/chi-sono" aria-current="page">Chi sono</a>
-      <a href="/testimonianze">Testimonianze</a>
-      <a href="/">Home</a>
-    </nav>
+        <p>
+          Nella sezione Testimonianze troverete due brani di coloro che erano per me dei perfetti sconosciuti, e che dopo la condivisione di miei “sguardi” su quello che io amo definire “infinito presente”, hanno scelto di omaggiarmi con loro scritti. Del secondo troverete solo le iniziali per motivi di privacy, mentre il primo, blogger e docente universitario, ha inserito l’articolo nel suo blog.
+        </p>
 
-    <main>
-      <article class="paper">
-        <h1>Chi sono</h1>
-
-        <div class="copy">
-          <p>
-            Si narra che un tempo esistesse una popolazione leggendaria, quella dei Fanes, che vide la nascita di due gemelle: Dolasilla e Lujanta. La prima, la più conosciuta, è la guerriera che difenderà il suo popolo fino alla morte. La gemella, Lujanta, invece, fin dalla nascita viene scambiata con le marmotte e trascorrerà la sua vita accolta dalle profondità della terra. Al di là della narrazione letteraria, qualcosa mi ha sempre condotto verso colei che non è conosciuta, verso colei il cui nome, in ladino, significa luminosa, pur avendo vissuto tutta la sua esistenza nel grembo oscuro della roccia, poiché Figlia della profondità della Montagna. Lujanta appare all'inizio e alla fine della storia, come due punti agli antipodi che delimitano lo spazio ideale per tracciare un cerchio: quello della Vita.
-          </p>
-
-          <p>
-            La Lujanta di questo blog nasce, in questa esistenza, il 2 novembre 1968. Fin da bambina manifesta una predisposizione peculiare per la riflessione e l’introspezione, tratti che emergono già nei primi scritti composti sui banchi della scuola primaria. Proprio questa inclinazione mi porta presto a sviluppare un amore profondo: quello per la conoscenza e la cultura, intese come un patrimonio inestinguibile a cui possiamo attingere a piene mani ogni giorno. La cultura per me è l’espressione dell’Essere Umano che, attraverso la sua creazione, diventa il tramite del sé e del fremito interiore del mondo. Tra le arti, amo particolarmente la pittura, con una predilezione per quella medievale e rinascimentale. Mi tocca profondamente la pittura esoterica di Albrecht Dürer, così come i contrasti drammatici di rossi e neri nelle opere di Caravaggio mi suscitano un grande apprezzamento. Infine, le tonalità vivaci della pittura impressionista di Armand Guillaumin evocano in me un forte coinvolgimento emotivo. Amo molto il teatro, a differenza del cinema. L'attore teatrale si rinnova in ogni pièce, ed è proprio attraverso questo continuo rinnovamento interiore che, salendo sul palco, riesce a comunicare profondamente con il pubblico. La musica, anch’essa, ha sempre avuto un ruolo fondamentale nella mia vita: dalla classica, con Bach in primis, alla musica celtica e folk.
-          </p>
-
-          <p>
-            La lettura fa parte di me sin da bambina, quando il più bel regalo, allora come oggi, era ed è un libro. La scrittura è sempre stata la mia seconda passione. Un testo può essere letto e riletto, immortalando pensieri e parole che non solo rendono consapevole chi scrive, ma possono anche essere spunto di riflessione, offrire nuove visioni e creare quel dialogo che, in fondo, è fondamentale per aprire la mente e aprirsi agli altri.
-          </p>
-
-          <p>
-            Di contro, ciò che non ho mai amato è la grettezza, nei modi come nei dialoghi, l’ottusità dei concetti, i giudizi gratuiti e ogni forma di imposizione, anche quando si presenta in modo sottile. Detesto chi non sa mettersi in discussione, chi si arrocca nelle proprie certezze e rifiuta l’apertura necessaria a un incontro autentico. Amo chi pensa diversamente da me, perché mi costringe a muovermi, a interrogarmi, a spostare il punto di vista. Questo continuo esercizio di relazione è una delle costanti della mia vita: con me stessa, con gli altri e con ciò che mi circonda. È uno dei fulcri dell’esistenza, senza il quale credo non possa esprimere appieno il suo valore.
-          </p>
-
-          <p>
-            Questo percorso ha avuto come primo terreno me stessa. Ci fu un momento in cui, in questo “Spazio Sacro” che è la Vita, emerse un nuovo aspetto del mio essere con cui dovetti fare i conti, non senza difficoltà. Circa due decenni fa, mi ritrovai, da un giorno all’altro, in punto di morte. Fra lo stupore generale, invece, riaprii gli occhi e mi ripresi. Da quel momento iniziò quella che io, con ironia, definisco la mia “vita 2.0”. Oltre i cinque sensi comunemente usati, mi resi conto di aver sviluppato qualcosa di più. Riscoprii ciò che oggi viene definito sensitività, ma che io preferisco chiamare semplicemente una sensibilità più profonda.
-          </p>
-
-          <p>
-            Vorrei sfatare un mito: non ho mai considerato questa sensibilità un dono, perché, in mezzo a mille incertezze, ho una certezza: le facoltà psichiche appartengono a tutti e possono essere sviluppate. Siamo stati culturalmente distaccati dal percepire, capacità peculiare dell'essere umano, che nei secoli è stata prima perseguitata e poi spesso ridicolizzata. Chi ha voluto mantenere la Donna e l'Uomo in una condizione frammentata rispetto al proprio Essere ci ha inculcato l'idea che esista solo ciò che è visibile, quando in realtà il visibile rappresenta solo una minuscola parte del Tutto. Fortunatamente, la fisica quantistica e alcuni ricercatori seri ci stanno documentando che siamo molto più completi di quanto siamo stati abituati a pensare.
-          </p>
-
-          <p>
-            Così iniziai a vedere oltre ciò che è comunemente visibile, a udire oltre ciò che è abituale, e a percepire eventi che non avrei potuto conoscere. Ho dovuto imparare a riconoscere, valutare, ascoltare e discernere, ma soprattutto a fare silenzio dentro di me. Ho imparato a mettere da parte le acquisizioni culturali e sociali della mente, per accogliere qualcosa che, latente in me, aveva trovato la via per manifestarsi. In seguito sono arrivati il Dharma, la Meditazione e il Reiki, che sono diventati fondamenti della mia vita, così come l'amore e il legame profondo con la Natura e i cicli legati ad essa e alla Terra. Questo legame mi porta, appena possibile, a camminare specialmente in montagna, dove il silenzio unico dei monti è la più alta forma di comunicazione che la Natura possa offrirci per entrare in contatto con noi stessi.
-          </p>
-
-          <p>
-            Attraverso il sentire ho dovuto imparare un rispetto più profondo: per ciò che percepisco, ma anche per chi ho davanti, nei suoi pensieri e sentimenti. Ho imparato ad affiancare ciò che c'è di più sacro nella Vita, l'Esperienza, e a lasciare che ognuno faccia le proprie.
-          </p>
-
-          <p>
-            Se dovessi inscrivere un quadrato, simbolo della natura umana e della fase terrena e fisica di questa esistenza, all'interno della circolarità della Vita, intesa nel suo senso più ampio e non limitata a questa dimensione, identificherei quattro punti cardine. Questi riferimenti, che nel tempo sono diventati ricordo e consapevolezza, rappresentano i miei interessi principali: l'Antico Egitto, l'Eresia Catara, le Culture originarie politeiste dell'Antica Europa con particolare riguardo alle Tradizioni Celtiche di matrice celto-germanica, e infine il Tibet. A prima vista, queste coordinate possono sembrare distanti tra loro, ma lo sono solo per l'apparente divisione del Tempo.
-          </p>
-
-          <p>
-            Questo blog nasce così, non solo per portarvi attraverso le mie ricerche, ma anche per condurvi nei miei ricordi, in reminiscenze sopite e risvegliate, in contatti attraverso storie, narrazioni e riflessioni, che avranno l’intento di offrirvi spunti e di invogliarvi all’ascolto di voi stessi, all’osservazione, al riconoscervi nella giusta misura e nella vostra infinità immensità oltre le apparenze ed i cliché.
-          </p>
-
-          <p>
-            Nella sezione Testimonianze troverete due brani di coloro che erano per me dei perfetti sconosciuti, e che dopo la condivisione di miei “sguardi” su quello che io amo definire “infinito presente”, hanno scelto di omaggiarmi con loro scritti. Del secondo troverete solo le iniziali per motivi di privacy, mentre il primo, blogger e docente universitario, ha inserito l’articolo nel suo blog.
-          </p>
-
-          <p class="closing">
-           <p class="firma">
- Grazie della lettura.<br />
+        <div class="closing">
+          <p class="firma">
+            Grazie della lettura.<br />
             Lujanta
           </p>
 
           <hr class="firma-sep" />
 
-
-
           <p>
             I lavori di ricerca presenti nel sito saranno progressivamente condivisi su Academia.edu con il mio nome completo.
           </p>
         </div>
-      </article>
-    </main>
-  </body>
-</html>
+      </div>
+    </article>
+  </main>
+</BaseLayout>

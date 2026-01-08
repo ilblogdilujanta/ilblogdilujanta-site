@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 
 type Articolo = {
   slug: string;
@@ -23,9 +24,9 @@ const slugify = (s: string) =>
     .replace(/-+/g, "-");
 
 // SENTIERI (unici)
-const sentieri = [
-  ...new Set(articoli.flatMap((a) => a.data.sentieri ?? [])),
-].sort((a, b) => a.localeCompare(b, "it"));
+const sentieri = [...new Set(articoli.flatMap((a) => a.data.sentieri ?? []))].sort((a, b) =>
+  a.localeCompare(b, "it"),
+);
 
 // ARCHIVIO PER ANNO
 const archivioPerAnno: Record<number, Articolo[]> = {};
@@ -33,16 +34,14 @@ for (const a of articoli) {
   const anno = a.data.date.getFullYear();
   (archivioPerAnno[anno] ??= []).push(a);
 }
-const anni = Object.keys(archivioPerAnno).map(Number).sort((a, b) => b - a);
+const anni = Object.keys(archivioPerAnno)
+  .map(Number)
+  .sort((a, b) => b - a);
+
+const titoloPagina = "Sentieri di Lettura";
 ---
 
-<!doctype html>
-<html lang="it">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sentieri di Lettura</title>
-
+<BaseLayout title={titoloPagina}>
   <style is:global>
     :root{
       --ink:#2c241c;
@@ -68,35 +67,6 @@ const anni = Object.keys(archivioPerAnno).map(Number).sort((a, b) => b - a);
 
       color:var(--ink);
     }
-
-    /* MENU PRINCIPALE */
-    .topnav{
-      position: sticky;
-      top: 0;
-      z-index: 50;
-
-      display:flex;
-      gap:18px;
-      justify-content:center;
-      align-items:center;
-
-      padding:14px 14px;
-      background: rgba(26, 20, 16, 0.35);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-    }
-
-    .topnav a{
-      color: rgba(255,245,230,0.92);
-      text-decoration:none;
-      font-size:16px;
-      letter-spacing:0.2px;
-      padding:6px 4px;
-      border-bottom:1px solid transparent;
-    }
-    .topnav a:hover{ border-bottom-color: rgba(255,245,230,0.65); }
-    .topnav a[aria-current="page"]{ border-bottom-color: rgba(255,245,230,0.95); }
 
     main{
       display:flex;
@@ -148,7 +118,7 @@ const anni = Object.keys(archivioPerAnno).map(Number).sort((a, b) => b - a);
 
     .sentiero{
       padding:16px 14px;
-       font-size:22px;   /* ← prova 18px / 20px / 22px */
+      font-size:22px;
       border:1px solid rgba(44,36,28,0.25);
       border-radius:4px;
       text-align:center;
@@ -203,21 +173,8 @@ const anni = Object.keys(archivioPerAnno).map(Number).sort((a, b) => b - a);
     @media (max-width:720px){
       .paper{ padding:42px 26px; }
       h1{ font-size:38px; }
-      .topnav{ gap:12px; flex-wrap:wrap; }
     }
   </style>
-</head>
-
-<body>
-  <nav class="topnav" aria-label="Menu principale">
-    <a href="/inizio-da-qui">Inizia da qui</a>
-    <a href="/sentieri" aria-current="page">Sentieri di lettura</a>
-    <a href="/articoli">Articoli</a>
-    <a href="/intenti">Intenti del Blog</a>
-    <a href="/chi-sono">Chi sono</a>
-    <a href="/testimonianze">Testimonianze</a>
-    <a href="/">Home</a>
-  </nav>
 
   <main>
     <article class="paper">
@@ -233,7 +190,6 @@ const anni = Object.keys(archivioPerAnno).map(Number).sort((a, b) => b - a);
         </p>
       </div>
 
-      <!-- SENTIERI -->
       {sentieri.length === 0 ? (
         <p style="text-align:center; opacity:0.75;">
           I Sentieri compariranno con l’arrivo dei primi articoli.
@@ -248,7 +204,6 @@ const anni = Object.keys(archivioPerAnno).map(Number).sort((a, b) => b - a);
         </section>
       )}
 
-      <!-- ARCHIVIO -->
       <h2>Archivio per Anno</h2>
 
       {anni.length === 0 ? (
@@ -278,5 +233,4 @@ const anni = Object.keys(archivioPerAnno).map(Number).sort((a, b) => b - a);
       )}
     </article>
   </main>
-</body>
-</html>
+</BaseLayout>

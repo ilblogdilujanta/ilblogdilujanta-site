@@ -1,5 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 import { slugify } from "../../lib/slugify";
 
 type Articolo = CollectionEntry<"articoli">;
@@ -24,7 +25,10 @@ const { slug } = Astro.params as { slug: string };
 let sentieroNome = slug;
 for (const a of articoli) {
   const found = (a.data.sentieri ?? []).find((s) => slugify(s) === slug);
-  if (found) { sentieroNome = found; break; }
+  if (found) {
+    sentieroNome = found;
+    break;
+  }
 }
 
 const articoliDelSentiero = articoli
@@ -34,15 +38,11 @@ const articoliDelSentiero = articoli
 
 const formatDate = (d: Date) =>
   d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
+
+const pageTitle = `${sentieroNome} — Sentieri di Lettura`;
 ---
 
-<!doctype html>
-<html lang="it">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{sentieroNome} — Sentieri di Lettura</title>
-
+<BaseLayout title={pageTitle}>
   <style is:global>
     :root{
       --ink:#2c241c;
@@ -61,24 +61,6 @@ const formatDate = (d: Date) =>
         Georgia,"Times New Roman",serif;
       color:var(--ink);
     }
-
-    .topnav{
-      position: sticky; top:0; z-index:50;
-      display:flex; gap:18px; justify-content:center; align-items:center;
-      padding:14px 14px;
-      background: rgba(26, 20, 16, 0.35);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-    }
-    .topnav a{
-      color: rgba(255,245,230,0.92);
-      text-decoration:none;
-      font-size:16px;
-      padding:6px 4px;
-      border-bottom:1px solid transparent;
-    }
-    .topnav a:hover{ border-bottom-color: rgba(255,245,230,0.65); }
 
     main{ display:flex; justify-content:center; padding:32px 14px; }
 
@@ -110,21 +92,8 @@ const formatDate = (d: Date) =>
     @media (max-width:720px){
       .paper{ padding:42px 26px; }
       h1{ font-size:34px; }
-      .topnav{ gap:12px; flex-wrap:wrap; }
     }
   </style>
-</head>
-
-<body>
-  <nav class="topnav" aria-label="Menu principale">
-    <a href="/inizio-da-qui">Inizia da qui</a>
-    <a href="/sentieri">Sentieri di lettura</a>
-    <a href="/articoli">Articoli</a>
-    <a href="/intenti">Intenti del Blog</a>
-    <a href="/chi-sono">Chi sono</a>
-    <a href="/testimonianze">Testimonianze</a>
-    <a href="/">Home</a>
-  </nav>
 
   <main>
     <article class="paper">
@@ -147,5 +116,4 @@ const formatDate = (d: Date) =>
       )}
     </article>
   </main>
-</body>
-</html>
+</BaseLayout>

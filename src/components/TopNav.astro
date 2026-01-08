@@ -1,0 +1,103 @@
+---
+const path = Astro.url.pathname;
+
+const isActive = (href: string) => {
+  if (href === "/") return path === "/";
+  return path === href || path.startsWith(href + "/");
+};
+
+const links = [
+  { href: "/inizio-da-qui", label: "Inizia da qui" },
+  { href: "/sentieri", label: "Sentieri di lettura" },
+  { href: "/articoli", label: "Articoli" },
+  { href: "/intenti", label: "Intenti del Blog" },
+  { href: "/testimonianze", label: "Testimonianze" },
+  { href: "/chi-sono", label: "Chi sono" },
+  { href: "/", label: "Home" },
+];
+---
+
+<nav class="topnav" aria-label="Menu principale">
+  <div class="nav-inner">
+    <div class="nav-left">
+      {links.map((l) => (
+        <a href={l.href} aria-current={isActive(l.href) ? "page" : undefined}>
+          {l.label}
+        </a>
+      ))}
+    </div>
+
+    <div class="nav-right" aria-label="Traduzione">
+      <div class="gtranslate_wrapper"></div>
+    </div>
+  </div>
+</nav>
+
+<style is:global>
+  .topnav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding: 14px 14px;
+    background: rgba(26, 20, 16, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* contenitore centrato come prima */
+  .nav-inner{
+    width: min(980px, 92vw);
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .nav-left{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items:center;
+    justify-content: center;
+  }
+
+  .topnav a{
+    color: rgba(255, 245, 230, 0.92);
+    text-decoration: none;
+    font-size: 16px;
+    padding: 6px 4px;
+    border-bottom: 1px solid transparent;
+    white-space: nowrap;
+    letter-spacing: 0.2px;
+  }
+
+  .topnav a:hover{
+    border-bottom-color: rgba(255, 245, 230, 0.65);
+  }
+
+  .topnav a[aria-current="page"]{
+    border-bottom-color: rgba(255, 245, 230, 0.95);
+  }
+
+  .nav-right{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    min-width: 120px;
+  }
+
+  @media (max-width: 760px){
+    .nav-inner{
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .nav-right{
+      width: 100%;
+      justify-content: center;
+      min-width: auto;
+    }
+  }
+</style>
