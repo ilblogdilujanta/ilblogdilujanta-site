@@ -1,7 +1,16 @@
 ---
+import { getCollection } from "astro:content";
+
 const siteTitle = "Il Blog di Lujanta";
 const tagline =
   "Tradizioni, Folklore e Stregoneria\nnelle Culture alpine e nei loro intrecci europei nel Tempo";
+
+// Prendo tutti gli articoli, ordino dal più recente e tengo i primi 9
+const articoli = (await getCollection("articoli"))
+  .slice()
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const top9 = articoli.slice(0, 9);
 ---
 
 <!doctype html>
@@ -13,13 +22,12 @@ const tagline =
 
     <!-- GTranslate (UNA SOLA VOLTA per pagina) -->
     <script is:inline>
-      // evita errore TS su window.gtranslateSettings
       window.gtranslateSettings = {
         default_language: "it",
         native_language_names: true,
         detect_browser_language: true,
         languages: ["it", "de", "en", "fr"],
-        wrapper_selector: ".gtranslate_wrapper",
+        wrapper_selector: ".gtranslate_wrapper"
       };
     </script>
     <script src="https://cdn.gtranslate.net/widgets/latest/lc.js" defer></script>
@@ -122,7 +130,6 @@ const tagline =
         min-width: 90px;
       }
 
-      /* Il widget a volte spinge: lo rendiamo compatto */
       .gtranslate_wrapper{
         transform: translateY(1px);
       }
@@ -262,12 +269,8 @@ const tagline =
 
       @media (max-width: 480px){
         .hero{ padding-top: 96px; }
-        .topnav{
-          align-items: flex-start;
-        }
-        .nav-right{
-          min-width: auto;
-        }
+        .topnav{ align-items: flex-start; }
+        .nav-right{ min-width: auto; }
       }
     </style>
   </head>
@@ -307,25 +310,20 @@ const tagline =
               <h3></h3>
 
               <div class="pick-grid">
-                <a class="pick" href="/articoli/2-2016-lungo-la-via-dolomiti">
-                  <img class="thumb" src="/immagini/2016/2.2016/2016-valle-casies.jpg" alt="Lungo la Via Dolomiti" />
-                  <p class="t">Lungo la Via Dolomiti</p>
-                  <p class="y">2016</p>
-                </a>
-
-                <a class="pick" href="/articoli/12016-ringraziamenti">
-                  <img class="thumb" src="/immagini/2016/1.2016/2016-tre-cime.jpg" alt="Ringraziamenti" />
-                  <p class="t">Ringraziamenti</p>
-                  <p class="y">2016</p>
-                </a>
-
-                <a class="pick" href="articoli/32016-anagantios-e-il-tempo-celtico-di-febbraio-e-del-fuoco-sacro-di-brigit-la-triplice"><img class="thumb" src="/immagini/2016/3.2016/brigit.jpg" alt="Ringraziamenti" /><p class="t">Anagantios e il Tempo celtico di Febbraio e del Fuoco Sacro di Brigit, la Triplice</p><p class="y">2016</p></a>
-                <a class="pick" href="/articoli/slug-4"><p class="t">Titolo articolo</p><p class="y">2018</p></a>
-                <a class="pick" href="/articoli/slug-5"><p class="t">Titolo articolo</p><p class="y">2019</p></a>
-                <a class="pick" href="/articoli/slug-6"><p class="t">Titolo articolo</p><p class="y">2020</p></a>
-                <a class="pick" href="/articoli/slug-7"><p class="t">Titolo articolo</p><p class="y">2021</p></a>
-                <a class="pick" href="/articoli/slug-8"><p class="t">Titolo articolo</p><p class="y">2022</p></a>
-                <a class="pick" href="/articoli/slug-9"><p class="t">Titolo articolo</p><p class="y">2023</p></a>
+                {top9.map((a) => (
+                  <a class="pick" href={`/articoli/${a.slug}`}>
+                    {a.data.cover && (
+                      <img
+                        class="thumb"
+                        src={a.data.cover}
+                        alt={a.data.title}
+                        loading="lazy"
+                      />
+                    )}
+                    <p class="t">{a.data.title}</p>
+                    <p class="y">{a.data.date.getFullYear()}</p>
+                  </a>
+                ))}
               </div>
             </div>
 
