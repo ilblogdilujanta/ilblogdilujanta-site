@@ -1,28 +1,30 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
 import { slugify } from "../../lib/slugify";
 
 type Articolo = CollectionEntry<"articoli">;
 
 export async function getStaticPaths() {
   const articoli = await getCollection("articoli");
-  return articoli.map((a) => ({ params: { slug: a.slug } }));
+
+  return articoli.map((a) => ({
+    params: { slug: a.slug.split("/") }, // ✅ IMPORTANTISSIMO per /2016/qualcosa
+  }));
 }
 
 const articoli = await getCollection("articoli");
 
 // Ordine: più recente -> più vecchio
-const ordinati = articoli
-  .slice()
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const ordinati = articoli.slice().sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-const { slug } = Astro.params as { slug: string };
+const slugParam = Astro.params.slug as unknown as string[]; // [...slug] => array
+const slugPath = Array.isArray(slugParam) ? slugParam.join("/") : String(slugParam);
 
-const currentIndex = ordinati.findIndex((a) => a.slug === slug);
+const currentIndex = ordinati.findIndex((a) => a.slug === slugPath);
 const articolo = currentIndex >= 0 ? ordinati[currentIndex] : null;
 
-if (!articolo) throw new Error(`Articolo non trovato: ${slug}`);
+if (!articolo) throw new Error(`Articolo non trovato: ${slugPath}`);
 
 // “Successivo” = più recente (indice - 1)
 const successivo = currentIndex > 0 ? ordinati[currentIndex - 1] : null;
@@ -36,18 +38,14 @@ const formatDate = (d: Date) =>
 
 const sentieri = (articolo.data.sentieri ?? []) as string[];
 
-// (opzionale) cover dal frontmatter del .md: cover: "/immagini/....jpg"
-const cover = (articolo.data as any).cover as string | undefined;
-
-const pageTitle = articolo.data.title;
+// ✅ se vuoi NIENTE cover dentro l’articolo: non renderizzare cover qui.
 ---
 
-<BaseLayout title={pageTitle}>
+<BaseLayout title={articolo.data.title}>
   <style is:global>
     :root {
       --ink: #2c241c;
       --green: #0d8460;
-
       --paper1: #efe1c5;
       --paper2: #e2caa6;
       --paper3: #d8bc93;
@@ -77,11 +75,9 @@ const pageTitle = articolo.data.title;
       max-width: 980px;
       width: 100%;
       padding: 60px;
-
       background:
         radial-gradient(120% 90% at 50% 20%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 55%),
         linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
-
       border-radius: 6px;
       box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
     }
@@ -100,7 +96,6 @@ const pageTitle = articolo.data.title;
       font-size: 18px;
     }
 
-    /* Riga utility sotto data */
     .meta-row {
       display: flex;
       justify-content: center;
@@ -115,9 +110,7 @@ const pageTitle = articolo.data.title;
       border-bottom: 1px solid rgba(44, 36, 28, 0.25);
       opacity: 0.9;
     }
-    .back:hover {
-      border-bottom-color: rgba(44, 36, 28, 0.6);
-    }
+    .back:hover { border-bottom-color: rgba(44, 36, 28, 0.6); }
 
     .tags {
       display: flex;
@@ -136,70 +129,23 @@ const pageTitle = articolo.data.title;
       font-size: 15px;
       opacity: 0.95;
     }
-    .tag:hover {
-      background: rgba(255, 255, 255, 0.38);
-    }
+    .tag:hover { background: rgba(255, 255, 255, 0.38); }
 
-    /* ===== COPERTINA ARTICOLO (dal frontmatter) ===== */
-    .cover {
-      margin: 12px auto 34px;
-      max-width: 900px;
-    }
-
-    .cover img {
-      width: 100%;
-      height: auto;
-      max-height: 62vh;
-      object-fit: cover;
-      display: block;
-      border-radius: 8px;
-      box-shadow: 0 14px 40px rgba(0,0,0,0.18);
-    }
-
-    /* ===== CONTENUTO MARKDOWN ===== */
     .content {
       font-size: 20px;
       line-height: 1.75;
     }
 
-    .content p {
-      margin: 0 0 18px;
-    }
+    .content p { margin: 0 0 18px; }
 
-    .content h2,
-    .content h3 {
+    .content h2, .content h3 {
       font-weight: 400;
       margin: 38px 0 14px;
       line-height: 1.2;
     }
-
     .content h2 { font-size: 30px; }
     .content h3 { font-size: 24px; opacity: 0.95; }
 
-    .content ul,
-    .content ol {
-      margin: 0 0 18px 22px;
-      padding: 0;
-    }
-
-    .content li {
-      margin: 8px 0;
-    }
-
-    .content blockquote {
-      margin: 22px 0;
-      padding: 12px 16px;
-      border-left: 3px solid rgba(44, 36, 28, 0.28);
-      background: rgba(255, 255, 255, 0.18);
-    }
-
-    .content hr {
-      border: 0;
-      border-top: 1px solid rgba(44, 36, 28, 0.22);
-      margin: 28px 0;
-    }
-
-    /* Immagini dentro il markdown: default “media” */
     .content img {
       display: block;
       max-width: 60%;
@@ -208,23 +154,13 @@ const pageTitle = articolo.data.title;
       border-radius: 6px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.18);
     }
+    .content img.img-large { max-width: 85%; }
+    .content img.img-small { max-width: 40%; }
 
-    .content img.img-large { max-width: 85%; margin: 70px auto; }
-    .content img.img-small { max-width: 40%; margin: 60px auto; }
-
-    .content .underline {
-      text-decoration-line: underline;
-      text-decoration-thickness: 2px;
-      text-underline-offset: 0.12em;
-      text-decoration-skip-ink: auto;
-    }
-
-    /* ===== NAV PREV/NEXT ===== */
     .pager {
       margin-top: 42px;
       padding-top: 18px;
       border-top: 1px solid rgba(44, 36, 28, 0.2);
-
       display: flex;
       gap: 14px;
       justify-content: space-between;
@@ -235,20 +171,14 @@ const pageTitle = articolo.data.title;
     .pager a {
       flex: 1;
       min-width: 220px;
-
       text-decoration: none;
       color: var(--ink);
-
       border: 1px solid rgba(44, 36, 28, 0.25);
       border-radius: 6px;
       background: rgba(255, 255, 255, 0.22);
-
       padding: 14px 14px;
     }
-
-    .pager a:hover {
-      background: rgba(255, 255, 255, 0.38);
-    }
+    .pager a:hover { background: rgba(255, 255, 255, 0.38); }
 
     .pager .label {
       font-size: 14px;
@@ -258,16 +188,8 @@ const pageTitle = articolo.data.title;
       align-items: center;
       gap: 8px;
     }
-
-    .pager .title {
-      font-size: 18px;
-      line-height: 1.35;
-    }
-
-    .pager .empty {
-      flex: 1;
-      min-width: 220px;
-    }
+    .pager .title { font-size: 18px; line-height: 1.35; }
+    .pager .empty { flex: 1; min-width: 220px; }
 
     @media (max-width: 720px) {
       .paper { padding: 42px 26px; }
@@ -293,8 +215,6 @@ const pageTitle = articolo.data.title;
           </div>
         )}
       </div>
-
-      
 
       <div class="content">
         <Content />
