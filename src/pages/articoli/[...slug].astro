@@ -8,18 +8,21 @@ type Articolo = CollectionEntry<"articoli">;
 export async function getStaticPaths() {
   const articoli = await getCollection("articoli");
 
+  // ✅ Catch-all in Astro: param deve essere STRINGA (es: "2016/12016-ringraziamenti")
   return articoli.map((a) => ({
-    params: { slug: a.slug.split("/") }, // ✅ IMPORTANTISSIMO per /2016/qualcosa
+    params: { slug: a.slug },
   }));
 }
 
 const articoli = await getCollection("articoli");
 
 // Ordine: più recente -> più vecchio
-const ordinati = articoli.slice().sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const ordinati = articoli
+  .slice()
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-const slugParam = Astro.params.slug as unknown as string[]; // [...slug] => array
-const slugPath = Array.isArray(slugParam) ? slugParam.join("/") : String(slugParam);
+// ✅ [...slug] in Astro arriva come stringa (es: "2016/qualcosa")
+const slugPath = String(Astro.params.slug ?? "");
 
 const currentIndex = ordinati.findIndex((a) => a.slug === slugPath);
 const articolo = currentIndex >= 0 ? ordinati[currentIndex] : null;
@@ -37,8 +40,6 @@ const formatDate = (d: Date) =>
   d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
 
 const sentieri = (articolo.data.sentieri ?? []) as string[];
-
-// ✅ se vuoi NIENTE cover dentro l’articolo: non renderizzare cover qui.
 ---
 
 <BaseLayout title={articolo.data.title}>
