@@ -1,11 +1,13 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
 import { slugify } from "../../lib/slugify";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 
 type Articolo = CollectionEntry<"articoli">;
 
-// Prendo tutti gli articoli e li ordino: più recente -> più vecchio
+const titoloPagina = "Articoli";
+
+// Prendo tutti gli articoli e category: più recente -> più vecchio
 const articoli: Articolo[] = (await getCollection("articoli"))
   .slice()
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
@@ -20,12 +22,15 @@ for (const a of articoli) {
   if (!byYear.has(y)) byYear.set(y, []);
   byYear.get(y)!.push(a);
 }
-
-// Lista anni (desc)
 const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
+
+// (facoltativo) anno preselezionato da querystring ?anno=2016
+const selectedYearParam = Astro.url.searchParams.get("anno");
+const selectedYear = selectedYearParam ? Number(selectedYearParam) : null;
+const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] : anni;
 ---
 
-<BaseLayout title="Articoli">
+<BaseLayout title={titoloPagina}>
   <style is:global>
     :root{
       --ink:#2c241c;
@@ -33,13 +38,12 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
     }
 
     body{
-      margin:0; min-height:100vh; background:var(--bg);
+      margin:0;
+      min-height:100vh;
+      background:var(--bg);
       font-family:"Baskerville Old Face","Baskerville","Libre Baskerville",Georgia,"Times New Roman",serif;
       color:var(--ink);
     }
-
-    /* ⚠️ Il menu (.topnav) adesso è nel BaseLayout.
-       Qui lasciamo solo gli stili della pagina contenuto. */
 
     main{ display:flex; justify-content:center; padding:32px 14px; }
 
@@ -64,6 +68,28 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
       margin:0 0 26px;
       font-size:16px;
       opacity:.85;
+    }
+
+    /* ===== filtro anni ===== */
+    .filters{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin: 0 0 28px;
+    }
+    .filter{
+      text-decoration:none;
+      color:var(--ink);
+      border:1px solid rgba(44,36,28,0.22);
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.18);
+      font-size:14px;
+    }
+    .filter:hover{ background:rgba(255,255,255,0.35); }
+    .filter[aria-current="true"]{
+      background:rgba(255,255,255,0.45);
     }
 
     /* ===== Raggruppamento per anni ===== */
@@ -129,13 +155,31 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
       <h1>Articoli</h1>
       <p class="sub">{articoli.length} articoli</p>
 
+      {/* Filtro anni (link) */}
+      {anni.length > 0 && (
+        <nav class="filters" aria-label="Filtra per anno">
+          <a class="filter" href="/articoli" aria-current={selectedYear === null ? "true" : "false"}>
+            Tutti
+          </a>
+          {anni.map((y) => (
+            <a
+              class="filter"
+              href={`/articoli?anno=${y}`}
+              aria-current={selectedYear === y ? "true" : "false"}
+            >
+              {y}
+            </a>
+          ))}
+        </nav>
+      )}
+
       {articoli.length === 0 ? (
         <p style="text-align:center; opacity:0.8;">
           Gli articoli compariranno qui non appena verranno aggiunti.
         </p>
       ) : (
         <>
-          {anni.map((anno) => (
+          {anniFiltrati.map((anno) => (
             <section aria-label={`Articoli ${anno}`}>
               <h2 class="year">{anno}</h2>
 
