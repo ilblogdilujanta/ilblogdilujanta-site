@@ -1,0 +1,237 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const titoloPagina = "Mappa";
+
+/** ✅ Doggerland: punto “mitico” (puoi spostarlo quando vuoi) */
+const DOGGERLAND = {
+  nome: "Doggerland",
+  lat: 54.5,
+  lng: 2.5,
+};
+
+/** Centro/zoom iniziali (Europa) */
+const INITIAL_VIEW = {
+  lat: 50.5,
+  lng: 10.0,
+  zoom: 4,
+};
+
+const articoli = await getCollection("articoli");
+
+const items = articoli.map((a) => {
+  const luogo = a.data.luogo ?? DOGGERLAND;
+  return {
+    slug: a.slug,
+    title: a.data.title,
+    date: a.data.date,
+    luogo,
+  };
+});
+
+// Raggruppo per luogo.nome (un marker per luogo)
+const gruppi = new Map<
+  string,
+  { luogo: typeof DOGGERLAND; articoli: { slug: string; title: string; date: Date }[] }
+>();
+
+for (const it of items) {
+  const key = it.luogo.nome;
+  if (!gruppi.has(key)) gruppi.set(key, { luogo: it.luogo, articoli: [] });
+  gruppi.get(key)!.articoli.push({ slug: it.slug, title: it.title, date: it.date });
+}
+
+// ordino articoli in ogni popup dal più recente
+for (const g of gruppi.values()) {
+  g.articoli.sort((a, b) => b.date.getTime() - a.date.getTime());
+}
+
+const markerData = Array.from(gruppi.values()).map((g) => ({
+  nome: g.luogo.nome,
+  lat: g.luogo.lat,
+  lng: g.luogo.lng,
+  articoli: g.articoli.map((a) => ({ title: a.title, href: `/articoli/${a.slug}` })),
+}));
+
+// Passo i dati al client in JSON
+const MARKERS_JSON = JSON.stringify(markerData);
+---
+
+<BaseLayout title={titoloPagina}>
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+    slot="head"
+  />
+
+  <style is:global>
+    :root{
+      --ink:#2c241c;
+      --green:#0d8460;
+      --paper1:#efe1c5;
+      --paper2:#e2caa6;
+      --paper3:#d8bc93;
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background: var(--green);
+      font-family:
+        "Baskerville Old Face","Baskerville","Libre Baskerville",
+        Georgia,"Times New Roman",serif;
+      color:var(--ink);
+    }
+
+    main{ display:flex; justify-content:center; padding:32px 14px; }
+
+    .paper{
+      max-width:980px;
+      width:100%;
+      padding:60px;
+      background:
+        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
+      border-radius:6px;
+      box-shadow:0 18px 60px rgba(0,0,0,0.55);
+    }
+
+    h1{
+      text-align:center;
+      font-size:44px;
+      font-weight:400;
+      margin:0 0 16px;
+    }
+
+    .sub{
+      text-align:center;
+      opacity:.85;
+      margin:0 0 26px;
+      line-height:1.6;
+    }
+
+    .map-wrap{
+      border: 1px solid rgba(44,36,28,0.22);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.18);
+      overflow: hidden;
+    }
+
+    #map{
+      height: 560px;
+      width: 100%;
+    }
+
+    /* Popup stile “carta” */
+    .leaflet-popup-content-wrapper{
+      background: rgba(244,241,234,0.98);
+      border: 1px solid rgba(44,36,28,0.22);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.18);
+      border-radius: 10px;
+    }
+
+    .leaflet-popup-content{
+      margin: 12px 14px;
+      font-family: inherit;
+      color: var(--ink);
+      min-width: 240px;
+      max-width: 340px;
+    }
+
+    .popup-title{
+      margin: 0 0 10px;
+      font-size: 18px;
+      font-weight: 400;
+    }
+
+    .popup-list a{
+      display:block;
+      text-decoration:none;
+      color: var(--ink);
+      padding: 6px 0;
+      border-top: 1px solid rgba(44,36,28,0.18);
+    }
+    .popup-list a:first-child{ border-top: none; }
+    .popup-list a:hover{ text-decoration: underline; }
+
+    .hint{
+      padding: 12px 14px;
+      font-size: 15px;
+      opacity: .85;
+      border-top: 1px solid rgba(44,36,28,0.18);
+      background: rgba(255,255,255,0.12);
+    }
+
+    @media (max-width:720px){
+      .paper{ padding:42px 26px; }
+      h1{ font-size:38px; }
+      #map{ height: 440px; }
+    }
+  </style>
+
+  <main>
+    <article class="paper">
+      <h1>Mappa</h1>
+      <p class="sub">
+        Luoghi reali e simbolici: passa sui marker per vedere gli articoli collegati.<br />
+        Se un articolo non ha coordinate, confluisce in <em>Doggerland</em>.
+      </p>
+
+      <div class="map-wrap">
+        <div id="map" aria-label="Mappa degli articoli"></div>
+        <div class="hint">
+          Suggerimento: in Google Maps fai “Cosa c’è qui?” per leggere lat/lng e copiarle nel frontmatter.
+        </div>
+      </div>
+
+      <!-- Leaflet JS -->
+      <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""
+      ></script>
+
+      <script is:inline define:vars={{ MARKERS_JSON, INITIAL_VIEW }}>
+        const markers = JSON.parse(MARKERS_JSON);
+
+        const map = L.map("map", {
+          scrollWheelZoom: true,
+        }).setView([INITIAL_VIEW.lat, INITIAL_VIEW.lng], INITIAL_VIEW.zoom);
+
+        // Tiles (OpenStreetMap)
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 18,
+          attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(map);
+
+        // Marker clustering (opzionale): se un giorno avrai tanti luoghi ravvicinati possiamo aggiungerlo.
+        // Per ora: marker normali.
+
+        markers.forEach((m) => {
+          const html =
+            `<div class="popup-title">${m.nome}</div>` +
+            `<div class="popup-list">` +
+            m.articoli.map((a) => `<a href="${a.href}">${a.title}</a>`).join("") +
+            `</div>`;
+
+          const marker = L.marker([m.lat, m.lng]).addTo(map);
+
+          marker.bindPopup(html, {
+            closeButton: true,
+            autoClose: false,
+            closeOnClick: false,
+            maxWidth: 360,
+          });
+
+          // Hover -> apre popup (desktop)
+          marker.on("mouseover", () => marker.openPopup());
+          marker.on("mouseout", () => marker.closePopup());
+        });
+      </script>
+    </article>
+  </main>
+</BaseLayout>

@@ -6,9 +6,16 @@ const articoli = defineCollection({
     title: z.string(),
     date: z.date(),
     sentieri: z.array(z.string()).optional(),
-    cover: z.string().optional(), // ✅ aggiungi questo
+    cover: z.string().optional(),
+
+    luogo: z
+      .object({
+        nome: z.string(),
+        lat: z.number(),
+        lng: z.number(),
+      })
+      .optional(),
   }),
 });
 
 export const collections = { articoli };
-
