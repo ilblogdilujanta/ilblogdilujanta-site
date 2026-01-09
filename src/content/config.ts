@@ -8,13 +8,10 @@ const articoli = defineCollection({
     sentieri: z.array(z.string()).optional(),
     cover: z.string().optional(),
 
-    luogo: z
-      .object({
-        nome: z.string(),
-        lat: z.number(),
-        lng: z.number(),
-      })
-      .optional(),
+    // ✅ per la mappa
+    luogo: z.string().optional(), // nome “umano” del luogo
+    lat: z.number().optional(),
+    lng: z.number().optional(),
   }),
 });
 

@@ -2,71 +2,103 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
-const titoloPagina = "Mappa";
+const titoloPagina = "Luoghi di Lujanta";
 
-/** ✅ Doggerland: punto “mitico” (puoi spostarlo quando vuoi) */
+// Coordinate "mitiche" Doggerland (circa Mare del Nord)
 const DOGGERLAND = {
-  nome: "Doggerland",
-  lat: 54.5,
-  lng: 2.5,
-};
-
-/** Centro/zoom iniziali (Europa) */
-const INITIAL_VIEW = {
-  lat: 50.5,
-  lng: 10.0,
-  zoom: 4,
+  nome: "Doggerland (terra mitica)",
+  lat: 54.8,
+  lng: 2.2,
 };
 
 const articoli = await getCollection("articoli");
 
-const items = articoli.map((a) => {
-  const luogo = a.data.luogo ?? DOGGERLAND;
-  return {
-    slug: a.slug,
+// Helper: normalizza sentieri
+const safeSentieri = (s?: unknown) => (Array.isArray(s) ? s.filter(Boolean) : []);
+
+// Costruisco punti (luoghi) raggruppando articoli per luogo+coordinate
+type Entry = (typeof articoli)[number];
+
+type Punto = {
+  key: string;
+  nome: string;
+  lat: number;
+  lng: number;
+  articoli: {
+    title: string;
+    slug: string;
+    year: number;
+    sentieri: string[];
+    dateISO: string;
+  }[];
+};
+
+const byKey = new Map<string, Punto>();
+
+for (const a of articoli) {
+  const year = a.data.date?.getFullYear?.() ?? new Date(a.data.date as any).getFullYear();
+
+  // Campi attesi nel frontmatter:
+  // luogo: string
+  // lat: number
+  // lng: number
+  const luogo = (a.data as any).luogo as string | undefined;
+  const lat = (a.data as any).lat as number | undefined;
+  const lng = (a.data as any).lng as number | undefined;
+
+  const hasCoords = typeof lat === "number" && typeof lng === "number" && !Number.isNaN(lat) && !Number.isNaN(lng);
+
+  const nome = hasCoords ? (luogo?.trim() || "Luogo") : DOGGERLAND.nome;
+  const useLat = hasCoords ? lat! : DOGGERLAND.lat;
+  const useLng = hasCoords ? lng! : DOGGERLAND.lng;
+
+  // key stabile (luogo + coordinate)
+  const key = `${nome}__${useLat.toFixed(5)}__${useLng.toFixed(5)}`;
+
+  if (!byKey.has(key)) {
+    byKey.set(key, { key, nome, lat: useLat, lng: useLng, articoli: [] });
+  }
+
+  byKey.get(key)!.articoli.push({
     title: a.data.title,
-    date: a.data.date,
-    luogo,
-  };
-});
-
-// Raggruppo per luogo.nome (un marker per luogo)
-const gruppi = new Map<
-  string,
-  { luogo: typeof DOGGERLAND; articoli: { slug: string; title: string; date: Date }[] }
->();
-
-for (const it of items) {
-  const key = it.luogo.nome;
-  if (!gruppi.has(key)) gruppi.set(key, { luogo: it.luogo, articoli: [] });
-  gruppi.get(key)!.articoli.push({ slug: it.slug, title: it.title, date: it.date });
+    slug: a.slug,
+    year,
+    sentieri: safeSentieri((a.data as any).sentieri),
+    dateISO: (a.data.date instanceof Date ? a.data.date : new Date(a.data.date as any)).toISOString(),
+  });
 }
 
-// ordino articoli in ogni popup dal più recente
-for (const g of gruppi.values()) {
-  g.articoli.sort((a, b) => b.date.getTime() - a.date.getTime());
+// Ordino articoli dentro ogni luogo: più recenti prima
+for (const p of byKey.values()) {
+  p.articoli.sort((x, y) => (x.dateISO < y.dateISO ? 1 : -1));
 }
 
-const markerData = Array.from(gruppi.values()).map((g) => ({
-  nome: g.luogo.nome,
-  lat: g.luogo.lat,
-  lng: g.luogo.lng,
-  articoli: g.articoli.map((a) => ({ title: a.title, href: `/articoli/${a.slug}` })),
-}));
+// Array finale
+const punti = Array.from(byKey.values());
 
-// Passo i dati al client in JSON
-const MARKERS_JSON = JSON.stringify(markerData);
+// Anni e sentieri (per filtri)
+const anni = Array.from(new Set(articoli.map((a) => (a.data.date instanceof Date ? a.data.date.getFullYear() : new Date(a.data.date as any).getFullYear()))))
+  .sort((a, b) => b - a);
+
+const sentieriUnici = Array.from(
+  new Set(articoli.flatMap((a) => safeSentieri((a.data as any).sentieri)))
+).sort((a, b) => a.localeCompare(b, "it"));
 ---
 
 <BaseLayout title={titoloPagina}>
-  <!-- Leaflet CSS -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-    slot="head"
-  />
+  <Fragment slot="head">
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- MarkerCluster -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+    />
+  </Fragment>
 
   <style is:global>
     :root{
@@ -104,134 +136,308 @@ const MARKERS_JSON = JSON.stringify(markerData);
       text-align:center;
       font-size:44px;
       font-weight:400;
-      margin:0 0 16px;
+      margin:0 0 12px;
+      letter-spacing:0.2px;
     }
 
     .sub{
       text-align:center;
-      opacity:.85;
       margin:0 0 26px;
+      font-size:18px;
+      opacity:.88;
       line-height:1.6;
     }
 
-    .map-wrap{
-      border: 1px solid rgba(44,36,28,0.22);
-      border-radius: 8px;
+    /* Barretta filtri */
+    .controls{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin: 18px 0 18px;
+    }
+    .controls label{
+      font-size:16px;
+      opacity:.9;
+      display:flex;
+      align-items:center;
+      gap:8px;
       background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(44,36,28,0.22);
+      border-radius: 999px;
+      padding: 8px 12px;
+    }
+    .controls select{
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--ink);
+      background: transparent;
+      border: 0;
+      outline: none;
+      padding: 2px 6px;
+    }
+
+    /* Mappa */
+    #map{
+      height: 520px;
+      border-radius: 8px;
+      border: 1px solid rgba(44,36,28,0.22);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.14);
       overflow: hidden;
     }
 
-    #map{
-      height: 560px;
-      width: 100%;
+    /* Effetto "antico" sui tiles */
+    .leaflet-tile{
+      filter: sepia(0.55) saturate(0.75) contrast(0.98) brightness(1.02);
     }
 
-    /* Popup stile “carta” */
-    .leaflet-popup-content-wrapper{
-      background: rgba(244,241,234,0.98);
-      border: 1px solid rgba(44,36,28,0.22);
-      box-shadow: 0 18px 50px rgba(0,0,0,0.18);
-      border-radius: 10px;
-    }
-
-    .leaflet-popup-content{
-      margin: 12px 14px;
-      font-family: inherit;
+    /* Tooltip: deve essere cliccabile */
+    .leaflet-tooltip{
+      pointer-events: auto;
+      background: rgba(244,241,234,0.96);
       color: var(--ink);
-      min-width: 240px;
-      max-width: 340px;
+      border: 1px solid rgba(44,36,28,0.28);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.18);
+      border-radius: 8px;
+      padding: 10px 12px;
+      max-width: 320px;
     }
 
-    .popup-title{
-      margin: 0 0 10px;
-      font-size: 18px;
-      font-weight: 400;
+    .tt-title{
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 6px;
     }
-
-    .popup-list a{
-      display:block;
-      text-decoration:none;
-      color: var(--ink);
-      padding: 6px 0;
-      border-top: 1px solid rgba(44,36,28,0.18);
-    }
-    .popup-list a:first-child{ border-top: none; }
-    .popup-list a:hover{ text-decoration: underline; }
-
-    .hint{
-      padding: 12px 14px;
+    .tt-list{
+      margin: 0;
+      padding-left: 16px;
+      line-height: 1.35;
       font-size: 15px;
-      opacity: .85;
-      border-top: 1px solid rgba(44,36,28,0.18);
-      background: rgba(255,255,255,0.12);
+    }
+    .tt-list a{
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(44,36,28,0.25);
+    }
+    .tt-list a:hover{
+      border-bottom-color: rgba(44,36,28,0.6);
+    }
+    .tt-meta{
+      margin-top: 6px;
+      font-size: 13px;
+      opacity: .75;
     }
 
     @media (max-width:720px){
       .paper{ padding:42px 26px; }
       h1{ font-size:38px; }
-      #map{ height: 440px; }
+      #map{ height: 480px; }
     }
+    .leaflet-popup-content-wrapper{
+  background: rgba(244,241,234,0.96);
+  border: 1px solid rgba(44,36,28,0.28);
+  border-radius: 8px;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.18);
+}
+
+.leaflet-popup-content{
+  margin: 10px 12px;
+  max-width: 320px;
+}
+
+.tt-popup a{
+  pointer-events: auto;
+}
+
   </style>
 
   <main>
     <article class="paper">
-      <h1>Mappa</h1>
+      <h1>Luoghi di Lujanta</h1>
       <p class="sub">
-        Luoghi reali e simbolici: passa sui marker per vedere gli articoli collegati.<br />
+        Luoghi reali e simbolici: passa sui marker per vedere gli articoli collegati.<br/>
         Se un articolo non ha coordinate, confluisce in <em>Doggerland</em>.
       </p>
 
-      <div class="map-wrap">
-        <div id="map" aria-label="Mappa degli articoli"></div>
-        <div class="hint">
-          Suggerimento: in Google Maps fai “Cosa c’è qui?” per leggere lat/lng e copiarle nel frontmatter.
-        </div>
+      <div class="controls" aria-label="Filtri mappa">
+        <label>
+          Anno:
+          <select id="yearFilter">
+            <option value="all">Tutti</option>
+            {anni.map((y) => <option value={String(y)}>{y}</option>)}
+          </select>
+        </label>
+
+        <label>
+          Sentiero:
+          <select id="trailFilter">
+            <option value="all">Tutti</option>
+            {sentieriUnici.map((s) => <option value={s}>{s}</option>)}
+          </select>
+        </label>
       </div>
 
-      <!-- Leaflet JS -->
-      <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""
-      ></script>
-
-      <script is:inline define:vars={{ MARKERS_JSON, INITIAL_VIEW }}>
-        const markers = JSON.parse(MARKERS_JSON);
-
-        const map = L.map("map", {
-          scrollWheelZoom: true,
-        }).setView([INITIAL_VIEW.lat, INITIAL_VIEW.lng], INITIAL_VIEW.zoom);
-
-        // Tiles (OpenStreetMap)
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          maxZoom: 18,
-          attribution: "&copy; OpenStreetMap contributors",
-        }).addTo(map);
-
-        // Marker clustering (opzionale): se un giorno avrai tanti luoghi ravvicinati possiamo aggiungerlo.
-        // Per ora: marker normali.
-
-        markers.forEach((m) => {
-          const html =
-            `<div class="popup-title">${m.nome}</div>` +
-            `<div class="popup-list">` +
-            m.articoli.map((a) => `<a href="${a.href}">${a.title}</a>`).join("") +
-            `</div>`;
-
-          const marker = L.marker([m.lat, m.lng]).addTo(map);
-
-          marker.bindPopup(html, {
-            closeButton: true,
-            autoClose: false,
-            closeOnClick: false,
-            maxWidth: 360,
-          });
-
-          // Hover -> apre popup (desktop)
-          marker.on("mouseover", () => marker.openPopup());
-          marker.on("mouseout", () => marker.closePopup());
-        });
-      </script>
+      <div id="map" aria-label="Mappa dei luoghi"></div>
     </article>
   </main>
+
+    <script
+    is:inline
+    define:vars={{ PUNTI: punti, DOGGERLAND }}
+  >
+    // ✅ DATI INIETTATI CORRETTAMENTE (niente JSON.parse / doppie stringify)
+    // Qui PUNTI e DOGGERLAND sono già variabili JS disponibili.
+
+    // Carico Leaflet + MarkerCluster da CDN
+    const loadScript = (src) =>
+      new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = src;
+        s.defer = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+
+    (async () => {
+      await loadScript("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js");
+      await loadScript(
+        "https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"
+      );
+
+      const L = window.L;
+
+      const map = L.map("map", {
+        zoomControl: true,
+        scrollWheelZoom: true,
+      });
+
+      // OSM (poi "antichizzato" via CSS filter)
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap",
+        maxZoom: 18,
+      }).addTo(map);
+
+      const cluster = L.markerClusterGroup({
+        showCoverageOnHover: false,
+        spiderfyOnMaxZoom: true,
+        maxClusterRadius: 42,
+      });
+
+      const yearSel = document.getElementById("yearFilter");
+      const trailSel = document.getElementById("trailFilter");
+
+      if (!yearSel || !trailSel) return;
+
+      function matchesFilters(article) {
+        const y = yearSel.value;
+        const t = trailSel.value;
+
+        const yearOk = y === "all" || String(article.year) === y;
+        const trailOk =
+          t === "all" || (article.sentieri && article.sentieri.includes(t));
+        return yearOk && trailOk;
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function tooltipHTML(p) {
+        // articoli filtrati
+        const list = p.articoli.filter(matchesFilters);
+        if (list.length === 0) return null;
+
+        const items = list
+          .map(
+            (a) =>
+              `<li><a href="/articoli/${a.slug}">${escapeHtml(
+                a.title
+              )}</a></li>`
+          )
+          .join("");
+
+        const meta = [];
+        if (p.nome === DOGGERLAND.nome) meta.push("Articoli senza coordinate");
+        meta.push(`${list.length} articol${list.length === 1 ? "o" : "i"}`);
+
+        return `
+          <div class="tt">
+            <div class="tt-title">${escapeHtml(p.nome)}</div>
+            <ul class="tt-list">${items}</ul>
+            <div class="tt-meta">${meta.join(" • ")}</div>
+          </div>
+        `;
+      }
+
+      function fitToVisible() {
+        const layers = cluster.getLayers();
+        if (!layers || layers.length === 0) {
+          // fallback Europa
+          map.setView([51.0, 10.0], 4);
+          return;
+        }
+        const group = L.featureGroup(layers);
+        map.fitBounds(group.getBounds().pad(0.18), { animate: false });
+      }
+
+      function buildMarkers() {
+        cluster.clearLayers();
+
+        for (const p of PUNTI) {
+          const html = tooltipHTML(p);
+          if (!html) continue;
+
+          const marker = L.circleMarker([p.lat, p.lng], {
+            radius: 6,
+            weight: 1.5,
+            color: "rgba(44,36,28,0.75)",
+            fillColor: "rgba(44,36,28,0.65)",
+            fillOpacity: 0.8,
+          });
+
+          // Tooltip per hover (va bene anche non interattivo, tanto il click userà il popup)
+marker.bindTooltip(html, {
+  direction: "top",
+  offset: [0, -6],
+  opacity: 1,
+  sticky: true,
+  interactive: false,
+});
+
+// Popup “bloccato” al click (qui i link sono cliccabili)
+marker.bindPopup(html, {
+  closeButton: true,
+  autoClose: true,     // chiude gli altri popup quando ne apri uno
+  closeOnClick: true,  // click sulla mappa chiude
+  className: "tt-popup",
+  offset: [0, -8],
+});
+
+// Al click apri il popup (pinnato)
+marker.on("click", () => {
+  marker.openPopup();
+});
+
+
+          cluster.addLayer(marker);
+        }
+
+        map.addLayer(cluster);
+        fitToVisible();
+      }
+
+      yearSel.addEventListener("change", buildMarkers);
+      trailSel.addEventListener("change", buildMarkers);
+
+      // Primo render
+      buildMarkers();
+    })();
+  </script>
+
 </BaseLayout>
