@@ -7,6 +7,9 @@ const EMAIL = "ilblogdilujanta@gmail.com";
 const TELEGRAM_USER = "blogdilujanta";      // senza @
 const TELEGRAM_CHANNEL = "ilblogdilujanta";  // senza @
 const ACADEMIA_URL = "https://independent.academia.edu/AlberoDaniela";
+const X_URL = "https://x.com/ilblogdiLujanta";
+const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=100064996321616";
+
 ---
 
 <BaseLayout title={titoloPagina}>
@@ -149,7 +152,7 @@ const ACADEMIA_URL = "https://independent.academia.edu/AlberoDaniela";
             </span>
             Email
           </h2>
-          <p>Per messaggi più lunghi o materiali da condividere.</p>
+          <p>Per messaggi più lunghi </p>
           <a class="contact-link" href={`mailto:${EMAIL}`}>{EMAIL}</a>
         </div>
 
@@ -165,7 +168,7 @@ const ACADEMIA_URL = "https://independent.academia.edu/AlberoDaniela";
             </span>
             Telegram
           </h2>
-          <p>Per un contatto rapido in privato.</p>
+          <p>Per un contatto rapido in privato</p>
           <a class="contact-link" href={`https://t.me/${TELEGRAM_USER}`} target="_blank" rel="noopener">
             @{TELEGRAM_USER}
           </a>
@@ -183,7 +186,7 @@ const ACADEMIA_URL = "https://independent.academia.edu/AlberoDaniela";
             </span>
             Canale Telegram
           </h2>
-          <p>Aggiornamenti e comunicazioni.</p>
+          <p>Aggiornamenti e comunicazioni</p>
           <a class="contact-link" href={`https://t.me/${TELEGRAM_CHANNEL}`} target="_blank" rel="noopener">
             t.me/{TELEGRAM_CHANNEL}
           </a>
@@ -202,11 +205,53 @@ const ACADEMIA_URL = "https://independent.academia.edu/AlberoDaniela";
             </span>
             Academia.edu
           </h2>
-          <p>I miei lavori e le ricerche.</p>
+          <p>I miei lavori e le mie ricerche</p>
           <a class="contact-link" href={ACADEMIA_URL} target="_blank" rel="noopener">
             Vai al profilo / articoli
           </a>
         </div>
+<!-- X -->
+<div class="card">
+  <h2 class="card-title">
+    <span class="icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="16" height="16">
+        <path
+          d="M4 4l16 16M20 4L4 20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+        />
+      </svg>
+    </span>
+    X
+  </h2>
+  <p>Condivisioni e aggiornamenti brevi</p>
+  <a class="contact-link" href={X_URL} target="_blank" rel="noopener">
+    x.com/ilblogdiLujanta
+  </a>
+</div>
+<!-- FACEBOOK -->
+<div class="card">
+  <h2 class="card-title">
+    <span class="icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="16" height="16">
+        <path
+          d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v5h3v-5h3l1-3h-4v-2c0-.6.4-1 1-1z"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </span>
+    Facebook
+  </h2>
+  <p>Pagina e contenuti condivisi</p>
+  <a class="contact-link" href={FACEBOOK_URL} target="_blank" rel="noopener">
+    Vai alla pagina Facebook
+  </a>
+</div>
 
       </section>
     </article>

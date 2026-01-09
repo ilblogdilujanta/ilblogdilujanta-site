@@ -1,6 +1,8 @@
 ---
 const { title = "Il Blog di Lujanta" } = Astro.props;
 import TopNav from "../components/TopNav.astro";
+
+const year = new Date().getFullYear();
 ---
 
 <!doctype html>
@@ -10,6 +12,11 @@ import TopNav from "../components/TopNav.astro";
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
 
+    <!-- Meta utili (non bloccano la copia, ma aiutano a dichiarare paternità) -->
+    <meta name="author" content="Lujanta" />
+    <meta name="copyright" content={`© ${year} Lujanta`} />
+
+    <!-- GTranslate: settings + script UNA SOLA VOLTA -->
     <script is:inline>
       window.gtranslateSettings = {
         default_language: "it",
@@ -22,10 +29,37 @@ import TopNav from "../components/TopNav.astro";
     <script src="https://cdn.gtranslate.net/widgets/latest/lc.js" defer></script>
 
     <slot name="head" />
+
+    <!-- Footer style globale -->
+    <style is:global>
+      .site-footer{
+        margin-top: 00px;
+        padding: 24px 16px;
+        text-align: center;
+        font-size: 14px;
+        opacity: 0.78;
+        border-top: 1px solid rgba(44,36,28,0.25);
+      }
+      .site-footer p{
+        margin: 6px 0;
+        line-height: 1.5;
+      }
+    </style>
   </head>
 
   <body>
     <TopNav />
     <slot />
+
+    <footer class="site-footer" aria-label="Note di copyright">
+      <p>
+        © {year} Lujanta — Tutti i contenuti di questo sito (testi, immagini, ricerche e materiali originali)
+        sono protetti da diritto d’autore.
+      </p>
+      <p>
+        È vietata la riproduzione totale o parziale senza autorizzazione.
+        La citazione è consentita esclusivamente indicando chiaramente l’autrice e la fonte.
+      </p>
+    </footer>
   </body>
 </html>
