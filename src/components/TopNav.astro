@@ -1,11 +1,4 @@
 ---
-const path = Astro.url.pathname;
-
-const isActive = (href: string) => {
-  if (href === "/") return path === "/";
-  return path === href || path.startsWith(href + "/");
-};
-
 const links = [
   { href: "/", label: "Home" },
   { href: "/inizio-da-qui", label: "Inizia da qui" },
@@ -16,93 +9,260 @@ const links = [
   { href: "/testimonianze", label: "Testimonianze" },
   { href: "/luoghi-di-Lujanta", label: "Luoghi di Lujanta" },
   { href: "/contatti", label: "Contatti" },
-  
-  
-
 ];
+
+const path = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const isCurrent = (href: string) => {
+  const h = href.replace(/\/+$/, "") || "/";
+  return h === "/" ? path === "/" : path.startsWith(h);
+};
 ---
 
 <nav class="topnav" aria-label="Menu principale">
-  <div class="nav-inner">
-    <div class="nav-left">
+  <div class="inner">
+    <!-- Mobile: hamburger -->
+    <button class="burger" type="button" aria-label="Apri menu" aria-controls="navDialog">
+      <span></span><span></span><span></span>
+    </button>
+
+    <!-- Desktop: links -->
+    <div class="nav-left" aria-label="Voci di menu">
       {links.map((l) => (
-        <a href={l.href} aria-current={isActive(l.href) ? "page" : undefined}>
+        <a href={l.href} aria-current={isCurrent(l.href) ? "page" : undefined}>
           {l.label}
         </a>
       ))}
     </div>
 
+    <!-- Traduttore (gtranslate) -->
     <div class="nav-right" aria-label="Traduzione">
-      <div class="gtranslate_wrapper"></div>
+      <div id="gtWrap" class="gtranslate_wrapper"></div>
     </div>
   </div>
-</nav>
 
-<style is:global>
-  .topnav{
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    padding: 14px 14px;
-    background: rgba(26, 20, 16, 0.55);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-  }
+  <!-- Mobile dialog -->
+  <dialog id="navDialog" class="nav-dialog" aria-label="Menu">
+    <div class="dialog-head">
+      <div class="dialog-title">Menu</div>
+      <button class="close" type="button" aria-label="Chiudi menu">×</button>
+    </div>
 
-  /* contenitore centrato come prima */
-  .nav-inner{
-    width: min(980px, 92vw);
-    margin: 0 auto;
+    <div class="dialog-links">
+      {links.map((l) => (
+        <a href={l.href} aria-current={isCurrent(l.href) ? "page" : undefined}>
+          {l.label}
+        </a>
+      ))}
+    </div>
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-  }
+    <div class="dialog-foot">
+      <div class="dialog-gt-slot" id="gtMobileSlot"></div>
+    </div>
+  </dialog>
 
-  .nav-left{
-    display:flex;
-    flex-wrap: wrap;
-    gap: 18px;
-    align-items:center;
-    justify-content: center;
-  }
+  <script is:inline>
+    (() => {
+      const dialog = document.getElementById("navDialog");
+      const burger = document.querySelector(".burger");
+      const closeBtn = dialog?.querySelector(".close");
 
-  .topnav a{
-    color: rgba(255, 245, 230, 0.92);
-    text-decoration: none;
-    font-size: 16px;
-    padding: 6px 4px;
-    border-bottom: 1px solid transparent;
-    white-space: nowrap;
-    letter-spacing: 0.2px;
-  }
+      const gtWrap = document.getElementById("gtWrap");
+      const gtMobileSlot = document.getElementById("gtMobileSlot");
+      const gtDesktopParent = gtWrap?.parentElement;
 
-  .topnav a:hover{
-    border-bottom-color: rgba(255, 245, 230, 0.65);
-  }
+      const isMobile = () => window.matchMedia("(max-width: 860px)").matches;
 
-  .topnav a[aria-current="page"]{
-    border-bottom-color: rgba(255, 245, 230, 0.95);
-  }
+      function moveTranslatorIntoDialog() {
+        if (!gtWrap || !gtMobileSlot) return;
+        gtMobileSlot.appendChild(gtWrap);
+      }
 
-  .nav-right{
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    min-width: 120px;
-  }
+      function moveTranslatorBackToDesktop() {
+        if (!gtWrap || !gtDesktopParent) return;
+        gtDesktopParent.appendChild(gtWrap);
+      }
 
-  @media (max-width: 760px){
-    .nav-inner{
-      flex-wrap: wrap;
-      justify-content: center;
+      function openMenu() {
+        if (!dialog || !isMobile()) return;
+        moveTranslatorIntoDialog();
+        dialog.showModal();
+      }
+
+      function closeMenu() {
+        if (!dialog) return;
+        dialog.close();
+        moveTranslatorBackToDesktop();
+      }
+
+      burger?.addEventListener("click", openMenu);
+      closeBtn?.addEventListener("click", closeMenu);
+
+      dialog?.addEventListener("click", (e) => {
+        // chiudi cliccando fuori dal pannello
+        const rect = dialog.getBoundingClientRect();
+        const x = e.clientX, y = e.clientY;
+        const inside = x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+        if (!inside) closeMenu();
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeMenu();
+      });
+
+      window.addEventListener("resize", () => {
+        // se esci da mobile, chiudi e rimetti tutto a posto
+        if (!isMobile()) {
+          if (dialog?.open) dialog.close();
+          moveTranslatorBackToDesktop();
+        }
+      });
+    })();
+  </script>
+
+  <style is:global>
+    :root{
+      --ink:#fff5e6;
+      --bar: rgba(26,20,16,0.35);
+      --barBorder: rgba(255,255,255,0.10);
     }
+
+    .topnav{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--bar);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--barBorder);
+    }
+
+    .topnav .inner{
+      width: min(1100px, 96vw);
+      margin: 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 10px;
+    }
+
+    /* Desktop links */
+    .nav-left{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 18px;
+      flex: 1;
+      flex-wrap: nowrap;       /* ✅ una riga */
+      overflow-x: auto;        /* se non ci sta, scroll orizzontale */
+      scrollbar-width: none;
+    }
+    .nav-left::-webkit-scrollbar{ display:none; }
+
+    .nav-left a{
+      color: rgba(255,245,230,0.92);
+      text-decoration:none;
+      font-size: 16px;
+      padding: 6px 4px;
+      border-bottom: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .nav-left a:hover{ border-bottom-color: rgba(255,245,230,0.65); }
+    .nav-left a[aria-current="page"]{ border-bottom-color: rgba(255,245,230,0.95); }
+
     .nav-right{
-      width: 100%;
-      justify-content: center;
-      min-width: auto;
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      min-width: 110px;
     }
-  }
-</style>
+
+    /* Burger: solo mobile */
+    .burger{
+      display:none;
+      width: 42px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.10);
+      color: rgba(255,245,230,0.92);
+      align-items:center;
+      justify-content:center;
+      gap: 5px;
+      flex-direction: column;
+    }
+    .burger span{
+      display:block;
+      width: 18px;
+      height: 2px;
+      background: rgba(255,245,230,0.9);
+      border-radius: 2px;
+    }
+
+    /* Dialog menu */
+    .nav-dialog{
+      width: min(560px, 92vw);
+      border: 1px solid rgba(44,36,28,0.22);
+      border-radius: 14px;
+      padding: 0;
+      background: linear-gradient(180deg, #efe1c5, #e2caa6 55%, #d8bc93);
+      color: #2c241c;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+    }
+    .nav-dialog::backdrop{
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(2px);
+    }
+
+    .dialog-head{
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(44,36,28,0.18);
+    }
+    .dialog-title{
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .close{
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid rgba(44,36,28,0.22);
+      background: rgba(255,255,255,0.18);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      color: #2c241c;
+    }
+
+    .dialog-links a{
+      display:block;
+      padding: 14px 16px;
+      text-decoration:none;
+      color:#2c241c;
+      border-bottom: 1px solid rgba(44,36,28,0.14);
+    }
+    .dialog-links a[aria-current="page"]{
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .dialog-foot{
+      padding: 12px 16px 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 860px){
+      .burger{ display:flex; }
+      .nav-left{ display:none; }      /* su mobile, links dentro dialog */
+      .nav-right{ min-width: auto; }
+    }
+
+    /* sicurezza: su desktop nascondi proprio il dialog (evita “errore visivo”) */
+    @media (min-width: 861px){
+      .nav-dialog{ display:none; }
+    }
+  </style>
+</nav>
