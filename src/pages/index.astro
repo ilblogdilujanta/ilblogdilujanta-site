@@ -345,6 +345,31 @@ const top9 = articoli.slice(0, 9);
       .topnav .nav-right{
         min-width: 90px !important;
       }
+      @media (max-width: 860px){
+  .hero__bg{
+    background-position: center 35%; /* 👈 sposta il focus */
+     }
+     }
+    @media (max-width: 860px){
+    .hero{
+    min-height: 88vh;     /* 👈 meno “vuoto” */
+    padding-top: 96px;   /* menu + respiro */
+    padding-bottom: 60px;
+  }
+}
+@media (max-width: 860px){
+  .hero__content{
+    margin-top: 120px; /* 👈 prima era 200 */
+  }
+}
+@media (max-width: 860px){
+  h1, .tagline{
+    text-shadow:
+      0 2px 12px rgba(244,241,234,.9),
+      0 1px 2px rgba(0,0,0,.15);
+  }
+}
+
     </style>
   </head>
 
