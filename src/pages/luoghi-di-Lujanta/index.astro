@@ -17,8 +17,6 @@ const articoli = await getCollection("articoli");
 const safeSentieri = (s?: unknown) => (Array.isArray(s) ? s.filter(Boolean) : []);
 
 // Costruisco punti (luoghi) raggruppando articoli per luogo+coordinate
-type Entry = (typeof articoli)[number];
-
 type Punto = {
   key: string;
   nome: string;
@@ -36,23 +34,23 @@ type Punto = {
 const byKey = new Map<string, Punto>();
 
 for (const a of articoli) {
-  const year = a.data.date?.getFullYear?.() ?? new Date(a.data.date as any).getFullYear();
+  const year =
+    a.data.date?.getFullYear?.() ?? new Date(a.data.date as any).getFullYear();
 
-  // Campi attesi nel frontmatter:
-  // luogo: string
-  // lat: number
-  // lng: number
   const luogo = (a.data as any).luogo as string | undefined;
   const lat = (a.data as any).lat as number | undefined;
   const lng = (a.data as any).lng as number | undefined;
 
-  const hasCoords = typeof lat === "number" && typeof lng === "number" && !Number.isNaN(lat) && !Number.isNaN(lng);
+  const hasCoords =
+    typeof lat === "number" &&
+    typeof lng === "number" &&
+    !Number.isNaN(lat) &&
+    !Number.isNaN(lng);
 
   const nome = hasCoords ? (luogo?.trim() || "Luogo") : DOGGERLAND.nome;
   const useLat = hasCoords ? lat! : DOGGERLAND.lat;
   const useLng = hasCoords ? lng! : DOGGERLAND.lng;
 
-  // key stabile (luogo + coordinate)
   const key = `${nome}__${useLat.toFixed(5)}__${useLng.toFixed(5)}`;
 
   if (!byKey.has(key)) {
@@ -64,7 +62,9 @@ for (const a of articoli) {
     slug: a.slug,
     year,
     sentieri: safeSentieri((a.data as any).sentieri),
-    dateISO: (a.data.date instanceof Date ? a.data.date : new Date(a.data.date as any)).toISOString(),
+    dateISO: (
+      a.data.date instanceof Date ? a.data.date : new Date(a.data.date as any)
+    ).toISOString(),
   });
 }
 
@@ -73,12 +73,18 @@ for (const p of byKey.values()) {
   p.articoli.sort((x, y) => (x.dateISO < y.dateISO ? 1 : -1));
 }
 
-// Array finale
 const punti = Array.from(byKey.values());
 
 // Anni e sentieri (per filtri)
-const anni = Array.from(new Set(articoli.map((a) => (a.data.date instanceof Date ? a.data.date.getFullYear() : new Date(a.data.date as any).getFullYear()))))
-  .sort((a, b) => b - a);
+const anni = Array.from(
+  new Set(
+    articoli.map((a) =>
+      a.data.date instanceof Date
+        ? a.data.date.getFullYear()
+        : new Date(a.data.date as any).getFullYear()
+    )
+  )
+).sort((a, b) => b - a);
 
 const sentieriUnici = Array.from(
   new Set(articoli.flatMap((a) => safeSentieri((a.data as any).sentieri)))
@@ -90,75 +96,86 @@ const sentieriUnici = Array.from(
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- MarkerCluster -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
-    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
   </Fragment>
 
   <style is:global>
-    :root{
-      --ink:#2c241c;
-      --green:#0d8460;
-      --paper1:#efe1c5;
-      --paper2:#e2caa6;
-      --paper3:#d8bc93;
+    :root {
+      --ink: #2c241c;
+      --green: #0d8460;
+
+      --paper1: #efe1c5;
+      --paper2: #e2caa6;
+      --paper3: #d8bc93;
     }
 
-    body{
-      margin:0;
-      min-height:100vh;
+    body {
+      margin: 0;
+      min-height: 100vh;
       background: var(--green);
       font-family:
-        "Baskerville Old Face","Baskerville","Libre Baskerville",
-        Georgia,"Times New Roman",serif;
-      color:var(--ink);
+        "Baskerville Old Face",
+        "Baskerville",
+        "Libre Baskerville",
+        Georgia,
+        "Times New Roman",
+        serif;
+      color: var(--ink);
     }
 
-    main{ display:flex; justify-content:center; padding:32px 14px; }
+    main {
+      display: flex;
+      justify-content: center;
+      padding: 32px 14px;
+    }
 
-    .paper{
-      max-width:980px;
-      width:100%;
-      padding:60px;
+    .paper {
+      max-width: 980px;
+      width: 100%;
+      padding: 60px;
+
       background:
-        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
+        radial-gradient(
+          120% 90% at 50% 20%,
+          rgba(255, 255, 255, 0.35),
+          rgba(255, 255, 255, 0) 55%
+        ),
         linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
-      border-radius:6px;
-      box-shadow:0 18px 60px rgba(0,0,0,0.55);
+
+      border-radius: 6px;
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
     }
 
-    h1{
-      text-align:center;
-      font-size:44px;
-      font-weight:400;
-      margin:0 0 12px;
-      letter-spacing:0.2px;
+    h1 {
+      text-align: center;
+      font-size: 56px;
+      font-weight: 400;
+      margin: 0 0 26px;
     }
 
-    .sub{
-      text-align:center;
-      margin:0 0 26px;
-      font-size:18px;
-      opacity:.88;
-      line-height:1.6;
+    /* ✅ come Testimonianze: il testo NON deve essere stretto */
+    .content {
+      font-size: 20px;
+      line-height: 1.75;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .content p {
+      margin: 0 0 18px;
     }
 
-    /* Barretta filtri */
+    /* ===== FILTRI MAPPA ===== */
     .controls{
       display:flex;
       gap:12px;
       justify-content:center;
       flex-wrap:wrap;
-      margin: 18px 0 18px;
+      margin: 22px 0 18px;
     }
     .controls label{
       font-size:16px;
-      opacity:.9;
+      opacity:.95;
       display:flex;
       align-items:center;
       gap:8px;
@@ -177,9 +194,11 @@ const sentieriUnici = Array.from(
       padding: 2px 6px;
     }
 
-    /* Mappa */
+    /* ===== MAPPA ===== */
     #map{
       height: 520px;
+      width: 100%;
+      margin: 10px auto 0;
       border-radius: 8px;
       border: 1px solid rgba(44,36,28,0.22);
       box-shadow: 0 14px 40px rgba(0,0,0,0.14);
@@ -191,7 +210,7 @@ const sentieriUnici = Array.from(
       filter: sepia(0.55) saturate(0.75) contrast(0.98) brightness(1.02);
     }
 
-    /* Tooltip: deve essere cliccabile */
+    /* ===== Tooltip (hover) ===== */
     .leaflet-tooltip{
       pointer-events: auto;
       background: rgba(244,241,234,0.96);
@@ -200,7 +219,11 @@ const sentieriUnici = Array.from(
       box-shadow: 0 10px 26px rgba(0,0,0,0.18);
       border-radius: 8px;
       padding: 10px 12px;
+
+      width: 320px;
       max-width: 320px;
+      min-width: 260px;
+      white-space: normal !important;
     }
 
     .tt-title{
@@ -210,54 +233,94 @@ const sentieriUnici = Array.from(
     }
     .tt-list{
       margin: 0;
-      padding-left: 16px;
+      padding-left: 18px;
       line-height: 1.35;
       font-size: 15px;
     }
+    .tt-list li{ margin: 0 0 4px 0; }
+
     .tt-list a{
       color: var(--ink);
       text-decoration: none;
       border-bottom: 1px solid rgba(44,36,28,0.25);
+      white-space: normal !important;
+      overflow-wrap: break-word;
+      word-break: normal;
     }
     .tt-list a:hover{
       border-bottom-color: rgba(44,36,28,0.6);
     }
+
     .tt-meta{
       margin-top: 6px;
       font-size: 13px;
       opacity: .75;
     }
 
-    @media (max-width:720px){
-      .paper{ padding:42px 26px; }
-      h1{ font-size:38px; }
-      #map{ height: 480px; }
-    }
+    /* ===== Popup (click) ===== */
     .leaflet-popup-content-wrapper{
-  background: rgba(244,241,234,0.96);
-  border: 1px solid rgba(44,36,28,0.28);
-  border-radius: 8px;
-  box-shadow: 0 10px 26px rgba(0,0,0,0.18);
-}
+      background: rgba(244,241,234,0.96);
+      border: 1px solid rgba(44,36,28,0.28);
+      border-radius: 8px;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.18);
+      max-width: 340px;
+      min-width: 260px;
+    }
 
-.leaflet-popup-content{
-  margin: 10px 12px;
-  max-width: 320px;
-}
+    .leaflet-popup-content{
+      margin: 10px 12px;
+      max-width: 340px;
+      white-space: normal !important;
+    }
 
-.tt-popup a{
-  pointer-events: auto;
-}
+    .tt-popup a{ pointer-events: auto; }
 
+    @media (max-width: 720px) {
+      .paper {
+        padding: 42px 26px;
+      }
+      h1 {
+        font-size: 44px;
+      }
+      #map{
+        height: 480px;
+      }
+      .leaflet-tooltip{
+        width: 300px;
+        max-width: 300px;
+        min-width: 240px;
+      }
+    }
   </style>
 
   <main>
     <article class="paper">
       <h1>Luoghi di Lujanta</h1>
-      <p class="sub">
-        Luoghi reali e simbolici: passa sui marker per vedere gli articoli collegati.<br/>
-        Se un articolo non ha coordinate, confluisce in <em>Doggerland</em>.
-      </p>
+
+      <div class="content">
+        <p>
+          Questo Atlante del Folklore e del Sacro è una mappa pensata per offrire un riferimento visivo ai luoghi narrati ed esplorati negli articoli:
+          terre di leggende, siti archeologici, musei, elementi rituali come menhir o rocce sacre, contesti territoriali da cui hanno origine racconti e tradizioni,
+          memorie che abitano uno spazio preciso o che da quello traggono origine.
+        </p>
+
+        <p>
+          La mappa non intende esaurire il significato dei luoghi, ma indicarne la dislocazione, permettendo a chi la consulta di collocare racconti,
+          tradizioni e presenze entro una geografia reale, tangibile e visitabile.
+        </p>
+
+        <p>
+          Non tutti i luoghi, tuttavia, possono essere indicati con precisione. Quando l’ubicazione resta incerta, volutamente non dichiarata, perduta nel tempo
+          o appartenente a una dimensione prevalentemente leggendaria più che alla cartografia, o ancora quando un testo è testimonianza di un’esperienza o di una
+          riflessione personale, questi articoli confluiranno in un punto simbolico della mappa: <em>Doggerland</em>.
+        </p>
+
+        <p>
+          Doggerland fu una vasta terra emersa sino all’ultima era glaciale, oggi sommersa sotto il Mare del Nord: un territorio un tempo abitato e poi cancellato dall’acqua,
+          una terra che univa la Germania e la Danimarca alle attuali Isole Britanniche. Nell’Atlante diventa luogo-limite e spazio di raccolta, una terra leggendaria che accoglie
+          ciò che non può essere fissato, ciò che è scomparso, ciò che vive tra memoria, mito e silenzio.
+        </p>
+      </div> <!-- ✅ CHIUSURA IMPORTANTISSIMA -->
 
       <div class="controls" aria-label="Filtri mappa">
         <label>
@@ -281,14 +344,7 @@ const sentieriUnici = Array.from(
     </article>
   </main>
 
-    <script
-    is:inline
-    define:vars={{ PUNTI: punti, DOGGERLAND }}
-  >
-    // ✅ DATI INIETTATI CORRETTAMENTE (niente JSON.parse / doppie stringify)
-    // Qui PUNTI e DOGGERLAND sono già variabili JS disponibili.
-
-    // Carico Leaflet + MarkerCluster da CDN
+  <script is:inline define:vars={{ PUNTI: punti, DOGGERLAND }}>
     const loadScript = (src) =>
       new Promise((resolve, reject) => {
         const s = document.createElement("script");
@@ -301,9 +357,7 @@ const sentieriUnici = Array.from(
 
     (async () => {
       await loadScript("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js");
-      await loadScript(
-        "https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"
-      );
+      await loadScript("https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js");
 
       const L = window.L;
 
@@ -312,7 +366,6 @@ const sentieriUnici = Array.from(
         scrollWheelZoom: true,
       });
 
-      // OSM (poi "antichizzato" via CSS filter)
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap",
         maxZoom: 18,
@@ -326,40 +379,31 @@ const sentieriUnici = Array.from(
 
       const yearSel = document.getElementById("yearFilter");
       const trailSel = document.getElementById("trailFilter");
-
       if (!yearSel || !trailSel) return;
 
       function matchesFilters(article) {
         const y = yearSel.value;
         const t = trailSel.value;
-
         const yearOk = y === "all" || String(article.year) === y;
-        const trailOk =
-          t === "all" || (article.sentieri && article.sentieri.includes(t));
+        const trailOk = t === "all" || (article.sentieri && article.sentieri.includes(t));
         return yearOk && trailOk;
       }
 
       function escapeHtml(s) {
         return String(s)
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#039;");
       }
 
       function tooltipHTML(p) {
-        // articoli filtrati
         const list = p.articoli.filter(matchesFilters);
         if (list.length === 0) return null;
 
         const items = list
-          .map(
-            (a) =>
-              `<li><a href="/articoli/${a.slug}">${escapeHtml(
-                a.title
-              )}</a></li>`
-          )
+          .map(a => `<li><a href="/articoli/${a.slug}">${escapeHtml(a.title)}</a></li>`)
           .join("");
 
         const meta = [];
@@ -378,7 +422,6 @@ const sentieriUnici = Array.from(
       function fitToVisible() {
         const layers = cluster.getLayers();
         if (!layers || layers.length === 0) {
-          // fallback Europa
           map.setView([51.0, 10.0], 4);
           return;
         }
@@ -401,29 +444,23 @@ const sentieriUnici = Array.from(
             fillOpacity: 0.8,
           });
 
-          // Tooltip per hover (va bene anche non interattivo, tanto il click userà il popup)
-marker.bindTooltip(html, {
-  direction: "top",
-  offset: [0, -6],
-  opacity: 1,
-  sticky: true,
-  interactive: false,
-});
+          marker.bindTooltip(html, {
+            direction: "top",
+            offset: [0, -6],
+            opacity: 1,
+            sticky: true,
+            interactive: false,
+          });
 
-// Popup “bloccato” al click (qui i link sono cliccabili)
-marker.bindPopup(html, {
-  closeButton: true,
-  autoClose: true,     // chiude gli altri popup quando ne apri uno
-  closeOnClick: true,  // click sulla mappa chiude
-  className: "tt-popup",
-  offset: [0, -8],
-});
+          marker.bindPopup(html, {
+            closeButton: true,
+            autoClose: true,
+            closeOnClick: true,
+            className: "tt-popup",
+            offset: [0, -8],
+          });
 
-// Al click apri il popup (pinnato)
-marker.on("click", () => {
-  marker.openPopup();
-});
-
+          marker.on("click", () => marker.openPopup());
 
           cluster.addLayer(marker);
         }
@@ -435,9 +472,7 @@ marker.on("click", () => {
       yearSel.addEventListener("change", buildMarkers);
       trailSel.addEventListener("change", buildMarkers);
 
-      // Primo render
       buildMarkers();
     })();
   </script>
-
 </BaseLayout>

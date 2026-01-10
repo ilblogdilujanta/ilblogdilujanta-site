@@ -4,12 +4,11 @@ const titoloPagina = "Contatti";
 
 // ✅ CAMBIA QUI
 const EMAIL = "ilblogdilujanta@gmail.com";
-const TELEGRAM_USER = "blogdilujanta";      // senza @
+const TELEGRAM_USER = "blogdilujanta";       // senza @
 const TELEGRAM_CHANNEL = "ilblogdilujanta";  // senza @
 const ACADEMIA_URL = "https://independent.academia.edu/AlberoDaniela";
 const X_URL = "https://x.com/ilblogdiLujanta";
 const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=100064996321616";
-
 ---
 
 <BaseLayout title={titoloPagina}>
@@ -57,13 +56,21 @@ const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=100064996321616";
       letter-spacing:0.2px;
     }
 
-    .sub{
-      text-align:center;
-      margin:0 0 34px;
-      font-size:18px;
-      opacity:.85;
-      line-height:1.6;
-    }
+.sub{
+  margin: 0 0 34px;
+  font-size: 20px;     /* come Testimonianze */
+  line-height: 1.75;   /* come Testimonianze */
+  opacity: 1;          /* niente “sbiadito” */
+  text-align: left;    /* testo normale, non centrato */
+}
+
+.sub p{
+  margin: 0 0 18px;    /* divisione paragrafi */
+}
+.sub p:last-child{
+  margin-bottom: 0;
+}
+
 
     .cards{
       display:grid;
@@ -128,16 +135,36 @@ const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=100064996321616";
     @media (max-width:720px){
       .paper{ padding:42px 26px; }
       h1{ font-size:38px; }
+      .sub{
+        max-width: none; /* su mobile meglio piena larghezza */
+        text-align: left;
+      }
     }
   </style>
 
   <main>
     <article class="paper">
       <h1>Contatti</h1>
-      <p class="sub">
-        Se vuoi scrivermi, questi sono i canali più diretti.<br />
-        Rispondo appena possibile.
-      </p>
+
+      <div class="sub">
+  <p>
+    Credo nello scambio consapevole e rispettoso, anche negli spazi digitali.
+    Per questo motivo, nel tempo, ho scelto di non affidare il mio lavoro a un solo canale,
+    ma di abitare più luoghi, selezionati per qualità e pertinenza.
+  </p>
+
+  <p>
+    Internet può essere uno spazio prezioso di studio, confronto e divulgazione, se usato con misura e attenzione.
+    I canali che utilizzo nascono da questa esigenza: condividere testi e materiali senza invadere, senza forzare la presenza,
+    lasciando a ciascuna persona la libertà di scegliere come e quando seguire.
+  </p>
+
+  <p>
+    Qui trovi i miei spazi online.
+    Scegli quello che senti più vicino al tuo modo di leggere, studiare e dialogare.
+  </p>
+</div>
+
 
       <section class="cards" aria-label="Canali di contatto">
 
@@ -152,7 +179,7 @@ const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=100064996321616";
             </span>
             Email
           </h2>
-          <p>Per messaggi più lunghi </p>
+          <p>Per messaggi più lunghi</p>
           <a class="contact-link" href={`mailto:${EMAIL}`}>{EMAIL}</a>
         </div>
 
@@ -210,48 +237,50 @@ const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=100064996321616";
             Vai al profilo / articoli
           </a>
         </div>
-<!-- X -->
-<div class="card">
-  <h2 class="card-title">
-    <span class="icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" width="16" height="16">
-        <path
-          d="M4 4l16 16M20 4L4 20"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-        />
-      </svg>
-    </span>
-    X
-  </h2>
-  <p>Condivisioni e aggiornamenti brevi</p>
-  <a class="contact-link" href={X_URL} target="_blank" rel="noopener">
-    x.com/ilblogdiLujanta
-  </a>
-</div>
-<!-- FACEBOOK -->
-<div class="card">
-  <h2 class="card-title">
-    <span class="icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" width="16" height="16">
-        <path
-          d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v5h3v-5h3l1-3h-4v-2c0-.6.4-1 1-1z"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linejoin="round"
-        />
-      </svg>
-    </span>
-    Facebook
-  </h2>
-  <p>Pagina e contenuti condivisi</p>
-  <a class="contact-link" href={FACEBOOK_URL} target="_blank" rel="noopener">
-    Vai alla pagina Facebook
-  </a>
-</div>
+
+        <!-- X -->
+        <div class="card">
+          <h2 class="card-title">
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16">
+                <path
+                  d="M4 4l16 16M20 4L4 20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </span>
+            X
+          </h2>
+          <p>Condivisioni e aggiornamenti brevi</p>
+          <a class="contact-link" href={X_URL} target="_blank" rel="noopener">
+            x.com/ilblogdiLujanta
+          </a>
+        </div>
+
+        <!-- FACEBOOK -->
+        <div class="card">
+          <h2 class="card-title">
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16">
+                <path
+                  d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v5h3v-5h3l1-3h-4v-2c0-.6.4-1 1-1z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            Facebook
+          </h2>
+          <p>Pagina e contenuti condivisi</p>
+          <a class="contact-link" href={FACEBOOK_URL} target="_blank" rel="noopener">
+            Vai alla pagina Facebook
+          </a>
+        </div>
 
       </section>
     </article>
