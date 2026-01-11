@@ -87,6 +87,24 @@ const top9 = articoli.slice(0, 9);
         margin-top: 200px;
       }
 
+.hero-logo img{
+  width: clamp(350px, 16vw, 380px); /* dimensione equilibrata */
+  height: auto;
+
+  /* integra il logo nello sfondo */
+  mix-blend-mode: multiply;
+
+  /* AURA ANTICA E DISCRETA */
+  filter:
+    contrast(1.05)
+    brightness(0.95)
+    drop-shadow(0 0 8px rgba(244,241,234,0.55))
+    drop-shadow(0 0 18px rgba(200,190,160,0.35));
+
+  opacity: 0.96;
+}
+
+
       h1{
         margin: 0 0 1rem;
         font-size: clamp(2.2rem, 5vw, 3.6rem);
@@ -345,31 +363,34 @@ const top9 = articoli.slice(0, 9);
       .topnav .nav-right{
         min-width: 90px !important;
       }
-      @media (max-width: 860px){
-  .hero__bg{
-    background-position: center 35%; /* 👈 sposta il focus */
-     }
-     }
-    @media (max-width: 860px){
-    .hero{
-    min-height: 88vh;     /* 👈 meno “vuoto” */
-    padding-top: 96px;   /* menu + respiro */
-    padding-bottom: 60px;
-  }
-}
-@media (max-width: 860px){
-  .hero__content{
-    margin-top: 120px; /* 👈 prima era 200 */
-  }
-}
-@media (max-width: 860px){
-  h1, .tagline{
-    text-shadow:
-      0 2px 12px rgba(244,241,234,.9),
-      0 1px 2px rgba(0,0,0,.15);
-  }
-}
 
+      @media (max-width: 860px){
+        .hero__bg{
+          background-position: center 35%; /* 👈 sposta il focus */
+        }
+      }
+
+      @media (max-width: 860px){
+        .hero{
+          min-height: 88vh;     /* 👈 meno “vuoto” */
+          padding-top: 96px;   /* menu + respiro */
+          padding-bottom: 60px;
+        }
+      }
+
+      @media (max-width: 860px){
+        .hero__content{
+          margin-top: 120px; /* 👈 prima era 200 */
+        }
+      }
+
+      @media (max-width: 860px){
+        h1, .tagline{
+          text-shadow:
+            0 2px 12px rgba(244,241,234,.9),
+            0 1px 2px rgba(0,0,0,.15);
+        }
+      }
     </style>
   </head>
 
@@ -381,6 +402,11 @@ const top9 = articoli.slice(0, 9);
       <div class="hero__veil"></div>
 
       <div class="hero__content">
+        <!-- ✅ LOGO (metti il file in /public/logo-lujanta.png) -->
+        <div class="hero-logo" aria-hidden="true">
+          <img src="/logo-lujanta.png" alt="" />
+        </div>
+
         <h1>{siteTitle}</h1>
         <p class="tagline">{tagline}</p>
         <a class="cta" href="/inizio-da-qui">Inizia da qui</a>
