@@ -108,8 +108,35 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
     }
 
     .list{ list-style:none; padding:0; margin:0; }
-    .list li{ padding:14px 0; border-top:1px solid rgba(44,36,28,0.18); }
+
+    /* ✅ ogni riga articolo con cover */
+    .list li{
+      padding:14px 0;
+      border-top:1px solid rgba(44,36,28,0.18);
+
+      display:grid;
+      grid-template-columns: 150px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
     .list li:first-child{ border-top:none; }
+
+    /* ✅ cover */
+    .cover-link{
+      display:block;
+      text-decoration:none;
+    }
+    img.cover{
+      width:100%;
+      height:100px;
+      object-fit:cover;
+      border-radius:6px;
+      box-shadow:0 8px 20px rgba(0,0,0,0.18);
+      display:block;
+    }
+
+    /* testo */
+    .text-col{ min-width:0; }
 
     .title{
       text-decoration:none;
@@ -143,10 +170,22 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
     }
     .chip:hover{ background:rgba(255,255,255,0.35); }
 
+    /* Se non c’è cover: riga a 1 colonna */
+    .list li.no-cover{
+      grid-template-columns: 1fr;
+    }
+
     @media (max-width:720px){
       .paper{ padding:42px 26px; }
       h1{ font-size:38px; }
       .year{ font-size: 24px; }
+
+      .list li{
+        grid-template-columns: 1fr;
+      }
+      img.cover{
+        height: 160px;
+      }
     }
   </style>
 
@@ -185,19 +224,27 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
 
               <ul class="list">
                 {byYear.get(anno)!.map((a) => (
-                  <li>
-                    <a class="title" href={`/articoli/${a.slug}`}>{a.data.title}</a>
+                  <li class={!a.data.cover ? "no-cover" : undefined}>
+                    {a.data.cover && (
+                      <a class="cover-link" href={`/articoli/${a.slug}`} aria-label={`Apri: ${a.data.title}`}>
+                        <img class="cover" src={a.data.cover} alt={a.data.title} loading="lazy" />
+                      </a>
+                    )}
 
-                    <div class="meta">
-                      <span>{formatDate(a.data.date)}</span>
+                    <div class="text-col">
+                      <a class="title" href={`/articoli/${a.slug}`}>{a.data.title}</a>
 
-                      {Array.isArray(a.data.sentieri) && a.data.sentieri.length > 0 && (
-                        <span class="chips" aria-label="Sentieri">
-                          {a.data.sentieri.map((s) => (
-                            <a class="chip" href={`/sentieri/${slugify(s)}`}>{s}</a>
-                          ))}
-                        </span>
-                      )}
+                      <div class="meta">
+                        <span>{formatDate(a.data.date)}</span>
+
+                        {Array.isArray(a.data.sentieri) && a.data.sentieri.length > 0 && (
+                          <span class="chips" aria-label="Sentieri">
+                            {a.data.sentieri.map((s) => (
+                              <a class="chip" href={`/sentieri/${slugify(s)}`}>{s}</a>
+                            ))}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </li>
                 ))}
