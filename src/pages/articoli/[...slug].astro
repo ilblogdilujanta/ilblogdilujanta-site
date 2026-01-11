@@ -7,8 +7,6 @@ type Articolo = CollectionEntry<"articoli">;
 
 export async function getStaticPaths() {
   const articoli = await getCollection("articoli");
-
-  // ✅ Catch-all in Astro: param deve essere STRINGA (es: "2016/12016-ringraziamenti")
   return articoli.map((a) => ({
     params: { slug: a.slug },
   }));
@@ -16,22 +14,17 @@ export async function getStaticPaths() {
 
 const articoli = await getCollection("articoli");
 
-// Ordine: più recente -> più vecchio
 const ordinati = articoli
   .slice()
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-// ✅ [...slug] in Astro arriva come stringa (es: "2016/qualcosa")
 const slugPath = String(Astro.params.slug ?? "");
-
 const currentIndex = ordinati.findIndex((a) => a.slug === slugPath);
 const articolo = currentIndex >= 0 ? ordinati[currentIndex] : null;
 
 if (!articolo) throw new Error(`Articolo non trovato: ${slugPath}`);
 
-// “Successivo” = più recente (indice - 1)
 const successivo = currentIndex > 0 ? ordinati[currentIndex - 1] : null;
-// “Precedente” = più vecchio (indice + 1)
 const precedente = currentIndex < ordinati.length - 1 ? ordinati[currentIndex + 1] : null;
 
 const { Content } = await articolo.render();
@@ -40,22 +33,25 @@ const formatDate = (d: Date) =>
   d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
 
 const sentieri = (articolo.data.sentieri ?? []) as string[];
+
+// 👇 subtitle opzionale (serve per mandare a capo il luogo nel titolo)
+const subtitle = (articolo.data as any).subtitle as string | undefined;
 ---
 
 <BaseLayout title={articolo.data.title}>
   <style is:global>
-    :root {
-      --ink: #2c241c;
-      --green: #0d8460;
-      --paper1: #efe1c5;
-      --paper2: #e2caa6;
-      --paper3: #d8bc93;
+    :root{
+      --ink:#2c241c;
+      --green:#0d8460;
+      --paper1:#efe1c5;
+      --paper2:#e2caa6;
+      --paper3:#d8bc93;
     }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: var(--green);
+    body{
+      margin:0;
+      min-height:100vh;
+      background:var(--green);
       font-family:
         "Baskerville Old Face",
         "Baskerville",
@@ -63,157 +59,225 @@ const sentieri = (articolo.data.sentieri ?? []) as string[];
         Georgia,
         "Times New Roman",
         serif;
-      color: var(--ink);
+      color:var(--ink);
     }
 
-    main {
-      display: flex;
-      justify-content: center;
-      padding: 32px 14px;
+    main{
+      display:flex;
+      justify-content:center;
+      padding:32px 14px;
     }
 
-    .paper {
-      max-width: 980px;
-      width: 100%;
-      padding: 60px;
+    .paper{
+      max-width:980px;
+      width:100%;
+      padding:60px;
       background:
-        radial-gradient(120% 90% at 50% 20%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 55%),
+        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,.35), rgba(255,255,255,0) 55%),
         linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
-      border-radius: 6px;
-      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+      border-radius:6px;
+      box-shadow:0 18px 60px rgba(0,0,0,.55);
     }
 
-    h1 {
-      text-align: center;
-      font-size: 30px;
-      font-weight: 400;
-      margin: 0 0 10px;
+    h1{
+      text-align:center;
+      font-size:30px;
+      font-weight:400;
+      margin:0 0 8px;
+      line-height: 1.18;
     }
 
-    .date {
-      text-align: center;
-      opacity: 0.75;
-      margin: 0 0 14px;
-      font-size: 18px;
-    }
-.underline {
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
-}
-
-    .meta-row {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin: 0 0 26px;
+    .subtitle{
+      text-align:center;
+      font-size:22px;
+      font-weight:400;
+      margin:0 0 12px;
+      opacity:.92;
+      line-height: 1.25;
     }
 
-    .back {
-      text-decoration: none;
-      color: var(--ink);
-      border-bottom: 1px solid rgba(44, 36, 28, 0.25);
-      opacity: 0.9;
-    }
-    .back:hover { border-bottom-color: rgba(44, 36, 28, 0.6); }
-
-    .tags {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
+    .date{
+      text-align:center;
+      opacity:.75;
+      margin:0 0 14px;
+      font-size:18px;
     }
 
-    .tag {
-      text-decoration: none;
-      color: var(--ink);
-      border: 1px solid rgba(44, 36, 28, 0.22);
-      border-radius: 999px;
-      padding: 6px 10px;
-      background: rgba(255, 255, 255, 0.22);
-      font-size: 15px;
-      opacity: 0.95;
-    }
-    .tag:hover { background: rgba(255, 255, 255, 0.38); }
-
-    .content {
-      font-size: 20px;
-      line-height: 1.75;
+    .meta-row{
+      display:flex;
+      justify-content:center;
+      gap:14px;
+      flex-wrap:wrap;
+      margin:0 0 26px;
     }
 
-    .content p { margin: 0 0 18px; }
-
-    .content h2, .content h3 {
-      font-weight: 400;
-      margin: 38px 0 14px;
-      line-height: 1.2;
+    .back{
+      text-decoration:none;
+      color:var(--ink);
+      border-bottom:1px solid rgba(44,36,28,.25);
     }
-    .content h2 { font-size: 30px; }
-    .content h3 { font-size: 24px; opacity: 0.95; }
+    .back:hover{ border-bottom-color: rgba(44,36,28,.6); }
 
-    .content img {
-      display: block;
-      max-width: 60%;
-      height: auto;
-      margin: 70px auto;
-      border-radius: 6px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-    }
-    .content img.img-large { max-width: 85%; }
-    .content img.img-small { max-width: 40%; }
-
-    .pager {
-      margin-top: 42px;
-      padding-top: 18px;
-      border-top: 1px solid rgba(44, 36, 28, 0.2);
-      display: flex;
-      gap: 14px;
-      justify-content: space-between;
-      align-items: stretch;
-      flex-wrap: wrap;
+    .tags{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
     }
 
-    .pager a {
-      flex: 1;
-      min-width: 220px;
-      text-decoration: none;
-      color: var(--ink);
-      border: 1px solid rgba(44, 36, 28, 0.25);
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.22);
-      padding: 14px 14px;
+    .tag{
+      text-decoration:none;
+      color:var(--ink);
+      border:1px solid rgba(44,36,28,.22);
+      border-radius:999px;
+      padding:6px 10px;
+      background:rgba(255,255,255,.22);
+      font-size:15px;
     }
-    .pager a:hover { background: rgba(255, 255, 255, 0.38); }
+    .tag:hover{ background: rgba(255,255,255,.38); }
 
-    .pager .label {
-      font-size: 14px;
-      opacity: 0.75;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    /* ===== TESTO ===== */
+    .content{
+      font-size:20px;
+      line-height:1.75;
     }
-    .pager .title { font-size: 18px; line-height: 1.35; }
-    .pager .empty { flex: 1; min-width: 220px; }
 
-    @media (max-width: 720px) {
-      .paper { padding: 42px 26px; }
-      h1 { font-size: 40px; }
-      .content { font-size: 19px; }
-      .content img { max-width: 92%; margin: 50px auto; }
+    .content p{ margin:0 0 18px; }
+
+    .content h2{
+      font-size:30px;
+      margin:38px 0 14px;
+      font-weight:400;
+    }
+
+    .content h3{
+      font-size:24px;
+      margin:34px 0 12px;
+      font-weight:400;
+      opacity:.95;
+    }
+
+    /* ✅ Sottolineatura “manuale” (es: <span class="underline">Testo</span>) */
+    .content .underline{
+      text-decoration: underline;
+      text-underline-offset: 0.15em;   /* ✅ valore valido */
+      text-decoration-thickness: 1px;
+    }
+
+    /* ===== IMMAGINI (coerenti anche se Typora le mette dentro <p>) ===== */
+    .content :where(img){
+      display:block;
+      height:auto;
+      max-width:60%;
+      margin:40px auto;               /* ✅ spaziatura “base” uniforme */
+      border-radius:6px;
+      box-shadow:0 10px 30px rgba(0,0,0,.18);
+    }
+
+    /* Varianti dimensione */
+    .content :where(img.img-large){ max-width:85%; }
+    .content :where(img.img-small){ max-width:40%; }
+
+    /* ===== FIGURE + DIDASCALIA ===== */
+    .content figure{
+      margin:40px auto;               /* stesso respiro dell’immagine “base” */
+      text-align:center;
+    }
+
+    /* dentro figure: togliamo i margini dell’immagine e li gestiamo col figure */
+    .content figure > img{
+      margin:0 auto 0 auto;           /* ✅ niente “salti” */
+    }
+
+    .content figure figcaption{
+      margin-top:14px;                /* ✅ distanza coerente */
+      font-size:16px;
+      line-height:1.55;
+      opacity:.85;
+      font-style:italic;
+      text-align:center;
+    }
+
+    /* Se per qualche motivo hai vecchie didascalie come <p class="caption"> */
+    .content p.caption{
+      margin:-18px auto 40px;         /* vicina alla foto sopra, poi respiro sotto */
+      text-align:center;
+      font-size:16px;
+      line-height:1.55;
+      opacity:.85;
+      font-style:italic;
+    }
+
+    /* ===== VIDEO ===== */
+    .video{
+      position:relative;
+      width:70%;
+      max-width:820px;
+      margin:36px auto;
+      aspect-ratio:16 / 9;
+    }
+    .video iframe{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      border:0;
+    }
+
+    /* ===== NAVIGAZIONE ===== */
+    .pager{
+      margin-top:42px;
+      padding-top:18px;
+      border-top:1px solid rgba(44,36,28,.2);
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .pager a{
+      flex:1;
+      min-width:220px;
+      text-decoration:none;
+      color:var(--ink);
+      border:1px solid rgba(44,36,28,.25);
+      border-radius:6px;
+      background:rgba(255,255,255,.22);
+      padding:14px;
+    }
+    .pager a:hover{ background: rgba(255,255,255,.38); }
+
+    .pager .label{
+      font-size:14px;
+      opacity:.75;
+      margin-bottom:6px;
+    }
+
+    .pager .title{
+      font-size:18px;
+      line-height:1.35;
+    }
+
+    @media (max-width:720px){
+      .paper{ padding:42px 26px; }
+      .content{ font-size:19px; }
+      .content :where(img){ max-width:92%; }
+      .subtitle{ font-size:20px; }
     }
   </style>
 
   <main>
     <article class="paper">
       <h1>{articolo.data.title}</h1>
+
+      {subtitle && <div class="subtitle">({subtitle})</div>}
+
       <p class="date">{formatDate(articolo.data.date)}</p>
 
       <div class="meta-row">
         <a class="back" href="/sentieri">← Torna a Sentieri</a>
 
         {sentieri.length > 0 && (
-          <div class="tags" aria-label="Sentieri dell’articolo">
+          <div class="tags">
             {sentieri.map((s) => (
               <a class="tag" href={`/sentieri/${slugify(s)}`}>{s}</a>
             ))}
@@ -225,26 +289,20 @@ const sentieri = (articolo.data.sentieri ?? []) as string[];
         <Content />
       </div>
 
-      <nav class="pager" aria-label="Navigazione articoli">
+      <nav class="pager">
         {precedente ? (
           <a href={`/articoli/${precedente.slug}`}>
-            <div class="label">← Precedente (più vecchio)</div>
+            <div class="label">← Precedente</div>
             <div class="title">{precedente.data.title}</div>
           </a>
-        ) : (
-          <div class="empty"></div>
-        )}
+        ) : <div></div>}
 
         {successivo ? (
-          <a href={`/articoli/${successivo.slug}`} style="text-align:right;">
-            <div class="label" style="justify-content:flex-end;">
-              Successivo (più recente) →
-            </div>
+          <a href={`/articoli/${successivo.slug}`} style="text-align:right">
+            <div class="label">Successivo →</div>
             <div class="title">{successivo.data.title}</div>
           </a>
-        ) : (
-          <div class="empty"></div>
-        )}
+        ) : <div></div>}
       </nav>
     </article>
   </main>

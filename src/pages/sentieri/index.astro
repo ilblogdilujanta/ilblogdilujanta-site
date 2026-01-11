@@ -13,6 +13,7 @@ type Articolo = {
 
 const articoli = (await getCollection("articoli")) as Articolo[];
 
+// slug coerente
 const slugify = (s: string) =>
   s
     .toLowerCase()
@@ -23,12 +24,40 @@ const slugify = (s: string) =>
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 
-// SENTIERI (unici)
-const sentieri = [...new Set(articoli.flatMap((a) => a.data.sentieri ?? []))].sort((a, b) =>
-  a.localeCompare(b, "it"),
+// ✅ normalizzazione "umana" per evitare duplicati tipo "Veneto " vs "Veneto"
+const normalizeLabel = (s: string) =>
+  s
+    .replace(/\s+/g, " ")  // spazi multipli -> 1
+    .trim();               // via spazi iniziali/finali
+
+// ===== SENTIERI (unici + ordinati A→Z) =====
+const sentieriMap = new Map<string, string>(); 
+// key = chiave normalizzata per dedup, value = label originale “pulita” da mostrare
+
+for (const a of articoli) {
+  for (const raw of a.data.sentieri ?? []) {
+    const label = normalizeLabel(raw);
+    if (!label) continue;
+
+    // chiave di dedup più “forte”: normalizzo e tolgo accenti/segni per confronto
+    const key = label
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[’'"]/g, "")        // apostrofi vari
+      .replace(/\s+/g, " ")
+      .trim();
+
+    // se esiste già non sovrascrivo (tengo la prima forma “umana”)
+    if (!sentieriMap.has(key)) sentieriMap.set(key, label);
+  }
+}
+
+const sentieri = Array.from(sentieriMap.values()).sort((a, b) =>
+  a.localeCompare(b, "it", { sensitivity: "base" })
 );
 
-// ARCHIVIO PER ANNO
+// ===== ARCHIVIO PER ANNO =====
 const archivioPerAnno: Record<number, Articolo[]> = {};
 for (const a of articoli) {
   const anno = a.data.date.getFullYear();
@@ -56,15 +85,9 @@ const titoloPagina = "Sentieri di Lettura";
       margin:0;
       min-height:100vh;
       background: var(--green);
-
       font-family:
-        "Baskerville Old Face",
-        "Baskerville",
-        "Libre Baskerville",
-        Georgia,
-        "Times New Roman",
-        serif;
-
+        "Baskerville Old Face","Baskerville","Libre Baskerville",
+        Georgia,"Times New Roman",serif;
       color:var(--ink);
     }
 
@@ -78,11 +101,9 @@ const titoloPagina = "Sentieri di Lettura";
       max-width:980px;
       width:100%;
       padding:60px;
-
       background:
         radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
         linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
-
       border-radius:6px;
       box-shadow:0 18px 60px rgba(0,0,0,0.55);
     }
@@ -117,16 +138,27 @@ const titoloPagina = "Sentieri di Lettura";
     }
 
     .sentiero{
-      padding:16px 14px;
-      font-size:22px;
-      border:1px solid rgba(44,36,28,0.25);
-      border-radius:4px;
-      text-align:center;
-      text-decoration:none;
-      color:var(--ink);
-      background:rgba(255,255,255,0.25);
-    }
-    .sentiero:hover{ background:rgba(255,255,255,0.45); }
+  padding:16px 14px;
+  font-size:22px;
+  border:1px solid rgba(44,36,28,0.25);
+  border-radius:4px;
+
+  /* ✅ centratura perfetta */
+  display:flex;
+  align-items:center;      /* centro verticale */
+  justify-content:center;  /* centro orizzontale */
+  text-align:center;
+
+  min-height:84px;         /* altezza minima uniforme (puoi alzare a 92/100) */
+  line-height:1.25;
+
+  text-decoration:none;
+  color:var(--ink);
+  background:rgba(255,255,255,0.25);
+}
+
+.sentiero:hover{ background:rgba(255,255,255,0.45); }
+
 
     /* ARCHIVIO COLLASSABILE */
     .anno{

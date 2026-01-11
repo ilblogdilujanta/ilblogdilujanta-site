@@ -76,14 +76,41 @@ const pageTitle = `${sentieroNome} — Sentieri di Lettura`;
     h1{ text-align:center; font-size:40px; font-weight:400; margin:0 0 14px; }
     .sub{ text-align:center; opacity:0.75; margin:0 0 28px; }
 
-    ul{ list-style:none; padding:0; margin:0; }
-    li{ padding:12px 0; border-top:1px solid rgba(44,36,28,0.18); }
-    li:first-child{ border-top:0; }
+    /* ===== LISTA CON COVER ===== */
+    .rows{ margin:0; padding:0; list-style:none; }
+
+    .row{
+      display:grid;
+      grid-template-columns: 150px 1fr;
+      gap: 16px;
+      padding: 12px 0;
+      border-top:1px solid rgba(44,36,28,0.18);
+      align-items: start;
+    }
+    .row:first-child{ border-top:0; }
+
+    .cover-link{
+      display:block;
+      text-decoration:none;
+    }
+
+    .thumb{
+      width:100%;
+      height:100px;
+      object-fit:cover;
+      border-radius:6px;
+      box-shadow:0 8px 20px rgba(0,0,0,0.18);
+      display:block;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .text{ min-width:0; }
 
     a.article{
       text-decoration:none;
       color:var(--ink);
       border-bottom:1px solid rgba(44,36,28,0.25);
+      display:inline;
     }
     a.article:hover{ border-bottom-color: rgba(44,36,28,0.6); }
 
@@ -92,6 +119,13 @@ const pageTitle = `${sentieroNome} — Sentieri di Lettura`;
     @media (max-width:720px){
       .paper{ padding:42px 26px; }
       h1{ font-size:34px; }
+
+      .row{
+        grid-template-columns: 1fr;
+      }
+      .thumb{
+        height: 170px;
+      }
     }
   </style>
 
@@ -105,11 +139,23 @@ const pageTitle = `${sentieroNome} — Sentieri di Lettura`;
           Nessun articolo ancora associato a questo Sentiero.
         </p>
       ) : (
-        <ul>
+        <ul class="rows" aria-label="Articoli del sentiero">
           {articoliDelSentiero.map((a) => (
-            <li>
-              <a class="article" href={`/articoli/${a.slug}`}>{a.data.title}</a>
-              <div class="meta">{formatDate(a.data.date)}</div>
+            <li class="row">
+              {a.data.cover ? (
+                <a class="cover-link" href={`/articoli/${a.slug}`} aria-label={`Apri: ${a.data.title}`}>
+                  <img class="thumb" src={a.data.cover} alt={a.data.title} loading="lazy" />
+                </a>
+              ) : (
+                <div aria-hidden="true">
+                  <div class="thumb"></div>
+                </div>
+              )}
+
+              <div class="text">
+                <a class="article" href={`/articoli/${a.slug}`}>{a.data.title}</a>
+                <div class="meta">{formatDate(a.data.date)}</div>
+              </div>
             </li>
           ))}
         </ul>
