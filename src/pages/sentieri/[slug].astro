@@ -127,6 +127,39 @@ const pageTitle = `${sentieroNome} — Sentieri di Lettura`;
         height: 170px;
       }
     }
+
+    /* ===== BOTTONE “ANTICO” (TORNA AI SENTIERI) ===== */
+    .back-wrap{
+      margin-top: 48px;
+      text-align: center;
+    }
+
+    .back-btn{
+      display: inline-block;
+      padding: 10px 22px;
+      font-size: 17px;
+      font-family: inherit;
+      color: var(--ink);
+      text-decoration: none;
+
+      background: rgba(255,255,255,0.22);
+      border: 1px solid rgba(44,36,28,0.35);
+      border-radius: 999px;
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.35),
+        0 4px 12px rgba(0,0,0,0.18);
+
+      transition: background .2s ease, box-shadow .2s ease, transform .15s ease;
+    }
+
+    .back-btn:hover{
+      background: rgba(255,255,255,0.42);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.45),
+        0 6px 18px rgba(0,0,0,0.25);
+      transform: translateY(-1px);
+    }
   </style>
 
   <main>
@@ -160,6 +193,11 @@ const pageTitle = `${sentieroNome} — Sentieri di Lettura`;
           ))}
         </ul>
       )}
+
+      <!-- ✅ Bottone centrale in fondo -->
+      <div class="back-wrap">
+        <a class="back-btn" href="/sentieri">← Torna ai Sentieri di Lettura</a>
+      </div>
     </article>
   </main>
 </BaseLayout>
