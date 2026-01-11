@@ -37,11 +37,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       max-width:980px;
       width:100%;
       padding:60px;
-
       background:
         radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
         linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
-
       border-radius:6px;
       box-shadow:0 18px 60px rgba(0,0,0,0.55);
     }
@@ -69,22 +67,44 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       margin:28px 0;
     }
 
-    .closing{
-      text-align:center;
-      margin-top:18px;
+    /* ===== VIDEO centrato e “più piccolo” ===== */
+    .video-wrap{
+      display:flex;
+      justify-content:center;
+      margin: 26px 0 18px;
     }
 
-    @media (max-width:720px){
-      .paper{ padding:42px 26px; }
-      h1{ font-size:38px; }
+    .video-wrap iframe{
+      width: 540px;          /* più piccolo del full */
+      max-width: 100%;
+      aspect-ratio: 16 / 9;  /* mantiene proporzioni */
+      height: auto;
+      border: 0;
+      border-radius: 10px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+      background: rgba(255,255,255,0.10);
+    }
+
+    /* Firma a sinistra */
+    .firma{
+      text-align:left;
+      margin: 18px 0 0;
+      opacity: .95;
     }
 
     .firma-sep{
       width: 150px;
       height: 1px;
-      margin: 18px auto 28px auto;
-      background-color: rgb(41, 11, 11);
+      margin: 18px 0 22px;   /* a sinistra (non auto) */
+      background-color: rgba(44,36,28,0.55);
       border: none;
+    }
+
+    @media (max-width:720px){
+      .paper{ padding:42px 26px; }
+      h1{ font-size:38px; }
+      .copy{ font-size:19px; }
+      .video-wrap iframe{ width: 100%; }
     }
   </style>
 
@@ -137,19 +157,30 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
           Nella sezione Testimonianze troverete due brani di coloro che erano per me dei perfetti sconosciuti, e che dopo la condivisione di miei “sguardi” su quello che io amo definire “infinito presente”, hanno scelto di omaggiarmi con loro scritti. Del secondo troverete solo le iniziali per motivi di privacy, mentre il primo, blogger e docente universitario, ha inserito l’articolo nel suo blog.
         </p>
 
-        <div class="closing">
-          <iframe width="556" height="425" src="https://www.youtube.com/embed/D6f0Nq9IhPY" title="Nel regno dei Fanes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-          <p class="firma">
-            Grazie della lettura.<br />
-            Lujanta
-          </p>
+        <p>
+          Un breve frammento visivo, come soglia, per restituire il senso di Lujanta.
+        </p>
 
-          <hr class="firma-sep" />
-
-          <p>
-            I lavori di ricerca presenti nel sito saranno progressivamente condivisi su Academia.edu con il mio nome completo.
-          </p>
+        <div class="video-wrap" aria-label="Video: Nel regno dei Fanes">
+          <iframe
+            src="https://www.youtube.com/embed/D6f0Nq9IhPY"
+            title="Nel regno dei Fanes"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
         </div>
+
+        <p class="firma">
+          Grazie della lettura.<br />
+          Lujanta
+        </p>
+
+        <hr class="firma-sep" />
+
+        <p>
+          I lavori di ricerca presenti nel sito saranno progressivamente condivisi su Academia.edu con il mio nome completo.
+        </p>
       </div>
     </article>
   </main>
