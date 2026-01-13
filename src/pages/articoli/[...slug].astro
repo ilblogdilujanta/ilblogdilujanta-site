@@ -34,8 +34,25 @@ const formatDate = (d: Date) =>
 
 const sentieri = (articolo.data.sentieri ?? []) as string[];
 
-// 👇 subtitle opzionale (serve per mandare a capo il luogo nel titolo)
+// subtitle opzionale
 const subtitle = (articolo.data as any).subtitle as string | undefined;
+
+/* =========================
+   CONDIVISIONE (URL pubblico)
+   ========================= */
+const site = Astro.site ?? new URL("https://ilblogdilujanta.eu"); // fallback
+const urlArticolo = new URL(`/articoli/${articolo.slug}`, site).toString();
+
+const shareText = articolo.data.title;
+
+const encUrl = encodeURIComponent(urlArticolo);
+const encText = encodeURIComponent(shareText);
+
+const shareX = `https://twitter.com/intent/tweet?url=${encUrl}&text=${encText}`;
+const shareFB = `https://www.facebook.com/sharer/sharer.php?u=${encUrl}`;
+const shareTG = `https://t.me/share/url?url=${encUrl}&text=${encText}`;
+const shareWA = `https://wa.me/?text=${encodeURIComponent(`${shareText} — ${urlArticolo}`)}`;
+const shareMail = `mailto:?subject=${encText}&body=${encodeURIComponent(urlArticolo)}`;
 ---
 
 <BaseLayout title={articolo.data.title}>
@@ -157,40 +174,37 @@ const subtitle = (articolo.data as any).subtitle as string | undefined;
       opacity:.95;
     }
 
-    /* ✅ Sottolineatura “manuale” (es: <span class="underline">Testo</span>) */
     .content .underline{
       text-decoration: underline;
-      text-underline-offset: 0.15em;   /* ✅ valore valido */
+      text-underline-offset: 0.15em;
       text-decoration-thickness: 1px;
     }
 
-    /* ===== IMMAGINI (coerenti anche se Typora le mette dentro <p>) ===== */
+    /* ===== IMMAGINI ===== */
     .content :where(img){
       display:block;
       height:auto;
       max-width:60%;
-      margin:40px auto;               /* ✅ spaziatura “base” uniforme */
+      margin:40px auto;
       border-radius:6px;
       box-shadow:0 10px 30px rgba(0,0,0,.18);
     }
 
-    /* Varianti dimensione */
     .content :where(img.img-large){ max-width:85%; }
     .content :where(img.img-small){ max-width:40%; }
 
     /* ===== FIGURE + DIDASCALIA ===== */
     .content figure{
-      margin:40px auto;               /* stesso respiro dell’immagine “base” */
+      margin:40px auto;
       text-align:center;
     }
 
-    /* dentro figure: togliamo i margini dell’immagine e li gestiamo col figure */
     .content figure > img{
-      margin:0 auto 0 auto;           /* ✅ niente “salti” */
+      margin:0 auto 0 auto;
     }
 
     .content figure figcaption{
-      margin-top:14px;                /* ✅ distanza coerente */
+      margin-top:14px;
       font-size:16px;
       line-height:1.55;
       opacity:.85;
@@ -198,9 +212,8 @@ const subtitle = (articolo.data as any).subtitle as string | undefined;
       text-align:center;
     }
 
-    /* Se per qualche motivo hai vecchie didascalie come <p class="caption"> */
     .content p.caption{
-      margin:-18px auto 40px;         /* vicina alla foto sopra, poi respiro sotto */
+      margin:-18px auto 40px;
       text-align:center;
       font-size:16px;
       line-height:1.55;
@@ -222,6 +235,59 @@ const subtitle = (articolo.data as any).subtitle as string | undefined;
       width:100%;
       height:100%;
       border:0;
+    }
+
+    /* ===== CONDIVIDI ===== */
+    .share{
+      margin-top: 34px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(44,36,28,.2);
+      text-align:center;
+    }
+
+    .share-title{
+      margin: 0 0 12px;
+      font-weight: 400;
+      font-size: 20px;
+      opacity: .92;
+    }
+
+    .share-row{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .share-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(44,36,28,0.22);
+      background: rgba(255,255,255,0.20);
+      color: var(--ink);
+      text-decoration:none;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .share-btn:hover{
+      background: rgba(255,255,255,0.38);
+    }
+
+    .share-btn svg{
+      opacity: .85;
+      flex: 0 0 auto;
+    }
+
+    .share-hint{
+      margin: 10px 0 0;
+      font-size: 14px;
+      opacity: .75;
+      word-break: break-word;
     }
 
     /* ===== NAVIGAZIONE ===== */
@@ -268,9 +334,7 @@ const subtitle = (articolo.data as any).subtitle as string | undefined;
   <main>
     <article class="paper">
       <h1>{articolo.data.title}</h1>
-
       {subtitle && <div class="subtitle">({subtitle})</div>}
-
       <p class="date">{formatDate(articolo.data.date)}</p>
 
       <div class="meta-row">
@@ -288,6 +352,122 @@ const subtitle = (articolo.data as any).subtitle as string | undefined;
       <div class="content">
         <Content />
       </div>
+
+      <!-- ✅ CONDIVIDI (fine articolo) -->
+      <section
+        class="share"
+        aria-label="Condividi questo articolo"
+        data-share
+        data-url={urlArticolo}
+        data-title={shareText}
+      >
+        <h3 class="share-title">Condividi</h3>
+
+        <div class="share-row">
+          <a class="share-btn" href={shareFB} target="_blank" rel="noopener noreferrer" aria-label="Condividi su Facebook">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v5h3v-5h3l1-3h-4v-2c0-.6.4-1 1-1z"
+                fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+            Facebook
+          </a>
+
+          <a class="share-btn" href={shareX} target="_blank" rel="noopener noreferrer" aria-label="Condividi su X">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M4 4l16 16M20 4L4 20"
+                fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            X
+          </a>
+
+          <a class="share-btn" href={shareTG} target="_blank" rel="noopener noreferrer" aria-label="Condividi su Telegram">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M21 4L3.6 11.3c-.7.3-.7 1.3.1 1.5l4.5 1.4 1.7 5c.2.6 1 .7 1.4.2l2.6-3 4.8 3.5c.5.4 1.2.1 1.3-.6L22 5.2c.1-.8-.6-1.4-1-1.2z"
+                fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M8.2 13.9l9.7-6.2"
+                fill="none" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+            Telegram
+          </a>
+
+          <a class="share-btn" href={shareWA} target="_blank" rel="noopener noreferrer" aria-label="Condividi su WhatsApp">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M4 20l2.2-4A8 8 0 1 1 20 12a8 8 0 0 1-8 8H4z"
+                fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+            WhatsApp
+          </a>
+
+          <a class="share-btn" href={shareMail} aria-label="Condividi via email">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M4 6h16v12H4z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+            Email
+          </a>
+
+          <button class="share-btn" type="button" data-copy aria-label="Copia link articolo">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 0 1 7 7l-1 1"
+                fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M14 11a5 5 0 0 1 0 7l-1 1a5 5 0 0 1-7-7l1-1"
+                fill="none" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+            Copia link
+          </button>
+
+          <button class="share-btn" type="button" data-native aria-label="Condividi con il menu del dispositivo">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M12 16V4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M8 8l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5 20h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            Condividi…
+          </button>
+        </div>
+
+        
+
+        <!-- ✅ JS PURO: niente { } dentro lo script -->
+        <script is:inline>
+          (function () {
+            const root = document.querySelector("[data-share]");
+            if (!root) return;
+
+            const url = root.getAttribute("data-url") || window.location.href;
+            const title = root.getAttribute("data-title") || document.title;
+
+            const copyBtn = root.querySelector("[data-copy]");
+            const nativeBtn = root.querySelector("[data-native]");
+
+            if (copyBtn) {
+              copyBtn.addEventListener("click", async () => {
+                try {
+                  await navigator.clipboard.writeText(url);
+                  const old = copyBtn.textContent;
+                  copyBtn.textContent = "Copiato ✓";
+                  setTimeout(() => (copyBtn.textContent = old), 1200);
+                } catch (e) {
+                  alert("Impossibile copiare automaticamente. Copia il link dalla barra del browser.");
+                }
+              });
+            }
+
+            if (nativeBtn) {
+              const canShare = !!navigator.share;
+              if (!canShare) {
+                nativeBtn.style.display = "none";
+              } else {
+                nativeBtn.addEventListener("click", async () => {
+                  try {
+                    await navigator.share({ title, text: title, url });
+                  } catch (e) {}
+                });
+              }
+            }
+          })();
+        </script>
+      </section>
 
       <nav class="pager">
         {precedente ? (
