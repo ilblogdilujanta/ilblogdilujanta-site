@@ -12,6 +12,26 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       --paper2:#e2caa6;
       --paper3:#d8bc93;
     }
+/* ===== IMMAGINE CHI SONO ===== */
+.hero-figure{
+  display: flex;
+  justify-content: center;
+  margin: 0 0 32px;
+}
+
+.hero-figure img{
+  max-width: 65%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+}
+
+/* Mobile */
+@media (max-width:720px){
+  .hero-figure img{
+    max-width: 100%;
+  }
+}
 
     body{
       margin:0;
@@ -111,7 +131,13 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   <main>
     <article class="paper">
       <h1>Chi sono</h1>
-
+       <figure class="hero-figure">
+  <img
+    src="/lujanta1.jpg"
+    alt="Laghetto delle Tose, Lagole di Calalzo (BL)"
+    loading="lazy"
+  />
+</figure>
       <div class="copy">
         <p>
           Si narra che un tempo esistesse una popolazione leggendaria, quella dei Fanes, che vide la nascita di due gemelle: Dolasilla e Lujanta. La prima, la più conosciuta, è la guerriera che difenderà il suo popolo fino alla morte. La gemella, Lujanta, invece, fin dalla nascita viene scambiata con le marmotte e trascorrerà la sua vita accolta dalle profondità della terra. Al di là della narrazione letteraria, qualcosa mi ha sempre condotto verso colei che non è conosciuta, verso colei il cui nome, in ladino, significa luminosa, pur avendo vissuto tutta la sua esistenza nel grembo oscuro della roccia, poiché Figlia della profondità della Montagna. Lujanta appare all'inizio e alla fine della storia, come due punti agli antipodi che delimitano lo spazio ideale per tracciare un cerchio: quello della Vita.

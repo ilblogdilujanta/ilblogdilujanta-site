@@ -28,7 +28,33 @@ const titoloPagina = "Intenti del Blog";
         serif;
       color:var(--ink);
     }
+    .hero-logo{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 28px;
+}
 
+/* ===== IMMAGINE CHI SONO ===== */
+.hero-figure{
+  display: flex;
+  justify-content: center;
+  margin: 0 0 32px;
+}
+
+.hero-figure img{
+  max-width: 65%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+}
+
+/* Mobile */
+@media (max-width:720px){
+  .hero-figure img{
+    max-width: 100%;
+  }
+}
     main{
       display:flex;
       justify-content:center;
@@ -55,7 +81,22 @@ const titoloPagina = "Intenti del Blog";
       margin:0 0 26px;
       letter-spacing:0.2px;
     }
+.hero-logo img{
+  width: clamp(350px, 16vw, 380px); /* dimensione equilibrata */
+  height: auto;
 
+  /* integra il logo nello sfondo */
+  mix-blend-mode: multiply;
+
+  /* AURA ANTICA E DISCRETA */
+  filter:
+    contrast(1.05)
+    brightness(0.95)
+    drop-shadow(0 0 8px rgba(244,241,234,0.55))
+    drop-shadow(0 0 18px rgba(200,190,160,0.35));
+
+  opacity: 0.96;
+}
     .copy{
       font-size:20px;
       line-height:1.62;
@@ -76,7 +117,11 @@ const titoloPagina = "Intenti del Blog";
   <main>
     <article class="paper">
       <h1>Intenti del Blog</h1>
-
+<div class="hero__content">
+        <!-- ✅ LOGO (metti il file in /public/logo-lujanta.png) -->
+        <div class="hero-logo" aria-hidden="true">
+          <img src="/logo-lujanta.png" alt="" />
+        </div>
       <div class="copy">
         <p>
           Fin dai suoi esordi, il blog di Lujanta ha inteso dedicarsi all'esplorazione di un'ampia gamma di argomenti, tutti accomunati dall'interesse primario per il Sacro Femminino e la Cultura Celtica, ma non solo. La passione per l'archeologia e l'antropologia si unisce all'esplorazione di antiche storie dolomitiche e di luoghi di potere arcaici. La ricerca, in un'area di matrice prevalentemente germanofona, conduce naturalmente ad approfondimenti con territori affini dal punto di vista culturale, e con località che, sebbene apparentemente distanti, condividono la stessa impronta originaria e tradizioni comuni, attingendo a un antico bacino culturale condiviso.
