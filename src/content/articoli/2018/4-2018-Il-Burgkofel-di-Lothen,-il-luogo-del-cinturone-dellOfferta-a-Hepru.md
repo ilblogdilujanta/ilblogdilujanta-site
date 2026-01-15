@@ -28,10 +28,8 @@ lng: 11.882851
   <img src="/immagini/2018/4.2018/1. CINTURONE CON CERVI - SAVAETES.jpg" alt="Foto" loading="lazy" class="img-normal" />
   <figcaption>1.Il Cinturone come si presenta al Museo Mansio Sebatum </figcaption>
 </figure>
-<br>
-<br>
-<br>
-Sulla destra orografica del fiume Rienz–Rienza, nel territorio comunale di Sankt Lorenzen – San Lorenzo di Sebato, sorgono le frazioni di Sonnenburg–Castelbadia, Fassing–Fassine e Lothen–Campolino. Seguendo a piedi il tracciato che dalla strada statale conduce verso Fassing–Fassine, lo sguardo incontra subito una falesia, a monte della quale sorge quello che oggi è denominato il *Burgkofel di Lothen*, situato a 961 metri di altitudine. La piccola frazione, abitata da circa quaranta persone, è compresa fra due cappelle, dedicate a Santa Maria e a San Nicolò. La parete a strapiombo è esposta a sud-ovest ed è oggi una palestra di arrampicata; la sua fama, però, è dovuta a un ritrovamento archeologico eccezionale avvenuto a seguito di lavori di rifacimento stradale. A cavallo tra il 1939 e il 1940 vennero rinvenuti numerosi oggetti di bronzo e di ferro, fra cui fibule, collane, bracciali, oltre a briglie ed a una spada.
+
+Sulla destra orografica del fiume Rienz–Rienza, nel territorio comunale di Sankt Lorenzen–San Lorenzo di Sebato, sorgono le frazioni di Sonnenburg–Castelbadia, Fassing–Fassine e Lothen–Campolino. Seguendo a piedi il tracciato che dalla strada statale conduce verso Fassing–Fassine, lo sguardo incontra subito una falesia, a monte della quale sorge quello che oggi è denominato il <em>Burgkofel di Lothen</em>, situato a 961 metri di altitudine. La piccola frazione, abitata da circa quaranta persone, è compresa fra due cappelle, dedicate a Santa Maria e a San Nicolò. La parete a strapiombo è esposta a sud-ovest ed è oggi una palestra di arrampicata; la sua fama, però, è dovuta a un ritrovamento archeologico eccezionale avvenuto a seguito di lavori di rifacimento stradale. A cavallo tra il 1939 e il 1940 vennero rinvenuti numerosi oggetti di bronzo e di ferro, fra cui fibule, collane, bracciali, oltre a briglie ed a una spada.
 
 
 
@@ -109,7 +107,7 @@ Non è ancora possibile stabilire se Hepru fosse una Divinità o una persona di 
 
 
 
-Inizialmente i reperti in mancanza di adeguata sorveglianza furono trafugati e venduti finendo sul mercato tedesco. Fu solo negli anni ’80  che grazie all’archeologo Reimo Lunz si poté rintracciarli e riportarli nel loro luogo di origine. Risalgono ad un periodo compreso fra il 450 ed il 370 a. C. per forma e foggia riconducibili alla Cultura di La Tène, appartengono ad un abbigliamento tipico del V° e IV° secolo a.C. La Cultura di La Tène ebbe come caratteristica una produzione metallurgica di valore con manufatti di pregio abbelliti da decorazioni accurate e particolareggiate. Inizialmente si pensò che questi oggetti potessero derivare da una frana della sommità del colle soprastante, ma la tesi più accreditata rimane quella del Prof. Hubert Stemberger che li definì come parte di un’offerta votiva alla piccola sorgente poco distante. Possiamo dedurre quindi che il deposito fosse un luogo di culto collettivo, collegato al resto del villaggio da diversi sentieri.
+Inizialmente i reperti, in assenza di adeguata sorveglianza, furono trafugati e venduti, finendo sul mercato tedesco. Fu solo negli anni Ottanta, grazie all’intervento dell’archeologo Reimo Lunz, che fu possibile rintracciarli e ricondurli nel loro luogo di provenienza. Gli oggetti sono databili a un periodo compreso fra il 450 e il 370 a.C.; per forma e foggia, riconducibili alla Cultura di La Tène, appartengono a un abbigliamento tipico del V e IV secolo a.C. Tale cultura si distingue per una raffinata produzione metallurgica, caratterizzata da manufatti di pregio abbelliti da decorazioni accurate e particolareggiate. Inizialmente si ipotizzò che il deposito potesse derivare da una frana dalla sommità del colle soprastante; tuttavia, la tesi oggi più accreditata rimane quella del prof. Hubert Stemberger, che li definì come parte di un’offerta votiva alla piccola sorgente situata poco distante. Possiamo dedurre, quindi, che il deposito fosse un luogo di Culto collettivo, collegato al villaggio da una rete di sentieri.
 
 
 
@@ -146,7 +144,7 @@ Inizialmente i reperti in mancanza di adeguata sorveglianza furono trafugati e v
   <img src="/immagini/2018/4.2018/18.jpg" alt="Foto" loading="lazy" class="img-normal" />
   </figure>
 
-La sommità del colle ha mostrato a seguito di scavi successivi resti di insediamenti e fortificazioni appartenenti a secoli diversi, sebbene i primi insediamenti risalgano all’Età del Rame come un po’ in tutte le zone del Comune (2600-1850 a.C). Abbiamo testimonianza che il Burgkofel di Lothen divenne anche un castrum a partire dal IV° secolo d.C., cioè un insediamento fortificato la cui parete nord era rafforzata da un’alta muraglia e da un profondo fossato. Di quell’insediamento faceva parte anche una necropoli e con probabilità anche una chiesa paleocristiana ma di cui al momento non se è ancora rilevata traccia. Ma soprattutto e ancora oggi parlare di Lothen significa ricordarne il suo cinturone e l’Offerta a Hepru.
+La sommità del colle ha mostrato a seguito di scavi successivi resti di insediamenti e fortificazioni appartenenti a secoli diversi, sebbene i primi insediamenti risalgano all’Età del Rame come un po’ in tutte le zone del Comune (2600-1850 a.C). Abbiamo testimonianza che il *Burgkofel di Lothen* divenne anche un castrum a partire dal IV° secolo d.C., cioè un insediamento fortificato la cui parete nord era rafforzata da un’alta muraglia e da un profondo fossato. Di quell’insediamento faceva parte anche una necropoli e con probabilità anche una chiesa paleocristiana ma di cui al momento non se è ancora rilevata traccia. Ma soprattutto e ancora oggi parlare di Lothen significa ricordarne il suo cinturone e l’Offerta a Hepru.
 
   <figure>
   <img src="/immagini/2018/4.2018/19.jpg" alt="Foto" loading="lazy" class="img-small" />
