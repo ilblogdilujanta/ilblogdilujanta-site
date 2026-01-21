@@ -12,8 +12,16 @@ const articoli: Articolo[] = (await getCollection("articoli"))
   .slice()
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-const formatDate = (d: Date) =>
-  d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
+/** ✅ DATA con giorno della settimana (sincronizzata con la pagina articolo) */
+const formatDate = (d: Date) => {
+  const s = d.toLocaleDateString("it-IT", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
 
 // Raggruppo per anno (mantenendo l’ordine già decrescente)
 const byYear = new Map<number, Articolo[]>();
@@ -134,13 +142,14 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
       box-shadow:0 8px 20px rgba(0,0,0,0.18);
       display:block;
     }
-.intro{
-  text-align: ;
-  font-size: 20px;      /* ⬅️ QUI aumenti la dimensione */
-  line-height: 1.55;
-  margin: 0 0 22px;
-  opacity: 0.9;
-}
+
+    .intro{
+      text-align: left; /* ✅ prima era vuoto e rompeva il CSS */
+      font-size: 20px;
+      line-height: 1.55;
+      margin: 0 0 22px;
+      opacity: 0.9;
+    }
 
     /* testo */
     .text-col{ min-width:0; }
@@ -199,17 +208,20 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
   <main>
     <article class="paper">
       <h1>Articoli</h1>
- <p class="intro">
-  Gli articoli realizzati nel corso degli ultimi dieci anni, 
-  non ancora presenti su questo sito, saranno trasferiti progressivamente, 
-  per scelta editoriale. Fino al completamento della migrazione, i contenuti 
-  restano disponibili sul sito precedente:
-  <a href="https://ilblogdilujanta.blogspot.com" target="_blank" rel="noopener noreferrer">
-    ilblogdilujanta.blogspot.com
-  </a>
-</p>
-  <br>
-  <br>
+
+      <p class="intro">
+        Gli articoli realizzati nel corso degli ultimi dieci anni,
+        non ancora presenti su questo sito, saranno trasferiti progressivamente,
+        per scelta editoriale. Fino al completamento della migrazione, i contenuti
+        restano disponibili sul sito precedente:
+        <a href="https://ilblogdilujanta.blogspot.com" target="_blank" rel="noopener noreferrer">
+          ilblogdilujanta.blogspot.com
+        </a>
+      </p>
+
+      <br>
+      <br>
+
       <p class="sub">{articoli.length} articoli</p>
 
       {/* Filtro anni (link) */}

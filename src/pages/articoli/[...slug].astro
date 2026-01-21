@@ -29,8 +29,17 @@ const precedente = currentIndex < ordinati.length - 1 ? ordinati[currentIndex + 
 
 const { Content } = await articolo.render();
 
-const formatDate = (d: Date) =>
-  d.toLocaleDateString("it-IT", { year: "numeric", month: "long", day: "2-digit" });
+/** ✅ DATA con giorno della settimana (sincronizzato per tutti gli articoli) */
+const formatDate = (d: Date) => {
+  const s = d.toLocaleDateString("it-IT", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  // Prima lettera maiuscola (es. "Lunedì 14 marzo 2016")
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
 
 const sentieri = (articolo.data.sentieri ?? []) as string[];
 
@@ -425,8 +434,6 @@ const shareMail = `mailto:?subject=${encText}&body=${encodeURIComponent(urlArtic
             Condividi…
           </button>
         </div>
-
-        
 
         <!-- ✅ JS PURO: niente { } dentro lo script -->
         <script is:inline>
