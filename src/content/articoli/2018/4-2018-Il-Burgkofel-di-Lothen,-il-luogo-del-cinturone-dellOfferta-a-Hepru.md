@@ -29,14 +29,14 @@ lng: 11.882851
   <figcaption>1. Il Cinturone come si presenta al Museo Mansio Sebatum </figcaption>
 </figure>
 
-Sulla destra orografica del fiume Rienz–Rienza, nel territorio comunale di Sankt Lorenzen–San Lorenzo di Sebato, sorgono le frazioni di Sonnenburg–Castelbadia, Fassing–Fassine e Lothen–Campolino. Seguendo a piedi il tracciato che dalla strada statale conduce verso Fassing–Fassine, lo sguardo incontra subito una falesia, a monte della quale sorge quello che oggi è denominato il <em>Burgkofel di Lothen</em>, situato a 961 metri di altitudine. La piccola frazione, abitata da circa quaranta persone, è compresa fra due cappelle, dedicate a Santa Maria e a San Nicolò. La parete a strapiombo è esposta a sud-ovest ed è oggi una palestra di arrampicata; la sua fama, però, è dovuta a un ritrovamento archeologico eccezionale avvenuto a seguito di lavori di rifacimento stradale. A cavallo tra il 1939 e il 1940 vennero rinvenuti numerosi oggetti di bronzo e di ferro, fra cui fibule, collane, bracciali, oltre a briglie ed a una spada.
+Sulla destra orografica del fiume Rienz — Rienza, nel territorio comunale di Sankt Lorenzen — San Lorenzo di Sebato, sorgono le frazioni di Sonnenburg — Castelbadia, Fassing — Fassine e Lothen — Campolino. Seguendo a piedi il tracciato che dalla strada statale conduce verso Fassing — Fassine, lo sguardo incontra subito una falesia, a monte della quale sorge quello che oggi è denominato il <em>Burgkofel di Lothen</em>, situato a 961 metri di altitudine. La piccola frazione, abitata da circa quaranta persone, è compresa fra due cappelle, dedicate a Santa Maria e a San Nicolò. La parete a strapiombo è esposta a sud-ovest ed è oggi una palestra di arrampicata; la sua fama, però, è dovuta a un ritrovamento archeologico eccezionale avvenuto a seguito di lavori di rifacimento stradale. A cavallo tra il 1939 e il 1940 vennero rinvenuti numerosi oggetti di bronzo e di ferro, fra cui fibule, collane, bracciali, oltre a briglie ed a una spada.
 
 
 
 <figure>
   <img src="/immagini/2018/4.2018/2.jpg" alt="Foto" loading="lazy" class="img-normal
   " />
-  <figcaption>2. Spada in ferro con rappresentazioni di maschere celtiche, ritrovata a Lothen- Campolino. Fattura pregiata di La Tène  Museo Mansio Sebatum, Sankt Lorenzen-San Lorenzo di Sebato (Bolzano)</figcaption>
+  <figcaption>2. Spada in ferro con rappresentazioni di maschere celtiche, ritrovata a Lothen — Campolino. Fattura pregiata di La Tène  Museo Mansio Sebatum, Sankt Lorenzen — San Lorenzo di Sebato (Bolzano)</figcaption>
 </figure>
 
 
@@ -62,14 +62,14 @@ Non è ancora possibile stabilire se Hepru fosse una Divinità o una persona di 
 
 <figure>
   <img src="/immagini/2018/4.2018/4.jpg" alt="Foto" loading="lazy" class="img-normal" />
-  <figcaption>4. La falesia di Lothen-Campolino vista dalla strada che conduce al Burgkofel attraverso Fassing-Fassine</figcaption>
+  <figcaption>4. La falesia di Lothen — Campolino vista dalla strada che conduce al Burgkofel attraverso Fassing — Fassine</figcaption>
 </figure>
 
 
 
 <figure>
   <img src="/immagini/2018/4.2018/5.jpg" alt="Foto" loading="lazy" class="img-small" />
-  <figcaption>5.6. Il paesaggio che conduce alla frazione di Fassing-Fassine e successivamente a quella di Lothen-Campolino</figcaption>
+  <figcaption>5.6. Il paesaggio che conduce alla frazione di Fassing — Fassine e successivamente a quella di Lothen — Campolino</figcaption>
 </figure>
 
 
@@ -82,7 +82,7 @@ Non è ancora possibile stabilire se Hepru fosse una Divinità o una persona di 
 
 <figure>
   <img src="/immagini/2018/4.2018/7.jpg" alt="Foto" loading="lazy" class="img-small" />
-  <figcaption>7.8. Sopra la cappella di Santa Maria all'inizio della frazione di Lothen - Campolino, sotto la cappella di San Nicolò che sorge su un promontorio all'interno della proprietà della famiglia Stadler</figcaption>
+  <figcaption>7.8. Sopra la cappella di Santa Maria all'inizio della frazione di Lothen — Campolino, sotto la cappella di San Nicolò che sorge su un promontorio all'interno della proprietà della famiglia Stadler</figcaption>
 </figure>
 
 
@@ -133,7 +133,7 @@ Inizialmente i reperti, in assenza di adeguata sorveglianza, furono trafugati e 
 
 
 <figure>
-  <img src="/immagini/2018/4.2018/16.jpg" alt="Foto" loading="lazy" class="img-small" /><figcaption>16.17.18. Dalla sommità del Burgkofel, davanti uno strapiombo e la vista della Rienz-Rienza</figcaption>
+  <img src="/immagini/2018/4.2018/16.jpg" alt="Foto" loading="lazy" class="img-small" /><figcaption>16.17.18. Dalla sommità del Burgkofel, davanti uno strapiombo e la vista della Rienz — Rienza</figcaption>
   </figure>
 
 <figure>
