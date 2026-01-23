@@ -6,6 +6,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   <style is:global>
     :root{
       --ink: #2c241c;
+      --green:#0d8460;
+
       --paper1: #efe1c5;
       --paper2: #e2caa6;
       --paper3: #d8bc93;
@@ -14,11 +16,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     body{
       margin:0;
       min-height:100vh;
-      background:
-        radial-gradient(1200px 900px at 50% 35%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 85%, rgba(0,0,0,0.75) 100%),
-        radial-gradient(900px 700px at 50% 35%, rgba(255,240,210,0.35), rgba(0,0,0,0) 70%),
-        #0d8460;
-
+      background: var(--green); /* ✅ uguale alle altre pagine */
       font-family:
         "Baskerville Old Face",
         "Baskerville",
@@ -33,7 +31,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     .page{
       display:flex;
       justify-content:center;
-      padding: 28px 14px;
+      padding: 32px 14px;
     }
 
     .paper{
@@ -98,7 +96,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       <div class="copy">
         <p class="left-block">
           <br>
-        
+
           Qui non si entra per cercare in fretta. Qui si entra per fermarsi. Questa è una biblioteca di montagna: uno spazio raccolto, antico, dove ciò che è scritto non è disposto per il consumo rapido, ma per la sosta, per il silenzio, per la sedimentazione, come accade alle cose che attraversano il Tempo.
         </p>
 
@@ -122,7 +120,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
         </p>
 
         <figure class="hero">
-          <img src="/inizia-da-qui.jpg" alt="Biblioteca di montagna" />
+          <img src="/inizia-da-qui.jpg" alt="Biblioteca di montagna" loading="lazy" />
         </figure>
 
         <p class="left-block">
