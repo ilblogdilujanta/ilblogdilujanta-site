@@ -7,12 +7,12 @@ type Articolo = CollectionEntry<"articoli">;
 
 const titoloPagina = "Articoli";
 
-// Prendo tutti gli articoli e category: più recente -> più vecchio
+// Tutti gli articoli (più recente -> più vecchio)
 const articoli: Articolo[] = (await getCollection("articoli"))
   .slice()
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-/** ✅ DATA con giorno della settimana (sincronizzata con la pagina articolo) */
+/** ✅ Data con giorno della settimana */
 const formatDate = (d: Date) => {
   const s = d.toLocaleDateString("it-IT", {
     weekday: "long",
@@ -23,19 +23,15 @@ const formatDate = (d: Date) => {
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
-// Raggruppo per anno (mantenendo l’ordine già decrescente)
+// Raggruppo per anno
 const byYear = new Map<number, Articolo[]>();
 for (const a of articoli) {
   const y = a.data.date.getFullYear();
   if (!byYear.has(y)) byYear.set(y, []);
   byYear.get(y)!.push(a);
 }
-const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
 
-// (facoltativo) anno preselezionato da querystring ?anno=2016
-const selectedYearParam = Astro.url.searchParams.get("anno");
-const selectedYear = selectedYearParam ? Number(selectedYearParam) : null;
-const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] : anni;
+const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
 ---
 
 <BaseLayout title={titoloPagina}>
@@ -71,9 +67,17 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
       margin:0 0 12px;
     }
 
+    .intro{
+      text-align:left;
+      font-size:20px;
+      line-height:1.55;
+      margin:0 0 22px;
+      opacity:.9;
+    }
+
     .sub{
       text-align:center;
-      margin:0 0 26px;
+      margin:18px 0 26px;
       font-size:20px;
       opacity:.85;
     }
@@ -110,30 +114,25 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
       padding-top: 18px;
     }
     .year:first-of-type{
-      border-top: none;
-      padding-top: 0;
-      margin-top: 0;
+      border-top:none;
+      padding-top:0;
+      margin-top:0;
     }
 
     .list{ list-style:none; padding:0; margin:0; }
 
-    /* ✅ ogni riga articolo con cover */
+    /* riga articolo con cover */
     .list li{
       padding:14px 0;
       border-top:1px solid rgba(44,36,28,0.18);
-
       display:grid;
       grid-template-columns: 150px 1fr;
       gap: 16px;
-      align-items: start;
+      align-items:start;
     }
     .list li:first-child{ border-top:none; }
 
-    /* ✅ cover */
-    .cover-link{
-      display:block;
-      text-decoration:none;
-    }
+    .cover-link{ display:block; text-decoration:none; }
     img.cover{
       width:100%;
       height:100px;
@@ -141,17 +140,9 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
       border-radius:6px;
       box-shadow:0 8px 20px rgba(0,0,0,0.18);
       display:block;
+      background: rgba(255,255,255,0.12);
     }
 
-    .intro{
-      text-align: left; /* ✅ prima era vuoto e rompeva il CSS */
-      font-size: 20px;
-      line-height: 1.55;
-      margin: 0 0 22px;
-      opacity: 0.9;
-    }
-
-    /* testo */
     .text-col{ min-width:0; }
 
     .title{
@@ -163,14 +154,15 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
     }
     .title:hover{ border-bottom-color:rgba(44,36,28,0.6); }
 
+    /* ✅ meta in colonna: data sopra, sentieri sotto */
     .meta{
       margin-top:6px;
       font-size:14px;
-      opacity:0.75;
+      opacity:.75;
       display:flex;
-      flex-wrap:wrap;
-      gap:10px 14px;
-      align-items:baseline;
+      flex-direction:column;
+      gap:8px;
+      align-items:flex-start;
     }
 
     .chips{ display:flex; flex-wrap:wrap; gap:8px; }
@@ -186,7 +178,7 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
     }
     .chip:hover{ background:rgba(255,255,255,0.35); }
 
-    /* Se non c’è cover: riga a 1 colonna */
+    /* senza cover: 1 colonna */
     .list li.no-cover{
       grid-template-columns: 1fr;
     }
@@ -194,14 +186,9 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
     @media (max-width:720px){
       .paper{ padding:42px 26px; }
       h1{ font-size:38px; }
-      .year{ font-size: 24px; }
-
-      .list li{
-        grid-template-columns: 1fr;
-      }
-      img.cover{
-        height: 160px;
-      }
+      .year{ font-size:24px; }
+      .list li{ grid-template-columns:1fr; }
+      img.cover{ height:160px; }
     }
   </style>
 
@@ -219,23 +206,14 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
         </a>
       </p>
 
-      <br>
-      <br>
-
-      <p class="sub">{articoli.length} articoli</p>
+      <p class="sub"><span id="articles-count">{articoli.length}</span> articoli</p>
 
       {/* Filtro anni (link) */}
       {anni.length > 0 && (
-        <nav class="filters" aria-label="Filtra per anno">
-          <a class="filter" href="/articoli" aria-current={selectedYear === null ? "true" : "false"}>
-            Tutti
-          </a>
+        <nav class="filters" id="year-filters" aria-label="Filtra per anno">
+          <a class="filter" data-year="all" href="/articoli" aria-current="true">Tutti</a>
           {anni.map((y) => (
-            <a
-              class="filter"
-              href={`/articoli?anno=${y}`}
-              aria-current={selectedYear === y ? "true" : "false"}
-            >
+            <a class="filter" data-year={String(y)} href={`/articoli?anno=${y}`} aria-current="false">
               {y}
             </a>
           ))}
@@ -248,13 +226,13 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
         </p>
       ) : (
         <>
-          {anniFiltrati.map((anno) => (
-            <section aria-label={`Articoli ${anno}`}>
+          {anni.map((anno) => (
+            <section data-year={String(anno)} aria-label={`Articoli ${anno}`}>
               <h2 class="year">{anno}</h2>
 
               <ul class="list">
                 {byYear.get(anno)!.map((a) => (
-                  <li class={!a.data.cover ? "no-cover" : undefined}>
+                  <li data-article class={!a.data.cover ? "no-cover" : undefined}>
                     {a.data.cover && (
                       <a class="cover-link" href={`/articoli/${a.slug}`} aria-label={`Apri: ${a.data.title}`}>
                         <img class="cover" src={a.data.cover} alt={a.data.title} loading="lazy" />
@@ -268,11 +246,11 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
                         <span>{formatDate(a.data.date)}</span>
 
                         {Array.isArray(a.data.sentieri) && a.data.sentieri.length > 0 && (
-                          <span class="chips" aria-label="Sentieri">
+                          <div class="chips" aria-label="Sentieri">
                             {a.data.sentieri.map((s) => (
                               <a class="chip" href={`/sentieri/${slugify(s)}`}>{s}</a>
                             ))}
-                          </span>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -283,6 +261,44 @@ const anniFiltrati = selectedYear && byYear.has(selectedYear) ? [selectedYear] :
           ))}
         </>
       )}
+
+      {/* ✅ filtro anno funzionante anche su build statica */}
+      <script is:inline>
+        (function () {
+          const params = new URLSearchParams(window.location.search);
+          const year = params.get("anno");
+          const yearOk = year && /^\d{4}$/.test(year) ? year : null;
+
+          const sections = Array.from(document.querySelectorAll('section[data-year]'));
+          const filters = Array.from(document.querySelectorAll('#year-filters a[data-year]'));
+          const countEl = document.getElementById("articles-count");
+
+          function updateCount() {
+            if (!countEl) return;
+            let count = 0;
+            sections.forEach((sec) => {
+              if (!sec.hidden) count += sec.querySelectorAll("li[data-article]").length;
+            });
+            countEl.textContent = String(count);
+          }
+
+          function setCurrent(y) {
+            sections.forEach((sec) => {
+              sec.hidden = !!(y && sec.getAttribute("data-year") !== y);
+            });
+
+            filters.forEach((a) => {
+              const val = a.getAttribute("data-year");
+              const isCurrent = y ? val === y : val === "all";
+              a.setAttribute("aria-current", isCurrent ? "true" : "false");
+            });
+
+            updateCount();
+          }
+
+          setCurrent(yearOk);
+        })();
+      </script>
     </article>
   </main>
 </BaseLayout>

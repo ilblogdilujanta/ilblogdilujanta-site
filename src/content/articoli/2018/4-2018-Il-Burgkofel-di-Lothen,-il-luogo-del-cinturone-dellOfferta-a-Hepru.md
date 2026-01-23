@@ -26,7 +26,7 @@ lng: 11.882851
 
 <figure>
   <img src="/immagini/2018/4.2018/1. CINTURONE CON CERVI - SAVAETES.jpg" alt="Foto" loading="lazy" class="img-normal" />
-  <figcaption>1.Il Cinturone come si presenta al Museo Mansio Sebatum </figcaption>
+  <figcaption>1. Il Cinturone come si presenta al Museo Mansio Sebatum </figcaption>
 </figure>
 
 Sulla destra orografica del fiume Rienz–Rienza, nel territorio comunale di Sankt Lorenzen–San Lorenzo di Sebato, sorgono le frazioni di Sonnenburg–Castelbadia, Fassing–Fassine e Lothen–Campolino. Seguendo a piedi il tracciato che dalla strada statale conduce verso Fassing–Fassine, lo sguardo incontra subito una falesia, a monte della quale sorge quello che oggi è denominato il <em>Burgkofel di Lothen</em>, situato a 961 metri di altitudine. La piccola frazione, abitata da circa quaranta persone, è compresa fra due cappelle, dedicate a Santa Maria e a San Nicolò. La parete a strapiombo è esposta a sud-ovest ed è oggi una palestra di arrampicata; la sua fama, però, è dovuta a un ritrovamento archeologico eccezionale avvenuto a seguito di lavori di rifacimento stradale. A cavallo tra il 1939 e il 1940 vennero rinvenuti numerosi oggetti di bronzo e di ferro, fra cui fibule, collane, bracciali, oltre a briglie ed a una spada.
@@ -133,7 +133,7 @@ Inizialmente i reperti, in assenza di adeguata sorveglianza, furono trafugati e 
 
 
 <figure>
-  <img src="/immagini/2018/4.2018/16.jpg" alt="Foto" loading="lazy" class="img-small" /><figcaption>16.17. 18. Dalla sommità del Burgkofel, davanti uno strapiombo e la vista della Rienz-Rienza</figcaption>
+  <img src="/immagini/2018/4.2018/16.jpg" alt="Foto" loading="lazy" class="img-small" /><figcaption>16.17.18. Dalla sommità del Burgkofel, davanti uno strapiombo e la vista della Rienz-Rienza</figcaption>
   </figure>
 
 <figure>
