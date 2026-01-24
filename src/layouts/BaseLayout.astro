@@ -6,8 +6,9 @@ import CookieBanner from "../components/CookieBanner.astro";
 
 const year = new Date().getFullYear();
 
-// ✅ GA4 ID
+// ✅ il tuo ID GA4
 const GA_ID = "G-4QEGKF1RX0";
+const CONSENT_KEY = "cookie_consent_v1";
 ---
 
 <!doctype html>
@@ -18,12 +19,11 @@ const GA_ID = "G-4QEGKF1RX0";
     <title>{title}</title>
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Meta autore -->
     <meta name="author" content="Lujanta" />
     <meta name="copyright" content={`© ${year} il Blog di Lujanta`} />
 
@@ -39,58 +39,50 @@ const GA_ID = "G-4QEGKF1RX0";
     </script>
     <script src="https://cdn.gtranslate.net/widgets/latest/lc.js" defer></script>
 
-    <!-- ✅ GOOGLE TAG (caricato sempre) -->
+    <!-- ✅ Google tag SEMPRE presente (così Analytics lo rileva) -->
     <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
 
-    <!-- ✅ GA4 con Consent Mode: NON traccia finché non accetti -->
-    <script is:inline>
+    <!-- ✅ Consent Mode: di default NEGATO finché non accetti -->
+    <script is:inline define:vars={{ GA_ID, CONSENT_KEY }}>
       (function () {
-        const KEY = "cookie_consent_v1";
-        const GA_ID = "G-4QEGKF1RX0";
-
         window.dataLayer = window.dataLayer || [];
         function gtag(){ window.dataLayer.push(arguments); }
         window.gtag = gtag;
 
         gtag("js", new Date());
 
-        // Default: niente analytics finché non c'è consenso
+        // default: niente analytics finché non c’è consenso
         gtag("consent", "default", {
-          ad_storage: "denied",
           analytics_storage: "denied",
-          functionality_storage: "granted",
-          security_storage: "granted",
-          wait_for_update: 500
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied"
         });
 
-        function enableAnalytics(){
-          // evita doppio config
-          if (window.__ga_configured) return;
-          window.__ga_configured = true;
+        // config senza page_view automatico (lo inviamo solo dopo consenso)
+        gtag("config", GA_ID, {
+          anonymize_ip: true,
+          send_page_view: false
+        });
 
+        function enableAnalyticsAndSendPageview(){
           gtag("consent", "update", { analytics_storage: "granted" });
-
-          // inizializza GA4 (solo dopo consenso)
-          gtag("config", GA_ID, {
-            anonymize_ip: true
+          gtag("event", "page_view", {
+            page_title: document.title,
+            page_location: location.href,
+            page_path: location.pathname + location.search
           });
         }
 
-        function disableAnalytics(){
-          gtag("consent", "update", { analytics_storage: "denied" });
-        }
+        // se già accettato in passato
+        try{
+          const consent = localStorage.getItem(CONSENT_KEY);
+          if(consent === "accepted") enableAnalyticsAndSendPageview();
+        }catch(e){}
 
-        // Se l'utente ha già scelto in passato
-        try {
-          const consent = localStorage.getItem(KEY);
-          if (consent === "accepted") enableAnalytics();
-          if (consent === "rejected") disableAnalytics();
-        } catch (e) {}
-
-        // Quando il banner emette l'evento
+        // quando l’utente accetta dal banner
         window.addEventListener("cookie:consent", (ev) => {
-          if (ev.detail === "accepted") enableAnalytics();
-          if (ev.detail === "rejected") disableAnalytics();
+          if(ev.detail === "accepted") enableAnalyticsAndSendPageview();
         });
       })();
     </script>
@@ -178,13 +170,12 @@ const GA_ID = "G-4QEGKF1RX0";
       </nav>
     </footer>
 
-    <!-- ✅ Gestisci cookie: riapre banner -->
-    <script is:inline>
+    <!-- ✅ Gestisci cookie -->
+    <script is:inline define:vars={{ CONSENT_KEY }}>
       document.addEventListener("click", (e) => {
         const btn = e.target.closest("[data-cookie-manage]");
         if (!btn) return;
-
-        try { localStorage.removeItem("cookie_consent_v1"); } catch (e) {}
+        try{ localStorage.removeItem(CONSENT_KEY); }catch(err){}
         window.location.reload();
       });
     </script>
