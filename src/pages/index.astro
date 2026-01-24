@@ -13,6 +13,10 @@ const articoli = (await getCollection("articoli"))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 const top9 = articoli.slice(0, 9);
+
+// ✅ GA4
+const GA_ID = "G-4QEGKF1RX0";
+const CONSENT_KEY = "cookie_consent_v1";
 ---
 
 <!doctype html>
@@ -21,10 +25,11 @@ const top9 = articoli.slice(0, 9);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{siteTitle}</title>
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
 
     <!-- GTranslate (UNA SOLA VOLTA per pagina) -->
     <script is:inline>
@@ -37,49 +42,58 @@ const top9 = articoli.slice(0, 9);
       };
     </script>
     <script src="https://cdn.gtranslate.net/widgets/latest/lc.js" defer></script>
-    <!-- ✅ Google tag SEMPRE presente -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4QEGKF1RX0"></script>
 
-<script is:inline>
-  (function () {
-    const GA_ID = "G-4QEGKF1RX0";
-    const CONSENT_KEY = "cookie_consent_v1";
+    <!-- ✅ Google tag SEMPRE presente (così Analytics lo rileva) -->
+    <script async src={"https://www.googletagmanager.com/gtag/js?id=" + GA_ID}></script>
 
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ window.dataLayer.push(arguments); }
-    window.gtag = gtag;
+    <!-- ✅ Consent Mode: default NEGATO, abilita e invia page_view solo dopo consenso -->
+    <script is:inline define:vars={{ GA_ID, CONSENT_KEY }}>
+      (function () {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ window.dataLayer.push(arguments); }
+        window.gtag = gtag;
 
-    gtag("js", new Date());
+        gtag("js", new Date());
 
-    gtag("consent", "default", {
-      analytics_storage: "denied",
-      ad_storage: "denied",
-      ad_user_data: "denied",
-      ad_personalization: "denied"
-    });
+        // default: niente analytics finché non c’è consenso
+        gtag("consent", "default", {
+          analytics_storage: "denied",
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied"
+        });
 
-    gtag("config", GA_ID, { anonymize_ip: true, send_page_view: false });
+        // config senza page_view automatico (lo inviamo solo dopo consenso)
+        gtag("config", GA_ID, {
+          anonymize_ip: true,
+          send_page_view: false
+        });
 
-    function enableAnalyticsAndSendPageview(){
-      gtag("consent", "update", { analytics_storage: "granted" });
-      gtag("event", "page_view", {
-        page_title: document.title,
-        page_location: location.href,
-        page_path: location.pathname + location.search
-      });
-    }
+        function sendPageView(){
+          gtag("event", "page_view", {
+            page_title: document.title,
+            page_location: location.href,
+            page_path: location.pathname + location.search
+          });
+        }
 
-    try{
-      const consent = localStorage.getItem(CONSENT_KEY);
-      if(consent === "accepted") enableAnalyticsAndSendPageview();
-    }catch(e){}
+        function enableAnalytics(){
+          gtag("consent", "update", { analytics_storage: "granted" });
+          sendPageView();
+        }
 
-    window.addEventListener("cookie:consent", (ev) => {
-      if(ev.detail === "accepted") enableAnalyticsAndSendPageview();
-    });
-  })();
-</script>
+        // se già accettato in passato
+        try{
+          const consent = localStorage.getItem(CONSENT_KEY);
+          if(consent === "accepted") enableAnalytics();
+        }catch(e){}
 
+        // quando l’utente accetta dal banner
+        window.addEventListener("cookie:consent", (ev) => {
+          if(ev.detail === "accepted") enableAnalytics();
+        });
+      })();
+    </script>
 
     <style>
       :root{
@@ -135,23 +149,17 @@ const top9 = articoli.slice(0, 9);
         margin-top: 200px;
       }
 
-.hero-logo img{
-  width: clamp(350px, 16vw, 380px); /* dimensione equilibrata */
-  height: auto;
-
-  /* integra il logo nello sfondo */
-  mix-blend-mode: multiply;
-
-  /* AURA ANTICA E DISCRETA */
-  filter:
-    contrast(1.05)
-    brightness(0.95)
-    drop-shadow(0 0 8px rgba(244,241,234,0.55))
-    drop-shadow(0 0 18px rgba(200,190,160,0.35));
-
-  opacity: 0.96;
-}
-
+      .hero-logo img{
+        width: clamp(350px, 16vw, 380px);
+        height: auto;
+        mix-blend-mode: multiply;
+        filter:
+          contrast(1.05)
+          brightness(0.95)
+          drop-shadow(0 0 8px rgba(244,241,234,0.55))
+          drop-shadow(0 0 18px rgba(200,190,160,0.35));
+        opacity: 0.96;
+      }
 
       h1{
         margin: 0 0 1rem;
@@ -305,31 +313,6 @@ const top9 = articoli.slice(0, 9);
         .hero{ padding-top: 96px; }
       }
 
-      /* ===== CANALI (box a destra) ===== */
-      .channels{
-        display:flex;
-        flex-wrap:wrap;
-        gap:10px 14px;
-        margin-top: 6px;
-      }
-
-      .channels--mini{
-        margin-top: 14px;
-        font-size: 15px;
-        opacity: .9;
-      }
-
-      .ch{
-        text-decoration:none;
-        color: inherit;
-        border-bottom: 1px solid rgba(43,42,38,.22);
-        padding-bottom: 2px;
-        white-space: nowrap;
-      }
-      .ch:hover{
-        border-bottom-color: rgba(43,42,38,.55);
-      }
-
       /* ===== DISCLAIMER ===== */
       .site-disclaimer{
         margin-top: 0px;
@@ -348,27 +331,7 @@ const top9 = articoli.slice(0, 9);
         padding-top: 18px;
       }
 
-      /* ===== FOOTER / DISCLAIMER ===== */
-      .site-footer{
-        margin-top: 80px;
-        padding: 28px 14px 36px;
-        background: transparent; /* 👈 niente bianco */
-      }
-
-      .site-footer__inner{
-        max-width: 980px;
-        margin: 0 auto;
-        text-align: center;
-        font-size: 14px;
-        line-height: 1.6;
-        opacity: .75;
-        color: var(--ink);
-
-        border-top: 1px solid rgba(43,42,38,.18);
-        padding-top: 18px;
-      }
-
-      /* ===== HOME OVERRIDE: usa TopNav.astro ma con look identico alla home (nero, trasparente, fixed) ===== */
+      /* ===== HOME OVERRIDE: usa TopNav.astro ma con look identico alla home ===== */
       .topnav{
         position: fixed !important;
         top: 1rem !important;
@@ -387,7 +350,6 @@ const top9 = articoli.slice(0, 9);
         padding: .7rem 1rem !important;
       }
 
-      /* Link della barra (desktop) devono restare neri come prima */
       .topnav .nav-left a{
         color: #2b2a26 !important;
         text-shadow: 0 1px 8px rgba(244,241,234,.9) !important;
@@ -398,7 +360,6 @@ const top9 = articoli.slice(0, 9);
         border-bottom-color: transparent !important;
       }
 
-      /* Burger su mobile nero (coerente con home) */
       .topnav .burger{
         border-color: rgba(43,42,38,.25) !important;
         background: rgba(244,241,234,.35) !important;
@@ -407,32 +368,18 @@ const top9 = articoli.slice(0, 9);
         background: rgba(43,42,38,.9) !important;
       }
 
-      /* Traduttore a destra come prima */
       .topnav .nav-right{
         min-width: 90px !important;
       }
 
       @media (max-width: 860px){
-        .hero__bg{
-          background-position: center 35%; /* 👈 sposta il focus */
-        }
-      }
-
-      @media (max-width: 860px){
+        .hero__bg{ background-position: center 35%; }
         .hero{
-          min-height: 88vh;     /* 👈 meno “vuoto” */
-          padding-top: 96px;   /* menu + respiro */
+          min-height: 88vh;
+          padding-top: 96px;
           padding-bottom: 60px;
         }
-      }
-
-      @media (max-width: 860px){
-        .hero__content{
-          margin-top: 120px; /* 👈 prima era 200 */
-        }
-      }
-
-      @media (max-width: 860px){
+        .hero__content{ margin-top: 120px; }
         h1, .tagline{
           text-shadow:
             0 2px 12px rgba(244,241,234,.9),
@@ -444,14 +391,13 @@ const top9 = articoli.slice(0, 9);
 
   <body>
     <TopNav />
-<CookieBanner />
+    <CookieBanner />
 
     <main class="hero">
       <div class="hero__bg" role="img" aria-label="Copertina: paesaggio innevato del lago"></div>
       <div class="hero__veil"></div>
 
       <div class="hero__content">
-        <!-- ✅ LOGO (metti il file in /public/logo-lujanta.png) -->
         <div class="hero-logo" aria-hidden="true">
           <img src="/logo-lujanta.png" alt="" />
         </div>
@@ -498,7 +444,6 @@ const top9 = articoli.slice(0, 9);
                 <a href="/articoli/2016/192016-bergfeuer-i-fuochi-solstiziali-preistorici-del-tirolo/">Bergfeuer, i Fuochi Solstiziali Preistorici del Tirol</a>
                 <a href="/articoli/2016/162016-prologo-e-toponimi/">Prologo e toponimi</a>
               </div>
-              </div>
 
               <hr style="margin:24px 0; border:0; border-top:1px solid rgba(43,42,38,.18);" />
 
@@ -506,7 +451,6 @@ const top9 = articoli.slice(0, 9);
                 <h3>Contatti</h3>
 
                 <div class="top-list">
-                  <!-- Email -->
                   <a class="icon-link" href="mailto:ilblogdilujanta@gmail.com">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                       <rect x="3" y="5" width="18" height="14" rx="2"/>
@@ -515,7 +459,6 @@ const top9 = articoli.slice(0, 9);
                     Email
                   </a>
 
-                  <!-- Telegram privato -->
                   <a class="icon-link" href="https://t.me/blogdilujanta" target="_blank">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M22 3L2 11l7 2 2 7 4-5 5 4z"/>
@@ -523,7 +466,6 @@ const top9 = articoli.slice(0, 9);
                     Telegram
                   </a>
 
-                  <!-- Canale Telegram -->
                   <a class="icon-link" href="https://t.me/ilblogdilujanta" target="_blank">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M22 3L2 11l7 2 2 7 4-5 5 4z"/>
@@ -531,7 +473,6 @@ const top9 = articoli.slice(0, 9);
                     Canale Telegram
                   </a>
 
-                  <!-- Academia -->
                   <a class="icon-link" href="https://independent.academia.edu/AlberoDaniela" target="_blank">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                       <circle cx="12" cy="12" r="9"/>
