@@ -489,14 +489,42 @@ const CONSENT_KEY = "cookie_consent_v1";
     </main>
 
     <footer class="site-disclaimer" role="contentinfo">
-      <div class="inner">
-        <p>
-          © Il Blog di Lujanta – Tutti i diritti riservati.<br>
-          I testi, le immagini e i contenuti presenti su questo sito sono di proprietà
-          dell’autrice, salvo diversa indicazione. È vietata la riproduzione, anche
-          parziale, senza autorizzazione scritta.
-        </p>
-      </div>
+   <!-- ✅ Banner Cookie -->
+    <CookieBanner />
+
+    <footer class="site-footer" aria-label="Note di copyright">
+      <p>© 2016 — 2026 Il Blog di Lujanta – Ricerca, Memoria, Tradizione</p>
+
+      <p>
+        Tutti i contenuti di questo sito (testi, immagini, ricerche e materiali originali)
+        sono protetti da diritto d’autore.
+      </p>
+
+      <p>
+        È vietata la riproduzione totale o parziale senza autorizzazione.
+        La citazione è consentita esclusivamente indicando chiaramente l’autrice e la fonte.
+      </p>
+
+      <nav class="footer-links" aria-label="Link legali">
+        <a href="/privacy">Privacy Policy</a>
+        <span>·</span>
+        <a href="/cookie">Cookie Policy</a>
+        <span>·</span>
+        <button type="button" class="cookie-manage" data-cookie-manage>
+          Gestisci cookie
+        </button>
+      </nav>
+    </footer>
+
+    <!-- ✅ Gestisci cookie -->
+    <script is:inline define:vars={{ CONSENT_KEY }}>
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-cookie-manage]");
+        if (!btn) return;
+        try{ localStorage.removeItem(CONSENT_KEY); }catch(err){}
+        window.location.reload();
+      });
+    </script>
     </footer>
   </body>
 </html>
