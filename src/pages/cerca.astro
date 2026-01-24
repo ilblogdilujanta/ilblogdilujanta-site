@@ -1,0 +1,451 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const titoloPagina = "Cerca";
+
+const articoli = await getCollection("articoli");
+
+// Piccolo indice per ricerca client-side
+const DATA = articoli.map((a) => {
+  const title = String(a.data.title ?? "");
+  const subtitle = String((a.data as any).subtitle ?? "");
+  const luogo = String((a.data as any).luogo ?? "");
+  const sentieri = Array.isArray(a.data.sentieri) ? a.data.sentieri.map(String) : [];
+  const body = String((a as any).body ?? "");
+
+  // testo “unificato” per la ricerca
+  const haystack = [title, subtitle, luogo, sentieri.join(" "), body].join("\n");
+
+  return {
+    url: `/articoli/${a.slug}`,
+    title,
+    subtitle,
+    luogo,
+    sentieri,
+    haystack,
+  };
+});
+---
+
+<BaseLayout title={titoloPagina}>
+  <style is:global>
+    :root{
+      --ink:#2c241c;
+      --green:#0d8460;
+      --paper1:#efe1c5;
+      --paper2:#e2caa6;
+      --paper3:#d8bc93;
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background:var(--green);
+      font-family:"Baskerville Old Face","Baskerville","Libre Baskerville",Georgia,"Times New Roman",serif;
+      color:var(--ink);
+    }
+
+    main{
+      display:flex;
+      justify-content:center;
+      padding:32px 14px;
+    }
+
+    .paper{
+      max-width:980px;
+      width:100%;
+      padding:60px;
+      background:
+        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,.35), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
+      border-radius:6px;
+      box-shadow:0 18px 60px rgba(0,0,0,.55);
+    }
+
+    h1{
+      text-align:center;
+      font-size:44px;
+      font-weight:400;
+      margin:0 0 18px;
+    }
+
+    .searchbar{
+      display:flex;
+      justify-content:center;
+      margin: 0 0 18px;
+    }
+
+    .searchwrap{
+      width:min(780px, 100%);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(44,36,28,.22);
+      background: rgba(255,255,255,.20);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+    }
+
+    .searchwrap:focus-within{
+      background: rgba(255,255,255,.30);
+      border-color: rgba(44,36,28,.32);
+    }
+
+    .searchwrap input{
+      width:100%;
+      font-family:inherit;
+      font-size:18px;
+      border:0;
+      outline:none;
+      background:transparent;
+      color:var(--ink);
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex:0 0 auto;
+    }
+
+    .btn{
+      border:1px solid rgba(44,36,28,.22);
+      background: rgba(255,255,255,.18);
+      color: var(--ink);
+      border-radius:999px;
+      padding:7px 12px;
+      cursor:pointer;
+      font-family:inherit;
+      font-size:15px;
+      white-space:nowrap;
+    }
+    .btn:hover{ background: rgba(255,255,255,.35); }
+
+    .hint{
+      text-align:center;
+      opacity:.8;
+      margin: 0 0 14px;
+      font-size:16px;
+    }
+
+    /* ✅ scorciatoie sotto la search */
+    .quicklinks{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:10px;
+      margin: 0 0 22px;
+    }
+
+    .ql{
+      text-decoration:none;
+      color:var(--ink);
+      border:1px solid rgba(44,36,28,.22);
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.20);
+      font-size:15px;
+      line-height:1;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.10);
+      user-select:none;
+    }
+    .ql:hover{ background:rgba(255,255,255,.38); }
+
+    /* (opzionale) “Articoli” più evidente */
+    .ql.primary{
+      background: rgba(255,255,255,.30);
+      border-color: rgba(44,36,28,.28);
+    }
+
+    .count{
+      text-align:center;
+      opacity:.75;
+      margin: 10px 0 0;
+      font-size:15px;
+    }
+
+    .results{
+      list-style:none;
+      padding:0;
+      margin: 26px 0 0;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .result{
+      border:1px solid rgba(44,36,28,.20);
+      border-radius:10px;
+      background: rgba(255,255,255,.18);
+      padding:14px 16px;
+    }
+    .result:hover{ background: rgba(255,255,255,.28); }
+
+    .titlelink{
+      text-decoration:none;
+      color:var(--ink);
+      border-bottom:1px solid rgba(44,36,28,.25);
+      font-size:18px;
+      line-height:1.35;
+    }
+    .titlelink:hover{ border-bottom-color: rgba(44,36,28,.6); }
+
+    .meta{
+      margin-top:8px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      opacity:.85;
+      font-size:14px;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      opacity:.9;
+    }
+
+    .chip{
+      border:1px solid rgba(44,36,28,.18);
+      border-radius:999px;
+      padding:3px 8px;
+      background: rgba(255,255,255,.18);
+      font-size:13px;
+      display:inline-block;
+    }
+
+    .snippet{
+      font-size:14px;
+      opacity:.9;
+      line-height:1.5;
+    }
+
+    mark.hl{
+      background: rgba(255,255,255,0.70);
+      padding: 0 2px;
+      border-radius: 3px;
+    }
+
+    @media (max-width:720px){
+      .paper{ padding:42px 26px; }
+      h1{ font-size:38px; }
+      .searchwrap input{ font-size:17px; }
+    }
+  </style>
+
+  <main>
+    <article class="paper">
+      <h1>Cerca</h1>
+
+      <div class="searchbar">
+        <form class="searchwrap" id="form" role="search">
+          <input
+            id="q"
+            name="q"
+            type="search"
+            placeholder="Cerca per titolo, sottotitolo, luogo, sentieri o testo…"
+            autocomplete="off"
+          />
+          <div class="actions">
+            <button class="btn" type="submit">Cerca</button>
+            <button class="btn" type="button" id="clear">Cancella ricerca</button>
+          </div>
+        </form>
+      </div>
+
+      <p class="hint">
+        Suggerimenti: prova “Samhain”, “Sudtirolo”, “Luoghi di Culto”, “Lagole”, ecc.
+      </p>
+
+      <!-- ✅ SCORCIATOIE (qui, non nel CSS) -->
+      <nav class="quicklinks" aria-label="Scorciatoie">
+        <a class="ql primary" href="/articoli">Tutti gli Articoli</a>
+        <a class="ql" href="/sentieri">Sentieri di Lettura</a>
+        <a class="ql" href="/luoghi-di-Lujanta">Mappa / Luoghi di Lujanta</a>
+        <a class="ql" href="/">Home</a>
+      </nav>
+
+      <ul class="results" id="results"></ul>
+      <p class="count" id="count"></p>
+
+      <script is:inline define:vars={{ DATA }}>
+        (function () {
+          const qInput = document.getElementById("q");
+          const resultsEl = document.getElementById("results");
+          const countEl = document.getElementById("count");
+          const clearBtn = document.getElementById("clear");
+          const form = document.getElementById("form");
+
+          if (!qInput || !resultsEl || !countEl || !form) return;
+
+          function norm(s) {
+            return String(s || "")
+              .toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .trim();
+          }
+
+          function escapeHtml(s) {
+            return String(s)
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+              .replace(/"/g, "&quot;")
+              .replace(/'/g, "&#039;");
+          }
+
+          function stripTags(s) {
+            return String(s || "").replace(/<[^>]*>/g, " ");
+          }
+
+          function highlightText(text, query) {
+            if (!query) return escapeHtml(text);
+            const t = String(text || "");
+            const nT = norm(t);
+            const nQ = norm(query);
+            const idx = nT.indexOf(nQ);
+            if (idx === -1) return escapeHtml(t);
+
+            const before = t.slice(0, idx);
+            const mid = t.slice(idx, idx + query.length);
+            const after = t.slice(idx + query.length);
+
+            return (
+              escapeHtml(before) +
+              '<mark class="hl">' + escapeHtml(mid) + "</mark>" +
+              escapeHtml(after)
+            );
+          }
+
+          function makeSnippet(haystack, query) {
+            const clean = stripTags(haystack).replace(/\s+/g, " ").trim();
+            const nClean = norm(clean);
+            const nQ = norm(query);
+            const idx = nClean.indexOf(nQ);
+            if (idx === -1) return "";
+
+            const start = Math.max(0, idx - 80);
+            const end = Math.min(clean.length, idx + 120);
+            const slice =
+              (start > 0 ? "… " : "") +
+              clean.slice(start, end) +
+              (end < clean.length ? " …" : "");
+            return highlightText(slice, query);
+          }
+
+          function render(items, query) {
+            resultsEl.innerHTML = "";
+
+            if (!items.length) {
+              countEl.textContent = query ? "Nessun risultato." : "";
+              return;
+            }
+
+            const frag = document.createDocumentFragment();
+
+            items.forEach((it) => {
+              const li = document.createElement("li");
+              li.className = "result";
+
+              const a = document.createElement("a");
+              a.className = "titlelink";
+              a.href = it.url;
+              a.innerHTML = highlightText(it.title || "Senza titolo", query);
+
+              const meta = document.createElement("div");
+              meta.className = "meta";
+
+              if (it.subtitle) {
+                const sub = document.createElement("div");
+                sub.innerHTML = highlightText(it.subtitle, query);
+                meta.appendChild(sub);
+              }
+
+              if (it.luogo) {
+                const place = document.createElement("div");
+                place.innerHTML = "Luogo: " + highlightText(it.luogo, query);
+                meta.appendChild(place);
+              }
+
+              if (Array.isArray(it.sentieri) && it.sentieri.length) {
+                const chips = document.createElement("div");
+                chips.className = "chips";
+                it.sentieri.forEach((s) => {
+                  const chip = document.createElement("span");
+                  chip.className = "chip";
+                  chip.innerHTML = highlightText(s, query);
+                  chips.appendChild(chip);
+                });
+                meta.appendChild(chips);
+              }
+
+              const sn = makeSnippet(it.haystack, query);
+              if (sn) {
+                const snippet = document.createElement("div");
+                snippet.className = "snippet";
+                snippet.innerHTML = sn;
+                meta.appendChild(snippet);
+              }
+
+              li.appendChild(a);
+              li.appendChild(meta);
+              frag.appendChild(li);
+            });
+
+            resultsEl.appendChild(frag);
+            countEl.textContent =
+              items.length + (items.length === 1 ? " risultato" : " risultati");
+          }
+
+          function doSearch(query) {
+            const q = norm(query);
+            if (!q) {
+              resultsEl.innerHTML = "";
+              countEl.textContent = "";
+              return;
+            }
+
+            const out = DATA
+              .filter((it) => norm(it.haystack).includes(q))
+              .slice(0, 80);
+
+            render(out, query);
+          }
+
+          // querystring /cerca?q=...
+          const params = new URLSearchParams(window.location.search);
+          const preset = params.get("q") || "";
+          if (preset) {
+            qInput.value = preset;
+            doSearch(preset);
+          }
+
+          // submit: aggiorna URL e ricerca
+          form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const v = qInput.value || "";
+            const u = new URL(window.location.href);
+            if (v.trim()) u.searchParams.set("q", v.trim());
+            else u.searchParams.delete("q");
+            history.replaceState(null, "", u.toString());
+            doSearch(v);
+          });
+
+          clearBtn?.addEventListener("click", () => {
+            qInput.value = "";
+            const u = new URL(window.location.href);
+            u.searchParams.delete("q");
+            history.replaceState(null, "", u.toString());
+            resultsEl.innerHTML = "";
+            countEl.textContent = "";
+            qInput.focus();
+          });
+        })();
+      </script>
+    </article>
+  </main>
+</BaseLayout>

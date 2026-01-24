@@ -36,7 +36,7 @@ Sulla destra orografica del fiume Rienz — Rienza, nel territorio comunale di S
 <figure>
   <img src="/immagini/2018/4.2018/2.jpg" alt="Foto" loading="lazy" class="img-normal
   " />
-  <figcaption>2. Spada in ferro con rappresentazioni di maschere celtiche, ritrovata a Lothen — Campolino. Fattura pregiata di La Tène  Museo Mansio Sebatum, Sankt Lorenzen — San Lorenzo di Sebato (Bolzano)</figcaption>
+  <figcaption>2. Spada in ferro con rappresentazioni di maschere celtiche, ritrovata a Lothen — Campolino. Fattura pregiata di La Tène  Museo Mansio Sebatum, Sankt Lorenzen — San Lorenzo di Sebato (Pustertal — Val Pusteria, Bolzano)</figcaption>
 </figure>
 
 
@@ -144,7 +144,7 @@ Inizialmente i reperti, in assenza di adeguata sorveglianza, furono trafugati e 
   <img src="/immagini/2018/4.2018/18.jpg" alt="Foto" loading="lazy" class="img-normal" />
   </figure>
 
-La sommità del colle ha mostrato a seguito di scavi successivi resti di insediamenti e fortificazioni appartenenti a secoli diversi, sebbene i primi insediamenti risalgano all’Età del Rame come un po’ in tutte le zone del Comune (2600-1850 a.C). Abbiamo testimonianza che il *Burgkofel di Lothen* divenne anche un castrum a partire dal IV° secolo d.C., cioè un insediamento fortificato la cui parete nord era rafforzata da un’alta muraglia e da un profondo fossato. Di quell’insediamento faceva parte anche una necropoli e con probabilità anche una chiesa paleocristiana ma di cui al momento non se è ancora rilevata traccia. Ma soprattutto e ancora oggi parlare di Lothen significa ricordarne il suo cinturone e l’Offerta a Hepru.
+La sommità del colle ha mostrato a seguito di scavi successivi resti di insediamenti e fortificazioni appartenenti a secoli diversi, sebbene i primi insediamenti risalgano all’Età del Rame come un po’ in tutte le zone del Comune (2600-1850 a.C). Abbiamo testimonianza che il *Burgkofel di Lothen* divenne anche un castrum a partire dal IV secolo d.C., cioè un insediamento fortificato la cui parete nord era rafforzata da un’alta muraglia e da un profondo fossato. Di quell’insediamento faceva parte anche una necropoli e con probabilità anche una chiesa paleocristiana ma di cui al momento non se è ancora rilevata traccia. Ma soprattutto e ancora oggi parlare di Lothen significa ricordarne il suo cinturone e l’Offerta a Hepru.
 
   <figure>
   <img src="/immagini/2018/4.2018/19.jpg" alt="Foto" loading="lazy" class="img-small" />

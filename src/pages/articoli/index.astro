@@ -88,7 +88,7 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
       justify-content:center;
       gap:10px;
       flex-wrap:wrap;
-      margin: 0 0 28px;
+      margin: 0 0 14px;
     }
     .filter{
       text-decoration:none;
@@ -98,11 +98,62 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
       border-radius:999px;
       background:rgba(255,255,255,0.18);
       font-size:18px;
+      user-select:none;
     }
     .filter:hover{ background:rgba(255,255,255,0.35); }
     .filter[aria-current="true"]{
       background:rgba(255,255,255,0.45);
     }
+
+    /* ===== ricerca sotto i filtri (porta a /cerca) ===== */
+    .searchbar{
+      display:flex;
+      justify-content:center;
+      margin: 0 0 28px;
+    }
+    .searchwrap{
+      width:min(780px, 100%);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(44,36,28,.22);
+      background: rgba(255,255,255,.20);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+    }
+    .searchwrap:focus-within{
+      background: rgba(255,255,255,.30);
+      border-color: rgba(44,36,28,.32);
+    }
+    .searchwrap svg{
+      opacity:.8;
+      flex:0 0 auto;
+    }
+    .searchwrap input{
+      width:100%;
+      border:0;
+      outline:0;
+      background:transparent;
+      font-family: inherit;
+      font-size:16px;
+      color: var(--ink);
+    }
+    .searchwrap input::placeholder{
+      color: rgba(44,36,28,0.55);
+    }
+    .searchwrap button{
+      border:1px solid rgba(44,36,28,.22);
+      background: rgba(255,255,255,.18);
+      color: var(--ink);
+      border-radius:999px;
+      padding:7px 12px;
+      cursor:pointer;
+      font-family:inherit;
+      font-size:15px;
+      white-space:nowrap;
+    }
+    .searchwrap button:hover{ background: rgba(255,255,255,.35); }
 
     /* ===== Raggruppamento per anni ===== */
     .year{
@@ -208,7 +259,7 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
 
       <p class="sub"><span id="articles-count">{articoli.length}</span> articoli</p>
 
-      {/* Filtro anni (link) */}
+      {/* Filtro anni */}
       {anni.length > 0 && (
         <nav class="filters" id="year-filters" aria-label="Filtra per anno">
           <a class="filter" data-year="all" href="/articoli" aria-current="true">Tutti</a>
@@ -219,6 +270,18 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
           ))}
         </nav>
       )}
+
+      {/* ✅ Ricerca: porta a /cerca (mostra solo risultati) */}
+      <div class="searchbar" aria-label="Cerca negli articoli">
+        <form class="searchwrap" action="/cerca" method="get" role="search">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M16.5 16.5 21 21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <input name="q" type="search" placeholder="Cerca per titolo, sottotitolo, luogo, sentieri o testo…" autocomplete="off" />
+          <button type="submit">Cerca</button>
+        </form>
+      </div>
 
       {articoli.length === 0 ? (
         <p style="text-align:center; opacity:0.8;">
@@ -262,7 +325,7 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
         </>
       )}
 
-      {/* ✅ filtro anno funzionante anche su build statica */}
+      {/* ✅ filtro anno funzionante anche su build statica (e aggiorna il count) */}
       <script is:inline>
         (function () {
           const params = new URLSearchParams(window.location.search);
@@ -295,6 +358,25 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
 
             updateCount();
           }
+
+          // opzionale: click senza reload (mantiene la pagina “ferma”)
+          filters.forEach((a) => {
+            a.addEventListener("click", (e) => {
+              e.preventDefault();
+              const val = a.getAttribute("data-year");
+              const p = new URLSearchParams(window.location.search);
+
+              if (!val || val === "all") p.delete("anno");
+              else p.set("anno", val);
+
+              const url = window.location.pathname + (p.toString() ? "?" + p.toString() : "");
+              history.replaceState(null, "", url);
+
+              const y = p.get("anno");
+              const yOk = y && /^\d{4}$/.test(y) ? y : null;
+              setCurrent(yOk);
+            });
+          });
 
           setCurrent(yearOk);
         })();
