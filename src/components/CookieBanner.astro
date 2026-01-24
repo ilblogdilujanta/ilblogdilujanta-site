@@ -1,0 +1,175 @@
+---
+const POLICY_URL = "/privacy";
+const STORAGE_KEY = "cookie_consent_v1";
+/**
+ * valori possibili:
+ * - "accepted"  -> carica GA
+ * - "rejected"  -> non carica GA
+ */
+---
+
+<style>
+  .cookie-wrap{
+    position:fixed;
+    left:0; right:0; bottom:0;
+    z-index:9999;
+    display:none;
+    padding:14px;
+  }
+
+  .cookie{
+    max-width:980px;
+    margin:0 auto;
+    border:1px solid rgba(44,36,28,0.25);
+    border-radius:10px;
+    padding:14px 14px;
+    background: rgba(239,225,197,0.92);
+    box-shadow:0 18px 60px rgba(0,0,0,0.35);
+    color:#2c241c;
+    font-family:"Baskerville Old Face","Baskerville","Libre Baskerville",Georgia,"Times New Roman",serif;
+    backdrop-filter: blur(6px);
+  }
+
+  .row{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+
+  .txt{
+    min-width:240px;
+    flex:1;
+    font-size:16px;
+    line-height:1.55;
+    opacity:.95;
+  }
+
+  .txt a{
+    color:#2c241c;
+    text-decoration:none;
+    border-bottom:1px solid rgba(44,36,28,0.25);
+  }
+  .txt a:hover{ border-bottom-color: rgba(44,36,28,0.6); }
+
+  .btns{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+
+  .btn{
+    appearance:none;
+    border:1px solid rgba(44,36,28,0.25);
+    background: rgba(255,255,255,0.20);
+    color:#2c241c;
+    border-radius:999px;
+    padding:8px 12px;
+    font-size:15px;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .btn:hover{ background: rgba(255,255,255,0.38); }
+
+  .btn.primary{
+    background: rgba(255,255,255,0.42);
+  }
+
+  /* piccolo pannello preferenze */
+  .prefs{
+    margin-top:12px;
+    border-top:1px solid rgba(44,36,28,0.18);
+    padding-top:10px;
+    display:none;
+  }
+  .prefs label{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    font-size:15px;
+  }
+  .prefs input{ transform: scale(1.1); }
+
+  @media (max-width:720px){
+    .btns{ justify-content:center; }
+  }
+</style>
+
+<div class="cookie-wrap" id="cookie-wrap" aria-live="polite">
+  <div class="cookie" role="dialog" aria-label="Preferenze cookie">
+    <div class="row">
+      <div class="txt">
+        Questo sito usa cookie **tecnici** e, solo con il tuo consenso, cookie **analitici** (Google Analytics) per capire quali pagine sono più lette.
+        Puoi leggere i dettagli nella <a href={POLICY_URL}>Privacy</a>.
+      </div>
+
+      <div class="btns">
+        <button class="btn" type="button" id="cookie-prefs">Preferenze</button>
+        <button class="btn" type="button" id="cookie-reject">Rifiuta</button>
+        <button class="btn primary" type="button" id="cookie-accept">Accetta</button>
+      </div>
+    </div>
+
+    <div class="prefs" id="cookie-prefs-panel">
+      <label>
+        <input type="checkbox" id="analytics-toggle" />
+        Consento cookie analitici (Google Analytics)
+      </label>
+
+      <div class="btns" style="margin-top:10px;">
+        <button class="btn primary" type="button" id="cookie-save">Salva scelta</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function(){
+    const KEY = "cookie_consent_v1";
+    const wrap = document.getElementById("cookie-wrap");
+    const btnAccept = document.getElementById("cookie-accept");
+    const btnReject = document.getElementById("cookie-reject");
+    const btnPrefs  = document.getElementById("cookie-prefs");
+    const panel = document.getElementById("cookie-prefs-panel");
+    const toggle = document.getElementById("analytics-toggle");
+    const btnSave = document.getElementById("cookie-save");
+
+    function getConsent(){
+      try{ return localStorage.getItem(KEY); }catch(e){ return null; }
+    }
+    function setConsent(v){
+      try{ localStorage.setItem(KEY, v); }catch(e){}
+      // segnala al resto del sito che la scelta è stata fatta
+      window.dispatchEvent(new CustomEvent("cookie:consent", { detail: v }));
+    }
+
+    // se già deciso -> non mostrare banner
+    const existing = getConsent();
+    if(existing === "accepted" || existing === "rejected"){
+      return;
+    }
+
+    // mostra banner
+    wrap.style.display = "block";
+
+    btnAccept && btnAccept.addEventListener("click", () => setConsent("accepted"));
+    btnReject && btnReject.addEventListener("click", () => setConsent("rejected"));
+
+    btnPrefs && btnPrefs.addEventListener("click", () => {
+      panel.style.display = (panel.style.display === "block" ? "none" : "block");
+      // default: toggle acceso
+      toggle.checked = true;
+    });
+
+    btnSave && btnSave.addEventListener("click", () => {
+      setConsent(toggle.checked ? "accepted" : "rejected");
+    });
+
+    // quando l’utente sceglie, chiudi banner
+    window.addEventListener("cookie:consent", () => {
+      wrap.style.display = "none";
+    });
+  })();
+</script>

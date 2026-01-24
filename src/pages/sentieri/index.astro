@@ -31,7 +31,7 @@ const normalizeLabel = (s: string) =>
     .trim();               // via spazi iniziali/finali
 
 // ===== SENTIERI (unici + ordinati A→Z) =====
-const sentieriMap = new Map<string, string>(); 
+const sentieriMap = new Map<string, string>();
 // key = chiave normalizzata per dedup, value = label originale “pulita” da mostrare
 
 for (const a of articoli) {
@@ -57,15 +57,33 @@ const sentieri = Array.from(sentieriMap.values()).sort((a, b) =>
   a.localeCompare(b, "it", { sensitivity: "base" })
 );
 
-// ===== ARCHIVIO PER ANNO =====
-const archivioPerAnno: Record<number, Articolo[]> = {};
+// ===== ARCHIVIO PER ANNO → MESE =====
+const archivioPerAnnoMese: Record<number, Record<number, Articolo[]>> = {};
+
 for (const a of articoli) {
   const anno = a.data.date.getFullYear();
-  (archivioPerAnno[anno] ??= []).push(a);
+  const mese = a.data.date.getMonth(); // 0..11
+
+  archivioPerAnnoMese[anno] ??= {};
+  archivioPerAnnoMese[anno][mese] ??= [];
+  archivioPerAnnoMese[anno][mese].push(a);
 }
-const anni = Object.keys(archivioPerAnno)
+
+const anni = Object.keys(archivioPerAnnoMese)
   .map(Number)
   .sort((a, b) => b - a);
+
+// Nomi mesi in italiano (0..11)
+const monthName = (m: number) => {
+  const d = new Date(2000, m, 1);
+  const s = d.toLocaleDateString("it-IT", { month: "long" });
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
+const countYear = (anno: number) => {
+  const months = archivioPerAnnoMese[anno] || {};
+  return Object.values(months).reduce((sum, arr) => sum + arr.length, 0);
+};
 
 const titoloPagina = "Sentieri di Lettura";
 ---
@@ -138,31 +156,30 @@ const titoloPagina = "Sentieri di Lettura";
     }
 
     .sentiero{
-  padding:16px 14px;
-  font-size:22px;
-  border:1px solid rgba(44,36,28,0.25);
-  border-radius:4px;
+      padding:16px 14px;
+      font-size:22px;
+      border:1px solid rgba(44,36,28,0.25);
+      border-radius:4px;
 
-  /* ✅ centratura perfetta */
-  display:flex;
-  align-items:center;      /* centro verticale */
-  justify-content:center;  /* centro orizzontale */
-  text-align:center;
+      /* ✅ centratura perfetta */
+      display:flex;
+      align-items:center;      /* centro verticale */
+      justify-content:center;  /* centro orizzontale */
+      text-align:center;
 
-  min-height:84px;         /* altezza minima uniforme (puoi alzare a 92/100) */
-  line-height:1.25;
+      min-height:84px;
+      line-height:1.25;
 
-  text-decoration:none;
-  color:var(--ink);
-  background:rgba(255,255,255,0.25);
-}
+      text-decoration:none;
+      color:var(--ink);
+      background:rgba(255,255,255,0.25);
+    }
 
-.sentiero:hover{ background:rgba(255,255,255,0.45); }
+    .sentiero:hover{ background:rgba(255,255,255,0.45); }
 
-
-    /* ARCHIVIO COLLASSABILE */
+    /* ARCHIVIO COLLASSABILE: ANNO */
     .anno{
-      margin-bottom:24px;
+      margin-bottom:18px;
       border-bottom:1px solid rgba(44,36,28,0.25);
       padding-bottom:12px;
     }
@@ -175,6 +192,7 @@ const titoloPagina = "Sentieri di Lettura";
       align-items:baseline;
       gap:12px;
       font-size:22px;
+      user-select:none;
     }
 
     .anno summary::-webkit-details-marker{ display:none; }
@@ -188,18 +206,51 @@ const titoloPagina = "Sentieri di Lettura";
 
     .anno-count{ font-size:14px; opacity:0.7; }
 
-    .anno ul{
+    /* ARCHIVIO COLLASSABILE: MESE (dentro anno) */
+    .mese{
+      margin: 12px 0 0;
+      padding: 10px 0 0;
+      border-top: 1px solid rgba(44,36,28,0.16);
+    }
+
+    .mese summary{
+      cursor:pointer;
       list-style:none;
-      padding:12px 0 0 18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:12px;
+      font-size:18px;
+      user-select:none;
+      padding-left: 18px; /* indentazione sotto anno */
+    }
+
+    .mese summary::-webkit-details-marker{ display:none; }
+    .mese summary::before{
+      content:"▸";
+      margin-right:8px;
+      font-size:16px;
+      opacity:0.6;
+    }
+    .mese[open] summary::before{ content:"▾"; }
+
+    .mese-count{ font-size:13px; opacity:0.7; }
+
+    .mese ul{
+      list-style:none;
+      padding:10px 0 0 36px; /* più indentazione */
       margin:0;
     }
 
-    .anno li{ margin-bottom:6px; }
+    .mese li{ margin-bottom:6px; }
+
+    .mese a,
     .anno a{
       text-decoration:none;
       color:var(--ink);
       border-bottom:1px solid rgba(44,36,28,0.25);
     }
+    .mese a:hover,
     .anno a:hover{ border-bottom-color:rgba(44,36,28,0.6); }
 
     @media (max-width:720px){
@@ -213,7 +264,6 @@ const titoloPagina = "Sentieri di Lettura";
       <h1>Sentieri di Lettura</h1>
 
       <div class="intro">
-      
         <p>
           I Sentieri non conducono a una meta unica.<br>
           Si aprono per essere attraversati, lasciati, ripresi.<br>
@@ -244,25 +294,42 @@ const titoloPagina = "Sentieri di Lettura";
           L’archivio si popolerà con l’arrivo dei primi articoli.
         </p>
       ) : (
-        anni.map((anno) => (
-          <details class="anno">
-            <summary>
-              <span>{anno}</span>
-              <span class="anno-count">{archivioPerAnno[anno].length} articoli</span>
-            </summary>
+        anni.map((anno) => {
+          const mesiObj = archivioPerAnnoMese[anno];
+          const mesi = Object.keys(mesiObj).map(Number).sort((a, b) => b - a); // 11..0
 
-            <ul>
-              {archivioPerAnno[anno]
-                .slice()
-                .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-                .map((a) => (
-                  <li>
-                    <a href={`/articoli/${a.slug}`}>{a.data.title}</a>
-                  </li>
-                ))}
-            </ul>
-          </details>
-        ))
+          return (
+            <details class="anno">
+              <summary>
+                <span>{anno}</span>
+                <span class="anno-count">{countYear(anno)} articoli</span>
+              </summary>
+
+              {mesi.map((mese) => {
+                const list = mesiObj[mese]
+                  .slice()
+                  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+                return (
+                  <details class="mese">
+                    <summary>
+                      <span>{monthName(mese)}</span>
+                      <span class="mese-count">{list.length}</span>
+                    </summary>
+
+                    <ul>
+                      {list.map((a) => (
+                        <li>
+                          <a href={`/articoli/${a.slug}`}>{a.data.title}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                );
+              })}
+            </details>
+          );
+        })
       )}
     </article>
   </main>

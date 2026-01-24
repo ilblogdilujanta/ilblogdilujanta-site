@@ -1,0 +1,126 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const titoloPagina = "Privacy";
+const SITE_NAME = "Il Blog di Lujanta";
+const CONTACT_EMAIL = "ilblogdilujanta@gmail.com";
+---
+
+<BaseLayout title={titoloPagina}>
+  <style is:global>
+    :root{
+      --ink:#2c241c;
+      --green:#0d8460;
+      --paper1:#efe1c5;
+      --paper2:#e2caa6;
+      --paper3:#d8bc93;
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background: var(--green);
+      font-family:
+        "Baskerville Old Face","Baskerville","Libre Baskerville",
+        Georgia,"Times New Roman",serif;
+      color:var(--ink);
+    }
+
+    main{ display:flex; justify-content:center; padding:32px 14px; }
+
+    .paper{
+      max-width:980px; width:100%; padding:60px;
+      background:
+        radial-gradient(120% 90% at 50% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, var(--paper1), var(--paper2) 55%, var(--paper3));
+      border-radius:6px;
+      box-shadow:0 18px 60px rgba(0,0,0,0.55);
+    }
+
+    h1{
+      text-align:center;
+      font-size:44px;
+      font-weight:400;
+      margin:0 0 18px;
+    }
+
+    .copy{
+      font-size:20px;
+      line-height:1.7;
+    }
+    .copy p{ margin:0 0 16px; }
+    .copy h2{
+      font-size:28px;
+      font-weight:400;
+      margin:34px 0 12px;
+    }
+    .copy a{
+      color:var(--ink);
+      text-decoration:none;
+      border-bottom:1px solid rgba(44,36,28,0.25);
+    }
+    .copy a:hover{ border-bottom-color: rgba(44,36,28,0.6); }
+
+    @media (max-width:720px){
+      .paper{ padding:42px 26px; }
+      h1{ font-size:38px; }
+      .copy{ font-size:19px; }
+    }
+  </style>
+
+  <main>
+    <article class="paper">
+      <h1>Privacy</h1>
+
+      <div class="copy">
+        <p>
+          Questa pagina descrive come <strong>{SITE_NAME}</strong> tratta i dati personali e l’uso dei cookie.
+          Per domande puoi scrivere a: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+        </p>
+
+        <h2>1) Titolare del trattamento</h2>
+        <p>
+          Il titolare del trattamento è l’autrice del sito <strong>{SITE_NAME}</strong>.
+          Contatto: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+        </p>
+
+        <h2>2) Dati trattati</h2>
+        <p>
+          Navigando il sito possono essere trattati dati tecnici (ad es. indirizzo IP, user-agent, pagine visitate)
+          necessari al funzionamento e alla sicurezza del servizio.
+        </p>
+
+        <h2>3) Cookie</h2>
+        <p>
+          Il sito utilizza:
+          <br />• <strong>cookie tecnici</strong> (necessari al funzionamento)
+          <br />• <strong>cookie analitici</strong> (solo con consenso) tramite Google Analytics 4, per capire quali pagine sono più lette
+          e migliorare i contenuti.
+        </p>
+
+        <h2>4) Google Analytics 4</h2>
+        <p>
+          Se acconsenti ai cookie analitici, il sito carica Google Analytics 4.
+          I dati sono usati per statistiche aggregate sulle visite (es. pagine più viste).
+          Il caricamento avviene solo dopo consenso tramite banner cookie.
+        </p>
+
+        <h2>5) Come modificare o revocare il consenso</h2>
+        <p>
+          Puoi cambiare idea in qualsiasi momento cancellando la scelta salvata nel browser.
+          
+        </p>
+
+        <h2>6) Conservazione e diritti</h2>
+        <p>
+          Hai diritto di chiedere informazioni sul trattamento e di esercitare i diritti previsti dalla normativa applicabile
+          contattando l’indirizzo email indicato sopra.
+        </p>
+
+        <p style="opacity:.85; margin-top:26px;">
+          Ultimo aggiornamento: {new Date().toLocaleDateString("it-IT")}
+        </p>
+      </div>
+    </article>
+  </main>
+</BaseLayout>
