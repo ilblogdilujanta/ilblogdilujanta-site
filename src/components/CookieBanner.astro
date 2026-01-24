@@ -11,7 +11,6 @@ const STORAGE_KEY = "cookie_consent_v1";
     display:none;
     padding:14px;
   }
-
   .cookie{
     max-width:980px;
     margin:0 auto;
@@ -24,7 +23,6 @@ const STORAGE_KEY = "cookie_consent_v1";
     font-family:"Baskerville Old Face","Baskerville","Libre Baskerville",Georgia,"Times New Roman",serif;
     backdrop-filter: blur(6px);
   }
-
   .row{
     display:flex;
     gap:14px;
@@ -32,22 +30,18 @@ const STORAGE_KEY = "cookie_consent_v1";
     justify-content:space-between;
     flex-wrap:wrap;
   }
-
   .txt{
     flex:1;
     font-size:16px;
     line-height:1.55;
     opacity:.95;
   }
-
   .txt a{
     color:#2c241c;
     text-decoration:none;
     border-bottom:1px solid rgba(44,36,28,0.25);
   }
-  .txt a:hover{
-    border-bottom-color: rgba(44,36,28,0.6);
-  }
+  .txt a:hover{ border-bottom-color: rgba(44,36,28,0.6); }
 
   .btns{
     display:flex;
@@ -55,7 +49,6 @@ const STORAGE_KEY = "cookie_consent_v1";
     flex-wrap:wrap;
     justify-content:flex-end;
   }
-
   .btn{
     border:1px solid rgba(44,36,28,0.25);
     background: rgba(255,255,255,0.20);
@@ -66,23 +59,15 @@ const STORAGE_KEY = "cookie_consent_v1";
     font-family:inherit;
     cursor:pointer;
   }
+  .btn:hover{ background: rgba(255,255,255,0.38); }
+  .btn.primary{ background: rgba(255,255,255,0.42); }
 
-  .btn:hover{
-    background: rgba(255,255,255,0.38);
-  }
-
-  .btn.primary{
-    background: rgba(255,255,255,0.42);
-  }
-
-  /* Preferenze */
   .prefs{
     margin-top:12px;
     border-top:1px solid rgba(44,36,28,0.18);
     padding-top:10px;
     display:none;
   }
-
   .prefs label{
     display:flex;
     gap:10px;
@@ -91,16 +76,12 @@ const STORAGE_KEY = "cookie_consent_v1";
   }
 
   @media (max-width:720px){
-    .btns{
-      justify-content:center;
-    }
+    .btns{ justify-content:center; }
   }
 </style>
 
-
 <div class="cookie-wrap" id="cookie-wrap" aria-live="polite">
   <div class="cookie" role="dialog" aria-label="Preferenze cookie">
-
     <div class="row">
       <div class="txt">
         Questo sito usa cookie tecnici e, solo con il tuo consenso,
@@ -123,22 +104,19 @@ const STORAGE_KEY = "cookie_consent_v1";
       </label>
 
       <div class="btns" style="margin-top:10px;">
-        <button class="btn primary" type="button" id="cookie-save">
-          Salva scelta
-        </button>
+        <button class="btn primary" type="button" id="cookie-save">Salva scelta</button>
       </div>
     </div>
-
   </div>
 </div>
 
-
-<script is:inline>
+<script is:inline define:vars={{ STORAGE_KEY }}>
 (function(){
-
-  const KEY = "cookie_consent_v1";
+  const KEY = STORAGE_KEY;
 
   const wrap = document.getElementById("cookie-wrap");
+  if(!wrap) return;
+
   const btnAccept = document.getElementById("cookie-accept");
   const btnReject = document.getElementById("cookie-reject");
   const btnPrefs  = document.getElementById("cookie-prefs");
@@ -147,49 +125,31 @@ const STORAGE_KEY = "cookie_consent_v1";
   const btnSave   = document.getElementById("cookie-save");
 
   function getConsent(){
-    try {
-      return localStorage.getItem(KEY);
-    } catch(e){
-      return null;
-    }
+    try { return localStorage.getItem(KEY); } catch(e){ return null; }
   }
 
   function setConsent(value){
-    try {
-      localStorage.setItem(KEY, value);
-    } catch(e){}
-
-    window.dispatchEvent(
-      new CustomEvent("cookie:consent", { detail: value })
-    );
-
+    try { localStorage.setItem(KEY, value); } catch(e){}
+    window.dispatchEvent(new CustomEvent("cookie:consent", { detail: value }));
     wrap.style.display = "none";
   }
 
-  // Se già scelto → non mostrare banner
   const existing = getConsent();
-  if(existing === "accepted" || existing === "rejected"){
-    return;
-  }
+  if(existing === "accepted" || existing === "rejected") return;
 
-  // Mostra banner
   wrap.style.display = "block";
 
-  btnAccept?.addEventListener("click", () => {
-    setConsent("accepted");
-  });
+  btnAccept && btnAccept.addEventListener("click", () => setConsent("accepted"));
+  btnReject && btnReject.addEventListener("click", () => setConsent("rejected"));
 
-  btnReject?.addEventListener("click", () => {
-    setConsent("rejected");
-  });
-
-  btnPrefs?.addEventListener("click", () => {
+  btnPrefs && btnPrefs.addEventListener("click", () => {
+    if(!panel) return;
     panel.style.display = (panel.style.display === "block") ? "none" : "block";
   });
 
-  btnSave?.addEventListener("click", () => {
-    setConsent(toggle.checked ? "accepted" : "rejected");
+  btnSave && btnSave.addEventListener("click", () => {
+    const ok = !!(toggle && toggle.checked);
+    setConsent(ok ? "accepted" : "rejected");
   });
-
 })();
 </script>
