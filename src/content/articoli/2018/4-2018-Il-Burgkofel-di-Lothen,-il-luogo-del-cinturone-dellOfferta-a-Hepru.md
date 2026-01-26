@@ -7,6 +7,7 @@ sentieri:
   - "Archeologia e Storia"
   - "Attraverso Antichi Sentieri"
   - "Luoghi di Culto"
+  - "Luoghi del Sacro alpini e dolomitici"
   - "Sudtirolo"
 
 cover: "/immagini/2018/4.2018/1. CINTURONE CON CERVI - SAVAETES.jpg"
