@@ -167,7 +167,6 @@ La sommità del colle ha mostrato a seguito di scavi successivi resti di insedia
 
 * Cfr. *St. Margareten, Kniepaß — St. Lorenzen — Santa Margherita, Kniepaß — San Lorenzo di Sebato* (Pustertal — Val Pusteria, Bolzano)   <br>
                                                               https://ilblogdilujanta.blogspot.it/2017/10/st-margareten-kniepa-st-lorenzen-dea.html
-* http://www.archaeologie-schweiz.ch/UEBER-UNS.5.0.html
 * https://www.mansio-sebatum.it
 * http://spazioinwind.libero.it/popoli_antichi
 * https://www.val-pusteria.net
