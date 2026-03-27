@@ -154,37 +154,39 @@ const sentieriUnici = Array.from(
       margin: 0 0 26px;
     }
 
-    /* ✅ come Testimonianze: il testo NON deve essere stretto */
     .content {
       font-size: 20px;
       line-height: 1.75;
       margin: 0 auto;
       text-align: left;
     }
+
     .content p {
       margin: 0 0 18px;
     }
 
     /* ===== FILTRI MAPPA ===== */
-    .controls{
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      flex-wrap:wrap;
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
       margin: 22px 0 18px;
     }
-    .controls label{
-      font-size:16px;
-      opacity:.95;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      background: rgba(255,255,255,0.18);
-      border: 1px solid rgba(44,36,28,0.22);
+
+    .controls label {
+      font-size: 16px;
+      opacity: 0.95;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(44, 36, 28, 0.22);
       border-radius: 999px;
       padding: 8px 12px;
     }
-    .controls select{
+
+    .controls select {
       font-family: inherit;
       font-size: 16px;
       color: var(--ink);
@@ -195,100 +197,127 @@ const sentieriUnici = Array.from(
     }
 
     /* ===== MAPPA ===== */
-    #map{
+    #map {
       height: 520px;
       width: 100%;
       margin: 10px auto 0;
       border-radius: 8px;
-      border: 1px solid rgba(44,36,28,0.22);
-      box-shadow: 0 14px 40px rgba(0,0,0,0.14);
+      border: 1px solid rgba(44, 36, 28, 0.22);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.14);
       overflow: hidden;
     }
 
     /* Effetto "antico" sui tiles */
-    .leaflet-tile{
+    .leaflet-tile {
       filter: sepia(0.55) saturate(0.75) contrast(0.98) brightness(1.02);
     }
 
     /* ===== Tooltip (hover) ===== */
-    .leaflet-tooltip{
-      pointer-events: auto;
-      background: rgba(244,241,234,0.96);
+    .leaflet-tooltip {
+      pointer-events: none;
+      background: rgba(244, 241, 234, 0.96);
       color: var(--ink);
-      border: 1px solid rgba(44,36,28,0.28);
-      box-shadow: 0 10px 26px rgba(0,0,0,0.18);
+      border: 1px solid rgba(44, 36, 28, 0.28);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
       border-radius: 8px;
       padding: 10px 12px;
-
       width: 320px;
       max-width: 320px;
       min-width: 260px;
       white-space: normal !important;
     }
 
-    .tt-title{
+    .tt-title {
       font-size: 16px;
       font-weight: 600;
       margin: 0 0 6px;
     }
-    .tt-list{
+
+    .tt-list {
       margin: 0;
       padding-left: 18px;
       line-height: 1.35;
       font-size: 15px;
     }
-    .tt-list li{ margin: 0 0 4px 0; }
 
-    .tt-list a{
+    .tt-list li {
+      margin: 0 0 4px 0;
+    }
+
+    .tt-list a {
       color: var(--ink);
       text-decoration: none;
-      border-bottom: 1px solid rgba(44,36,28,0.25);
+      border-bottom: 1px solid rgba(44, 36, 28, 0.25);
       white-space: normal !important;
       overflow-wrap: break-word;
       word-break: normal;
     }
-    .tt-list a:hover{
-      border-bottom-color: rgba(44,36,28,0.6);
+
+    .tt-list a:hover {
+      border-bottom-color: rgba(44, 36, 28, 0.6);
     }
 
-    .tt-meta{
+    .tt-meta {
       margin-top: 6px;
       font-size: 13px;
-      opacity: .75;
+      opacity: 0.75;
     }
 
     /* ===== Popup (click) ===== */
-    .leaflet-popup-content-wrapper{
-      background: rgba(244,241,234,0.96);
-      border: 1px solid rgba(44,36,28,0.28);
+    .leaflet-popup-content-wrapper {
+      background: rgba(244, 241, 234, 0.98);
+      border: 1px solid rgba(44, 36, 28, 0.28);
       border-radius: 8px;
-      box-shadow: 0 10px 26px rgba(0,0,0,0.18);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
       max-width: 340px;
       min-width: 260px;
     }
 
-    .leaflet-popup-content{
+    .leaflet-popup-content {
       margin: 10px 12px;
       max-width: 340px;
+      max-height: 300px;
+      overflow-y: auto;
+      overflow-x: hidden;
       white-space: normal !important;
+      padding-right: 2px;
     }
 
-    .tt-popup a{ pointer-events: auto; }
+    .tt-popup a {
+      pointer-events: auto;
+    }
+
+    .tt-popup .tt-list {
+      padding-right: 6px;
+    }
 
     @media (max-width: 720px) {
       .paper {
         padding: 42px 26px;
       }
+
       h1 {
         font-size: 44px;
       }
-      #map{
+
+      #map {
         height: 480px;
       }
-      .leaflet-tooltip{
+
+      .leaflet-tooltip {
         width: 300px;
         max-width: 300px;
         min-width: 240px;
+      }
+
+      .leaflet-popup-content-wrapper {
+        max-width: 300px;
+        min-width: 220px;
+      }
+
+      .leaflet-popup-content {
+        max-width: 300px;
+        max-height: 260px;
       }
     }
   </style>
@@ -298,7 +327,7 @@ const sentieriUnici = Array.from(
       <h1>I Luoghi di Lujanta</h1>
 
       <div class="content">
-        <br>
+        <br />
         <p>
           Questo Atlante del Folklore e del Sacro è una mappa pensata per offrire un riferimento visivo ai luoghi narrati ed esplorati negli articoli:
           terre di leggende, siti archeologici, musei, elementi rituali come menhir o rocce sacre, contesti territoriali da cui hanno origine racconti e tradizioni,
@@ -321,7 +350,7 @@ const sentieriUnici = Array.from(
           una terra che univa la Germania e la Danimarca alle attuali Isole Britanniche. Nell’Atlante diventa luogo-limite e spazio di raccolta, una terra leggendaria che accoglie
           ciò che non può essere fissato, ciò che è scomparso, ciò che vive tra memoria, mito e silenzio.
         </p>
-      </div> <!-- ✅ CHIUSURA IMPORTANTISSIMA -->
+      </div>
 
       <div class="controls" aria-label="Filtri mappa">
         <label>
@@ -375,6 +404,7 @@ const sentieriUnici = Array.from(
       const cluster = L.markerClusterGroup({
         showCoverageOnHover: false,
         spiderfyOnMaxZoom: true,
+        zoomToBoundsOnClick: true,
         maxClusterRadius: 42,
       });
 
@@ -392,11 +422,11 @@ const sentieriUnici = Array.from(
 
       function escapeHtml(s) {
         return String(s)
-          .replaceAll("&","&amp;")
-          .replaceAll("<","&lt;")
-          .replaceAll(">","&gt;")
-          .replaceAll('"',"&quot;")
-          .replaceAll("'","&#039;");
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
       }
 
       function tooltipHTML(p) {
@@ -404,7 +434,9 @@ const sentieriUnici = Array.from(
         if (list.length === 0) return null;
 
         const items = list
-          .map(a => `<li><a href="/articoli/${a.slug}">${escapeHtml(a.title)}</a></li>`)
+          .map(
+            (a) => `<li><a href="/articoli/${a.slug}">${escapeHtml(a.title)}</a></li>`
+          )
           .join("");
 
         const meta = [];
@@ -430,7 +462,12 @@ const sentieriUnici = Array.from(
         map.fitBounds(group.getBounds().pad(0.18), { animate: false });
       }
 
+      function closeMapPopups() {
+        map.closePopup();
+      }
+
       function buildMarkers() {
+        closeMapPopups();
         cluster.clearLayers();
 
         for (const p of PUNTI) {
@@ -442,7 +479,7 @@ const sentieriUnici = Array.from(
             weight: 1.5,
             color: "rgba(44,36,28,0.75)",
             fillColor: "rgba(13, 132, 96, 0.65)",
-            fillOpacity: 2,
+            fillOpacity: 1,
           });
 
           marker.bindTooltip(html, {
@@ -456,19 +493,45 @@ const sentieriUnici = Array.from(
           marker.bindPopup(html, {
             closeButton: true,
             autoClose: true,
-            closeOnClick: true,
+            closeOnClick: false,
             className: "tt-popup",
             offset: [0, -8],
+            maxWidth: 340,
+            minWidth: 260,
+            maxHeight: 320,
+            autoPan: true,
+            autoPanPadding: [30, 30],
           });
 
-          marker.on("click", () => marker.openPopup());
+          marker.on("click", (e) => {
+            if (e.originalEvent) {
+              L.DomEvent.stopPropagation(e.originalEvent);
+              L.DomEvent.preventDefault(e.originalEvent);
+            }
+            marker.openPopup();
+          });
 
           cluster.addLayer(marker);
         }
 
-        map.addLayer(cluster);
+        if (!map.hasLayer(cluster)) {
+          map.addLayer(cluster);
+        }
+
         fitToVisible();
       }
+
+      map.on("popupopen", (e) => {
+        const el = e.popup && e.popup.getElement ? e.popup.getElement() : null;
+        if (!el) return;
+
+        L.DomEvent.disableClickPropagation(el);
+        L.DomEvent.disableScrollPropagation(el);
+      });
+
+      map.on("click", () => {
+        map.closePopup();
+      });
 
       yearSel.addEventListener("change", buildMarkers);
       trailSel.addEventListener("change", buildMarkers);
