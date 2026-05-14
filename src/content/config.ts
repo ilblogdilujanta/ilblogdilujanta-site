@@ -4,6 +4,7 @@ import { defineCollection, z } from "astro:content";
 const articoli = defineCollection({
   schema: z.object({
     title: z.string(),
+    title2: z.string().optional(),
     subtitle: z.string().optional(),
 
     date: z

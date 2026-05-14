@@ -44,7 +44,7 @@ const sentieri = (articolo.data.sentieri ?? []) as string[];
 
 // subtitle opzionale
 const subtitle = (articolo.data as any).subtitle as string | undefined;
-
+const title2 = (articolo.data as any).title2 as string | undefined;
 /* =========================
    CONDIVISIONE (URL pubblico)
    ========================= */
@@ -481,7 +481,11 @@ const shareMail = `mailto:?subject=${encText}&body=${encodeURIComponent(urlArtic
 
   <main>
     <article class="paper">
-      <h1>{articolo.data.title}</h1>
+     <h1>
+     {articolo.data.title}
+     {title2 && <><br />{title2}</>}
+     </h1>
+
       {subtitle && <div class="subtitle">({subtitle})</div>}
       <p class="date">{formatDate(articolo.data.date)}</p>
 

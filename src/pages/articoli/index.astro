@@ -233,7 +233,13 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
     .list li.no-cover{
       grid-template-columns: 1fr;
     }
-
+     .titolo2-lista{
+      margin-top:5px;
+      font-size:16px;
+      line-height:1.35;
+      opacity:.75;
+      font-style:italic;
+    }
     @media (max-width:720px){
       .paper{ padding:42px 26px; }
       h1{ font-size:38px; }
@@ -304,7 +310,9 @@ const anni = Array.from(byYear.keys()).sort((a, b) => b - a);
 
                     <div class="text-col">
                       <a class="title" href={`/articoli/${a.slug}`}>{a.data.title}</a>
-
+{(a.data as any).title2 && (
+  <div class="title2-lista">{(a.data as any).title2}</div>
+)}
                       <div class="meta">
                         <span>{formatDate(a.data.date)}</span>
 
