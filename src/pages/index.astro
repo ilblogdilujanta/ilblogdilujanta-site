@@ -427,7 +427,10 @@ const CONSENT_KEY = "cookie_consent_v1";
                       />
                     )}
                     <p class="t">{a.data.title}</p>
-                    <p class="y">{a.data.date.getFullYear()}</p>
+{(a.data as any).title2 && (
+  <p class="t2">{(a.data as any).title2}</p>
+)}
+<p class="y">{a.data.date.getFullYear()}</p>
                   </a>
                 ))}
               </div>

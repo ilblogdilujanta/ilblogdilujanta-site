@@ -314,7 +314,12 @@ const shareMail = `mailto:?subject=${encText}&body=${encodeURIComponent(urlArtic
       font-size:18px;
       line-height:1.35;
     }
-
+.pager-title2{
+  margin-top:5px;
+  font-size:18px;
+  line-height:1.35;
+  
+}
     /* ✅ BOTTONE CENTRALE: testo centrato nel box */
     .back-center{
       border-radius:6px;
@@ -616,26 +621,32 @@ const shareMail = `mailto:?subject=${encText}&body=${encodeURIComponent(urlArtic
         </script>
       </section>
 
-      <!-- ✅ PRECEDENTE | TORNA AI SENTIERI | SUCCESSIVO -->
-      <nav class="pager" aria-label="Navigazione articoli">
-        {precedente ? (
-          <a href={`/articoli/${precedente.slug}`}>
-            <div class="label">← Precedente</div>
-            <div class="title">{precedente.data.title}</div>
-          </a>
-        ) : <div></div>}
+<!-- ✅ PRECEDENTE | TORNA AI SENTIERI | SUCCESSIVO -->
+<nav class="pager" aria-label="Navigazione articoli">
+  {precedente ? (
+    <a href={`/articoli/${precedente.slug}`}>
+      <div class="label">← Precedente</div>
+      <div class="title">{precedente.data.title}</div>
+      {(precedente.data as any).title2 && (
+        <div class="pager-title2">{(precedente.data as any).title2}</div>
+      )}
+    </a>
+  ) : <div></div>}
 
-        <a class="back-center" href="/sentieri" aria-label="Torna ai Sentieri di Lettura">
-          Torna ai Sentieri di Lettura
-        </a>
+  <a class="back-center" href="/sentieri" aria-label="Torna ai Sentieri di Lettura">
+    Torna ai Sentieri di Lettura
+  </a>
 
-        {successivo ? (
-          <a href={`/articoli/${successivo.slug}`} style="text-align:right">
-            <div class="label">Successivo →</div>
-            <div class="title">{successivo.data.title}</div>
-          </a>
-        ) : <div></div>}
-      </nav>
+  {successivo ? (
+    <a href={`/articoli/${successivo.slug}`} style="text-align:right">
+      <div class="label">Successivo →</div>
+      <div class="title">{successivo.data.title}</div>
+      {(successivo.data as any).title2 && (
+        <div class="pager-title2">{(successivo.data as any).title2}</div>
+      )}
+    </a>
+  ) : <div></div>}
+</nav>
     </article>
   </main>
 </BaseLayout>
