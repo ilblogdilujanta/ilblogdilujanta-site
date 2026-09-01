@@ -78,7 +78,7 @@ export default async () => {
       ],
 
       // 8 articoli più letti
-      limit: 9,
+      limit: 8,
     });
 
     const articoli = (response.rows || [])
@@ -99,7 +99,7 @@ export default async () => {
         );
       })
 
-      .slice(0, 9);
+      .slice(0, 8);
 
     return new Response(JSON.stringify(articoli), {
       status: 200,
