@@ -13,7 +13,14 @@ const articoli = (await getCollection("articoli"))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 const top9 = articoli.slice(0, 9);
-
+const articleTitles = Object.fromEntries(
+  articoli.map((a) => [
+    `/articoli/${a.slug}`,
+    (a.data as any).title2
+      ? `${a.data.title} — ${(a.data as any).title2}`
+      : a.data.title
+  ])
+);
 // ✅ GA4
 const GA_ID = "G-4QEGKF1RX0";
 const CONSENT_KEY = "cookie_consent_v1";
@@ -308,7 +315,22 @@ const CONSENT_KEY = "cookie_consent_v1";
       }
       .top-list a:first-child{ border-top: none; padding-top: 0; }
       .top-list a:hover{ text-decoration: underline; }
+:global(#weekly-most-read a){
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  padding: 10px 0;
+  border-top: 1px solid rgba(43,42,38,.18);
+}
 
+:global(#weekly-most-read a:first-child){
+  border-top: none;
+  padding-top: 0;
+}
+
+:global(#weekly-most-read a:hover){
+  text-decoration: underline;
+}
       @media (max-width: 480px){
         .hero{ padding-top: 96px; }
       }
@@ -522,7 +544,7 @@ const CONSENT_KEY = "cookie_consent_v1";
         window.location.reload();
       });
     </script>
-    <script is:inline>
+<script is:inline define:vars={{ articleTitles }}>
   (async function () {
     const container = document.getElementById("weekly-most-read");
 
@@ -557,7 +579,11 @@ const CONSENT_KEY = "cookie_consent_v1";
         const link = document.createElement("a");
 
         link.href = article.path;
-        link.textContent = article.title;
+
+        link.textContent =
+          articleTitles[article.path] ||
+          article.title ||
+          article.path;
 
         container.appendChild(link);
       }
@@ -570,6 +596,7 @@ const CONSENT_KEY = "cookie_consent_v1";
       container.textContent = "";
 
       const message = document.createElement("p");
+
       message.textContent =
         "I più letti non sono momentaneamente disponibili.";
 
