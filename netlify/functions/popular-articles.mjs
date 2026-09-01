@@ -34,37 +34,13 @@ export default async () => {
       ],
 
       dimensionFilter: {
-        andGroup: {
-          expressions: [
-            // Considera esclusivamente le pagine degli articoli
-            {
-              filter: {
-                fieldName: "pagePath",
-                stringFilter: {
-                  matchType: "BEGINS_WITH",
-                  value: "/articoli/",
-                  caseSensitive: false,
-                },
-              },
-            },
-
-            // Esclude la pagina generale "Articoli"
-            // sia con sia senza slash finale
-            {
-              notExpression: {
-                filter: {
-                  fieldName: "pagePath",
-                  inListFilter: {
-                    values: [
-                      "/articoli",
-                      "/articoli/",
-                    ],
-                    caseSensitive: false,
-                  },
-                },
-              },
-            },
-          ],
+        filter: {
+          fieldName: "pagePath",
+          stringFilter: {
+            matchType: "BEGINS_WITH",
+            value: "/articoli/",
+            caseSensitive: false,
+          },
         },
       },
 
@@ -77,8 +53,8 @@ export default async () => {
         },
       ],
 
-      // 8 articoli più letti
-      limit: 8,
+      // Ne chiediamo più di 8 e filtriamo dopo
+      limit: 50,
     });
 
     const articoli = (response.rows || [])
@@ -88,26 +64,29 @@ export default async () => {
         views: Number(row.metricValues?.[0]?.value || 0),
       }))
 
-      // Ulteriore sicurezza:
-      // elimina comunque l'indice /articoli
+      // Accetta SOLO veri articoli:
+      // /articoli/2016/...
+      // /articoli/2025/...
+      // ecc.
       .filter((articolo) => {
         const path = articolo.path.replace(/\/+$/, "");
 
-        return (
-          path !== "/articoli" &&
-          path.startsWith("/articoli/")
-        );
+        return /^\/articoli\/\d{4}\//.test(path);
       })
 
-      .slice(0, 8);
+      // Evita eventuali duplicati dello stesso URL
+      .filter(
+        (articolo, index, array) =>
+          array.findIndex((item) => item.path === articolo.path) === index
+      )
+
+      // Prende infine gli 8 più letti
+      .slice(0, 9);
 
     return new Response(JSON.stringify(articoli), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-
-        // Durante i test niente cache:
-        // così vedi immediatamente il nuovo risultato.
         "Cache-Control": "no-store",
       },
     });
