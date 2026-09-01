@@ -30,12 +30,29 @@ export default async () => {
         },
       ],
       dimensionFilter: {
-        filter: {
-          fieldName: "pagePath",
-          stringFilter: {
-            matchType: "BEGINS_WITH",
-            value: "/articoli/",
-          },
+        andGroup: {
+          expressions: [
+            {
+              filter: {
+                fieldName: "pagePath",
+                stringFilter: {
+                  matchType: "BEGINS_WITH",
+                  value: "/articoli/",
+                },
+              },
+            },
+            {
+              notExpression: {
+                filter: {
+                  fieldName: "pagePath",
+                  stringFilter: {
+                    matchType: "EXACT",
+                    value: "/articoli/",
+                  },
+                },
+              },
+            },
+          ],
         },
       },
       orderBys: [
