@@ -10,14 +10,12 @@ export default async () => {
   try {
     const [response] = await analyticsDataClient.runReport({
       property: `properties/${PROPERTY_ID}`,
-
       dateRanges: [
         {
           startDate: "30daysAgo",
           endDate: "today",
         },
       ],
-
       dimensions: [
         {
           name: "pagePath",
@@ -26,24 +24,20 @@ export default async () => {
           name: "pageTitle",
         },
       ],
-
       metrics: [
         {
           name: "screenPageViews",
         },
       ],
-
       dimensionFilter: {
         filter: {
           fieldName: "pagePath",
           stringFilter: {
             matchType: "BEGINS_WITH",
             value: "/articoli/",
-            caseSensitive: false,
           },
         },
       },
-
       orderBys: [
         {
           metric: {
@@ -52,42 +46,47 @@ export default async () => {
           desc: true,
         },
       ],
-
-      // Ne chiediamo più di 8 e filtriamo dopo
-      limit: 50,
+      limit: 100,
     });
 
-    const articoli = (response.rows || [])
-      .map((row) => ({
-        path: row.dimensionValues?.[0]?.value || "",
-        title: row.dimensionValues?.[1]?.value || "",
-        views: Number(row.metricValues?.[0]?.value || 0),
-      }))
+    const mappaArticoli = new Map();
 
-      // Accetta SOLO veri articoli:
-      // /articoli/2016/...
-      // /articoli/2025/...
-      // ecc.
-      .filter((articolo) => {
-        const path = articolo.path.replace(/\/+$/, "");
+    for (const row of response.rows || []) {
+      let path = row.dimensionValues[0].value;
+      const title = row.dimensionValues[1].value;
+      const views = Number(row.metricValues[0].value);
 
-        return /^\/articoli\/\d{4}\//.test(path);
-      })
+      // Elimina query string ed eventuale slash finale
+      path = path.split("?")[0].replace(/\/+$/, "");
 
-      // Evita eventuali duplicati dello stesso URL
-      .filter(
-        (articolo, index, array) =>
-          array.findIndex((item) => item.path === articolo.path) === index
-      )
+      // Esclude la pagina generale /articoli e la homepage
+      if (!path || path === "/" || path === "/articoli") {
+        continue;
+      }
 
-      // Prende infine gli 8 più letti
+      // Accorpa eventuali righe GA4 riferite allo stesso articolo
+      if (mappaArticoli.has(path)) {
+        const articolo = mappaArticoli.get(path);
+        articolo.views += views;
+      } else {
+        mappaArticoli.set(path, {
+          path,
+          title,
+          views,
+        });
+      }
+    }
+
+    // Ordina nuovamente dopo avere unito i duplicati
+    const articoli = Array.from(mappaArticoli.values())
+      .sort((a, b) => b.views - a.views)
       .slice(0, 9);
 
     return new Response(JSON.stringify(articoli), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-store",
+        "Cache-Control": "public, max-age=3600",
       },
     });
   } catch (error) {
@@ -101,7 +100,6 @@ export default async () => {
         status: 500,
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-store",
         },
       }
     );
