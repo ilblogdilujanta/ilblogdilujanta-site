@@ -522,6 +522,61 @@ const CONSENT_KEY = "cookie_consent_v1";
         window.location.reload();
       });
     </script>
+    <script is:inline>
+  (async function () {
+    const container = document.getElementById("weekly-most-read");
+
+    if (!container) return;
+
+    try {
+      const response = await fetch(
+        "/.netlify/functions/popular-articles"
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Errore funzione: ${response.status}`
+        );
+      }
+
+      const articles = await response.json();
+
+      if (!Array.isArray(articles) || articles.length === 0) {
+        container.textContent = "";
+
+        const message = document.createElement("p");
+        message.textContent = "Nessun dato disponibile.";
+        container.appendChild(message);
+
+        return;
+      }
+
+      container.textContent = "";
+
+      for (const article of articles) {
+        const link = document.createElement("a");
+
+        link.href = article.path;
+        link.textContent = article.title;
+
+        container.appendChild(link);
+      }
+    } catch (error) {
+      console.error(
+        "Errore caricamento articoli più letti:",
+        error
+      );
+
+      container.textContent = "";
+
+      const message = document.createElement("p");
+      message.textContent =
+        "I più letti non sono momentaneamente disponibili.";
+
+      container.appendChild(message);
+    }
+  })();
+</script>
     </footer>
   </body>
 </html>
