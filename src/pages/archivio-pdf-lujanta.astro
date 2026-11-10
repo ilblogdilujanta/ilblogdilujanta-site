@@ -1,0 +1,152 @@
+
+---
+import { getCollection } from "astro:content";
+
+const articoli = await getCollection("articoli");
+
+const ordinati = articoli.slice().sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const anni = [...new Set(
+  ordinati.map(a => a.data.date.getFullYear())
+)].sort((a, b) => b - a);
+
+const articoliPerAnno = anni.map(anno => ({
+  anno,
+  articoli: ordinati.filter(
+    a => a.data.date.getFullYear() === anno
+  )
+}));
+---
+
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <title>Archivio PDF – Il Blog di Lujanta</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 35px 18px;
+      background: #f2eadb;
+      color: #29251e;
+      font-family: Georgia, serif;
+    }
+
+    main {
+      max-width: 950px;
+      margin: auto;
+    }
+
+    h1 {
+      color: #174A32;
+      text-align: center;
+      font-weight: normal;
+      margin-bottom: 12px;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    details {
+      background: #fffaf1;
+      border: 1px solid #d4c6aa;
+      border-radius: 7px;
+      margin-bottom: 14px;
+      padding: 18px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: #174A32;
+      font-size: 23px;
+    }
+
+    .articolo {
+      border-top: 1px solid #ddd1bb;
+      padding: 20px 0;
+    }
+
+    .titolo {
+      font-size: 19px;
+      margin-bottom: 12px;
+    }
+
+    .pulsanti {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pulsante {
+      display: inline-block;
+      background: #174A32;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 15px;
+      text-decoration: none;
+    }
+
+    .pulsante:hover {
+      background: #246b49;
+    }
+
+    .secondario {
+      background: #635744;
+    }
+
+    .secondario:hover {
+      background: #80715b;
+    }
+
+    .pulsante[aria-disabled="true"] {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <h1>Archivio PDF – Il Blog di Lujanta</h1>
+
+    <p class="intro">
+      Archivio degli articoli in formato PDF.
+      Versione completa e versione senza fotografie.
+    </p>
+
+    {articoliPerAnno.map(({ anno, articoli }) => (
+      <details>
+        <summary>
+          {anno} – {articoli.length} articoli
+        </summary>
+
+        {articoli.map(articolo => (
+          <div class="articolo">
+            <div class="titolo">
+              {articolo.data.title}
+            </div>
+
+            <div class="pulsanti">
+              <span class="pulsante" aria-disabled="true">
+                PDF con fotografie
+              </span>
+
+              <span class="pulsante secondario" aria-disabled="true">
+                PDF senza fotografie
+              </span>
+            </div>
+          </div>
+        ))}
+      </details>
+    ))}
+  </main>
+</body>
+</html>
