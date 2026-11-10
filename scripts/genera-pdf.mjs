@@ -9,7 +9,7 @@ const DIST = path.join(ROOT, "dist");
 const OUTPUT = path.join(ROOT, "pdf-generati");
 
 const ARTICOLO =
-  "articoli/2025/il-tormento-notturno-vii";
+  "articoli/2016/112016-trumusiate-sainate-la-divinità-del-santuario-di-lagole-calalzo-di-cadore-belluno";
 
 await fs.mkdir(OUTPUT, { recursive: true });
 
@@ -87,9 +87,9 @@ async function generaPDF(senzaFoto) {
     `
   });
 
-  const nome = senzaFoto
-    ? "tormento-notturno-vii-senza-foto.pdf"
-    : "tormento-notturno-vii-con-foto.pdf";
+ const nome = senzaFoto
+  ? "trumusiate-sainate-senza-foto.pdf"
+  : "trumusiate-sainate-con-foto.pdf";
 
   await page.pdf({
     path: path.join(OUTPUT, nome),
