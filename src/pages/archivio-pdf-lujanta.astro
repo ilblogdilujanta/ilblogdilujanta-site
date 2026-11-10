@@ -18,6 +18,26 @@ const articoliPerAnno = anni.map(anno => ({
     a => a.data.date.getFullYear() === anno
   )
 }));
+
+// PDF già generati e disponibili.
+// Aggiungeremo qui gli altri articoli man mano.
+const pdfDisponibili = {
+  "trumusiate": {
+    conFoto: "/pdf/trumusiate-sainate-con-foto.pdf",
+    senzaFoto: "/pdf/trumusiate-sainate-senza-foto.pdf"
+  }
+};
+
+// Identifica l'articolo senza modificare il suo titolo.
+function trovaPDF(articolo) {
+  const titolo = articolo.data.title.toLowerCase();
+
+  if (titolo.includes("trumusiate sainate")) {
+    return pdfDisponibili.trumusiate;
+  }
+
+  return null;
+}
 ---
 
 <!doctype html>
@@ -128,23 +148,53 @@ const articoliPerAnno = anni.map(anno => ({
           {anno} – {articoli.length} articoli
         </summary>
 
-        {articoli.map(articolo => (
-          <div class="articolo">
-            <div class="titolo">
-              {articolo.data.title}
-            </div>
+        {articoli.map(articolo => {
+          const pdf = trovaPDF(articolo);
 
-            <div class="pulsanti">
-              <span class="pulsante" aria-disabled="true">
-                PDF con fotografie
-              </span>
+          return (
+            <div class="articolo">
+              <div class="titolo">
+                {articolo.data.title}
+              </div>
 
-              <span class="pulsante secondario" aria-disabled="true">
-                PDF senza fotografie
-              </span>
+              <div class="pulsanti">
+                {pdf?.conFoto ? (
+                  <a
+                    class="pulsante"
+                    href={pdf.conFoto}
+                    download
+                  >
+                    PDF con fotografie
+                  </a>
+                ) : (
+                  <span
+                    class="pulsante"
+                    aria-disabled="true"
+                  >
+                    PDF con fotografie
+                  </span>
+                )}
+
+                {pdf?.senzaFoto ? (
+                  <a
+                    class="pulsante secondario"
+                    href={pdf.senzaFoto}
+                    download
+                  >
+                    PDF senza fotografie
+                  </a>
+                ) : (
+                  <span
+                    class="pulsante secondario"
+                    aria-disabled="true"
+                  >
+                    PDF senza fotografie
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </details>
     ))}
   </main>
