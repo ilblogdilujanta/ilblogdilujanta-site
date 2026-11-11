@@ -22,3 +22,15 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# PDF intermedi: non pubblicare su GitHub
+/pdf-generati/*.pdf
+
+# Copie di sicurezza
+src/pages/*-backup-*.astro
+
+# Font locale di lavorazione
+/fonts/BASKVILL.TTF
+
+# Font Baskerville: non caricare nel repository pubblico
+/public/fonts/BASKVILL.TTF

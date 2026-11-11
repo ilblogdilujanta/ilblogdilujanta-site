@@ -19,21 +19,27 @@ const articoliPerAnno = anni.map(anno => ({
   )
 }));
 
-// PDF già generati e disponibili.
-// Aggiungeremo qui gli altri articoli man mano.
-const pdfDisponibili = {
-  "trumusiate": {
-    conFoto: "/pdf/trumusiate-sainate-con-foto.pdf",
-    senzaFoto: "/pdf/trumusiate-sainate-senza-foto.pdf"
-  }
+// Collegamenti ai PDF generati automaticamente.
+const moduli = import.meta.glob(
+  "../../pdf-generati/manifest.json",
+  { eager: true, import: "default" }
+);
+
+const manifest = Object.values(moduli)[0] ?? {};
+
+// Manteniamo il collegamento già presente per Trumusiate.
+const trumusiate = {
+  conFoto: "/pdf/trumusiate-sainate-con-foto.pdf",
+  senzaFoto: "/pdf/trumusiate-sainate-senza-foto.pdf"
 };
 
-// Identifica l'articolo senza modificare il suo titolo.
 function trovaPDF(articolo) {
-  const titolo = articolo.data.title.toLowerCase();
+  const pdf = manifest[articolo.slug];
 
-  if (titolo.includes("trumusiate sainate")) {
-    return pdfDisponibili.trumusiate;
+  if (pdf) return pdf;
+
+  if (articolo.data.title.toLowerCase().includes("trumusiate sainate")) {
+    return trumusiate;
   }
 
   return null;
