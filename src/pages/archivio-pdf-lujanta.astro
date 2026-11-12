@@ -145,7 +145,7 @@ function trovaPDF(articolo) {
 
     <p class="intro">
       Archivio degli articoli in formato PDF.
-      Versione completa e versione senza fotografie.
+      Versione completa e versione solo testo.
     </p>
 
     {articoliPerAnno.map(({ anno, articoli }) => (
@@ -187,14 +187,14 @@ function trovaPDF(articolo) {
                     href={pdf.senzaFoto}
                     download
                   >
-                    PDF senza fotografie
+                    PDF solo testo
                   </a>
                 ) : (
                   <span
                     class="pulsante secondario"
                     aria-disabled="true"
                   >
-                    PDF senza fotografie
+                    PDF solo testo
                   </span>
                 )}
               </div>
