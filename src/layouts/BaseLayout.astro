@@ -1,5 +1,22 @@
 ---
-const { title = "Il Blog di Lujanta" } = Astro.props;
+
+const {
+  title = "Il Blog di Lujanta",
+  image,
+  description = "Tradizioni, folklore e stregoneria nel Tempo – Il Blog di Lujanta",
+  pageUrl
+} = Astro.props;
+
+const siteUrl = "https://ilblogdilujanta.eu";
+
+const ogImage = image
+  ? new URL(image, siteUrl).toString()
+  : undefined;
+
+const canonicalUrl = pageUrl
+  ? new URL(pageUrl, siteUrl).toString()
+  : Astro.url.toString();
+
 
 import TopNav from "../components/TopNav.astro";
 import CookieBanner from "../components/CookieBanner.astro";
@@ -17,6 +34,19 @@ const CONSENT_KEY = "cookie_consent_v1";
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+
+<meta name="description" content={description} />
+
+<meta property="og:type" content="article" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+{ogImage && <meta property="og:image" content={ogImage} />}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{ogImage && <meta name="twitter:image" content={ogImage} />}
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />

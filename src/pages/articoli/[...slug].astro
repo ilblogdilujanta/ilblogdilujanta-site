@@ -63,7 +63,11 @@ const shareWA = `https://wa.me/?text=${encodeURIComponent(`${shareText} — ${ur
 const shareMail = `mailto:?subject=${encText}&body=${encodeURIComponent(urlArticolo)}`;
 ---
 
-<BaseLayout title={articolo.data.title}>
+<BaseLayout
+  title={articolo.data.title}
+  image={articolo.data.cover}
+  pageUrl={urlArticolo}
+>
   <style is:global>
     :root{
       --ink:#2c241c;
